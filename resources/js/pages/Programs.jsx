@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
-import { Clock, Users, Check, MessageSquare, BookOpen, Heart, Shield, UsersRound, School, Landmark, Home, Compass, UserCheck, Briefcase, Award, Calendar, ChevronDown, Flag, GraduationCap, Globe, Building } from 'lucide-react';
+import { Clock, Users, Check, MessageSquare, BookOpen, Heart, Shield, UsersRound, School, Landmark, Home, Compass, UserCheck, Briefcase, Award, Calendar, ChevronDown, Flag, GraduationCap, Globe, Building, Phone } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
 export default function Programs({ changePage, content }) {
     const [openFaq, setOpenFaq] = useState(null);
+
+    const resolveImage = (key, def) => {
+        const src = content(key, def);
+        if (!src) return def || '';
+        if (src.startsWith('http') || src.startsWith('/')) {
+            return src;
+        }
+        return `/storage/${src}`;
+    };
 
     const toggleFaq = (idx) => {
         setOpenFaq(openFaq === idx ? null : idx);
@@ -121,13 +130,7 @@ export default function Programs({ changePage, content }) {
             <section className="relative py-32 md:py-40 pb-28 md:pb-36 lg:pb-44 flex items-center justify-center overflow-hidden">
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ 
-                        backgroundImage: `url('${
-                            content('program_banner', 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=1600&auto=format&fit=crop').startsWith('http') || content('program_banner', 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=1600&auto=format&fit=crop').startsWith('/')
-                                ? content('program_banner', 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=1600&auto=format&fit=crop')
-                                : `/storage/${content('program_banner')}`
-                        }')` 
-                    }}
+                    style={{ backgroundImage: `url('${resolveImage('program_banner', 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=1600&auto=format&fit=crop')}')` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/95 via-[#261E14]/85 to-[#261E14]/40" />
 
@@ -413,6 +416,39 @@ export default function Programs({ changePage, content }) {
                                 </div>
                             </ScrollReveal>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* SECTION: BOTTOM CTA BANNER */}
+            <section className="relative py-28 overflow-hidden">
+                <div 
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url('${resolveImage('home_cta_bg', 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=1600&auto=format&fit=crop')}')` }}
+                />
+                <div className="absolute inset-0 bg-black/75" />
+                
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left space-y-6">
+                    <h2 className="text-3xl sm:text-5xl font-serif text-[#FAF6F0] font-bold leading-tight" dangerouslySetInnerHTML={{ __html: content('home_cta_title', 'Mari <span class="font-serif italic font-normal text-[#C99B53]">Mengenal Budaya Bali</span> Lebih Dekat') }} />
+                    <p className="text-sm sm:text-base text-gray-300 max-w-2xl leading-relaxed font-sans">
+                        {content('home_cta_desc', 'Hubungi kami hari ini untuk merencanakan kunjungan, pementasan, atau kolaborasi seni yang berkesan bersama kami.')}
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-start gap-4 pt-4">
+                        <button
+                            onClick={() => changePage('contact')}
+                            className="w-full sm:w-auto px-8 py-3.5 bg-[#C99B53] hover:bg-[#B7863F] text-[#261E14] font-bold text-xs rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer uppercase tracking-wider"
+                        >
+                            Hubungi Kami
+                        </button>
+                        <a
+                            href="https://wa.me/6281234567890"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full sm:w-auto px-8 py-3.5 border border-[#C99B53] text-[#C99B53] hover:bg-[#C99B53]/15 font-bold text-xs rounded-lg shadow-md transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider"
+                        >
+                            <Phone size={12} />
+                            <span>Hubungi WhatsApp</span>
+                        </a>
                     </div>
                 </div>
             </section>

@@ -24,7 +24,10 @@ const PAGE_SCHEMAS = {
             { key: 'home_program_3_img', label: 'Gambar Program 3', type: 'image', section: 'beranda' },
             { key: 'home_program_4_title', label: 'Judul Program 4', type: 'text', section: 'beranda' },
             { key: 'home_program_4_desc', label: 'Deskripsi Program 4', type: 'text', section: 'beranda' },
-            { key: 'home_program_4_img', label: 'Gambar Program 4', type: 'image', section: 'beranda' }
+            { key: 'home_program_4_img', label: 'Gambar Program 4', type: 'image', section: 'beranda' },
+            { key: 'home_cta_bg', label: 'Gambar Latar Bawah (CTA)', type: 'image', section: 'beranda' },
+            { key: 'home_cta_title', label: 'Judul Bagian Bawah (CTA)', type: 'text', section: 'beranda' },
+            { key: 'home_cta_desc', label: 'Deskripsi Bagian Bawah (CTA)', type: 'text', section: 'beranda' }
         ]
     },
     tentangkami: {

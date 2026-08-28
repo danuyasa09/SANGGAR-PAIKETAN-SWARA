@@ -5,6 +5,7 @@ import ScrollReveal from '../components/ScrollReveal';
 export default function Home({ changePage, content }) {
     const resolveImage = (key, def) => {
         const src = content(key, def);
+        if (!src) return def || '';
         if (src.startsWith('http') || src.startsWith('/')) {
             return src;
         }
@@ -82,7 +83,7 @@ export default function Home({ changePage, content }) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/90 via-[#261E14]/75 to-[#261E14]/30" />
  
-                <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left mt-8 space-y-6">
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left mt-8 space-y-6">
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-[#FAF6F0] font-bold leading-[1.1] max-w-3xl" dangerouslySetInnerHTML={{ __html: content('home_hero_title', 'Mengenal <span class="font-serif italic font-normal text-[#C99B53]">Budaya Bali</span> <br /> melalui <span class="font-serif italic font-normal text-[#C99B53]">Gamelan</span> dan <span class="font-serif italic font-normal text-[#C99B53]">Tari</span>') }}>
                     </h1>
                     <p className="text-sm sm:text-base text-gray-300 max-w-2xl font-sans leading-relaxed">
@@ -376,7 +377,7 @@ export default function Home({ changePage, content }) {
                 />
                 <div className="absolute inset-0 bg-black/75" />
                 
-                <div className="relative z-10 max-w-4xl mx-auto px-4 text-left space-y-6">
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left space-y-6">
                     <h2 className="text-3xl sm:text-5xl font-serif text-[#FAF6F0] font-bold leading-tight" dangerouslySetInnerHTML={{ __html: content('home_cta_title', 'Mari <span class="font-serif italic font-normal text-[#C99B53]">Mengenal Budaya Bali</span> Lebih Dekat') }} />
                     <p className="text-sm sm:text-base text-gray-300 max-w-2xl leading-relaxed font-sans">
                         {content('home_cta_desc', 'Hubungi kami hari ini untuk merencanakan kunjungan, pementasan, atau kolaborasi seni yang berkesan bersama kami.')}
