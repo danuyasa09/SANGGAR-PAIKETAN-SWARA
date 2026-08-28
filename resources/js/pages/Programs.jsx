@@ -197,35 +197,35 @@ export default function Programs({ changePage, content }) {
                     </ScrollReveal>
 
                     {/* Right: Targets Dark Image Box with Overlay */}
-                    <ScrollReveal className="lg:col-span-5 flex" delay={200} distance="40px">
-                        <div className="relative rounded-3xl overflow-hidden h-[520px] shadow-lg group w-full">
+                    <ScrollReveal className="lg:col-span-5 flex flex-col" delay={200} distance="40px">
+                        <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-lg group w-full">
                             <img
                                 src="https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=800&auto=format&fit=crop"
                                 alt="Edu-Wisata Sanggar"
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
-                            {/* Translucent overlay matching mockup */}
-                            <div className="absolute inset-x-4 bottom-4 bg-[#261E14]/90 backdrop-blur-md rounded-2xl p-5 border border-white/5 shadow-2xl space-y-3.5">
-                                <h4 className="font-serif font-bold text-[#C99B53] text-sm tracking-wide text-center">
-                                    Sebaran Peserta Edu-Wisata Kami
-                                </h4>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {[
-                                        { label: "Sekolah Dasar", icon: <School size={14} className="text-[#C99B53]" /> },
-                                        { label: "Sekolah Menengah", icon: <GraduationCap size={14} className="text-[#C99B53]" /> },
-                                        { label: "Perguruan Tinggi", icon: <Landmark size={14} className="text-[#C99B53]" /> },
-                                        { label: "Keluarga & Umum", icon: <Users size={14} className="text-[#C99B53]" /> },
-                                        { label: "Wisatawan Domestik", icon: <Compass size={14} className="text-[#C99B53]" /> },
-                                        { label: "Wisatawan Mancanegara", icon: <Globe size={14} className="text-[#C99B53]" /> },
-                                        { label: "Komunitas Budaya", icon: <Heart size={14} className="text-[#C99B53]" /> },
-                                        { label: "Instansi Pemerintah", icon: <Building size={14} className="text-[#C99B53]" /> }
-                                    ].map((target, idx) => (
-                                        <div key={idx} className="flex items-center gap-2.5 p-2 bg-white/5 rounded-lg border border-white/5 text-[11px] text-gray-200">
-                                            {target.icon}
-                                            <span className="font-sans font-semibold leading-none">{target.label}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                        </div>
+                        {/* Translucent overlay matching mockup but pushed lower overlapping the bottom border */}
+                        <div className="bg-[#261E14]/90 backdrop-blur-md rounded-2xl p-5 border border-white/5 shadow-2xl space-y-3.5 -mt-10 mx-4 relative z-10">
+                            <h4 className="font-serif font-bold text-[#C99B53] text-sm tracking-wide text-center">
+                                Sebaran Peserta Edu-Wisata Kami
+                            </h4>
+                            <div className="grid grid-cols-2 gap-2">
+                                {[
+                                    { label: "Sekolah Dasar", icon: <School size={14} className="text-[#C99B53]" /> },
+                                    { label: "Sekolah Menengah", icon: <GraduationCap size={14} className="text-[#C99B53]" /> },
+                                    { label: "Perguruan Tinggi", icon: <Landmark size={14} className="text-[#C99B53]" /> },
+                                    { label: "Keluarga & Umum", icon: <Users size={14} className="text-[#C99B53]" /> },
+                                    { label: "Wisatawan Domestik", icon: <Compass size={14} className="text-[#C99B53]" /> },
+                                    { label: "Wisatawan Mancanegara", icon: <Globe size={14} className="text-[#C99B53]" /> },
+                                    { label: "Komunitas Budaya", icon: <Heart size={14} className="text-[#C99B53]" /> },
+                                    { label: "Instansi Pemerintah", icon: <Building size={14} className="text-[#C99B53]" /> }
+                                ].map((target, idx) => (
+                                    <div key={idx} className="flex items-center gap-2.5 p-2 bg-white/5 rounded-lg border border-white/5 text-[11px] text-gray-200">
+                                        {target.icon}
+                                        <span className="font-sans font-semibold leading-none">{target.label}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </ScrollReveal>
