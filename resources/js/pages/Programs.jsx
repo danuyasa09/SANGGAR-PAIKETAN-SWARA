@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, Users, Check, MessageSquare, BookOpen, Heart, Shield, UsersRound, School, Landmark, Home, Compass, UserCheck, Briefcase, Award, Calendar, ChevronDown, Flag } from 'lucide-react';
+import { Clock, Users, Check, MessageSquare, BookOpen, Heart, Shield, UsersRound, School, Landmark, Home, Compass, UserCheck, Briefcase, Award, Calendar, ChevronDown, Flag, GraduationCap, Globe, Building } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
 export default function Programs({ changePage, content }) {
@@ -198,7 +198,7 @@ export default function Programs({ changePage, content }) {
 
                     {/* Right: Targets Dark Image Box with Overlay */}
                     <ScrollReveal className="lg:col-span-5 flex" delay={200} distance="40px">
-                        <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-lg group w-full">
+                        <div className="relative rounded-3xl overflow-hidden h-[520px] shadow-lg group w-full">
                             <img
                                 src="https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=800&auto=format&fit=crop"
                                 alt="Edu-Wisata Sanggar"
@@ -211,14 +211,18 @@ export default function Programs({ changePage, content }) {
                                 </h4>
                                 <div className="grid grid-cols-2 gap-2">
                                     {[
-                                        "Sekolah Dasar", "Sekolah Menengah",
-                                        "Perguruan Tinggi", "Keluarga & Umum",
-                                        "Wisatawan Domestik", "Wisatawan Mancanegara",
-                                        "Komunitas Budaya", "Instansi Pemerintah"
+                                        { label: "Sekolah Dasar", icon: <School size={14} className="text-[#C99B53]" /> },
+                                        { label: "Sekolah Menengah", icon: <GraduationCap size={14} className="text-[#C99B53]" /> },
+                                        { label: "Perguruan Tinggi", icon: <Landmark size={14} className="text-[#C99B53]" /> },
+                                        { label: "Keluarga & Umum", icon: <Users size={14} className="text-[#C99B53]" /> },
+                                        { label: "Wisatawan Domestik", icon: <Compass size={14} className="text-[#C99B53]" /> },
+                                        { label: "Wisatawan Mancanegara", icon: <Globe size={14} className="text-[#C99B53]" /> },
+                                        { label: "Komunitas Budaya", icon: <Heart size={14} className="text-[#C99B53]" /> },
+                                        { label: "Instansi Pemerintah", icon: <Building size={14} className="text-[#C99B53]" /> }
                                     ].map((target, idx) => (
-                                        <div key={idx} className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/5 text-[10px] text-gray-200">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-[#C99B53] shrink-0" />
-                                            <span className="font-sans font-medium">{target}</span>
+                                        <div key={idx} className="flex items-center gap-2.5 p-2 bg-white/5 rounded-lg border border-white/5 text-[11px] text-gray-200">
+                                            {target.icon}
+                                            <span className="font-sans font-semibold leading-none">{target.label}</span>
                                         </div>
                                     ))}
                                 </div>
