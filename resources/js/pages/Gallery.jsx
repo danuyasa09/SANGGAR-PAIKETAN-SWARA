@@ -8,9 +8,31 @@ export default function Gallery({ content }) {
 
     const categories = [
         { id: 'all', label: 'Semua' },
-        { id: 'gamelan', label: 'Gamelan' },
-        { id: 'tari', label: 'Tari Bali' },
-        { id: 'upacara', label: 'Upacara & Sosial' },
+        { id: 'gamelan', label: 'Latihan Gamelan' },
+        { id: 'tari', label: 'Latihan Tari' },
+        { id: 'pertunjukan', label: 'Pertunjukan' },
+        { id: 'eduwisata', label: 'Edu-Wisata' },
+        { id: 'kegiatan', label: 'Kegiatan Masyarakat' },
+        { id: 'pelatihan', label: 'Pelatihan dan Pendampingan' },
+        { id: 'bantas', label: 'Dokumentasi Desa Bantas' }
+    ];
+
+    const videos = [
+        {
+            thumbnail: "https://images.unsplash.com/photo-1513829096963-8a30ef68ad66?q=80&w=600&auto=format&fit=crop",
+            title: "Latihan Gamelan - Paiketan Swara",
+            views: "28,567 views"
+        },
+        {
+            thumbnail: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=600&auto=format&fit=crop",
+            title: "Pentas Tari Legong - Paiketan Swara",
+            views: "35,150 views"
+        },
+        {
+            thumbnail: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=600&auto=format&fit=crop",
+            title: "Kegiatan Sosial - Paiketan Swara",
+            views: "26,592 views"
+        }
     ];
 
     React.useEffect(() => {
@@ -43,7 +65,7 @@ export default function Gallery({ content }) {
 
                 <div className="relative z-10 max-w-4xl mx-auto px-4 text-center mt-12 space-y-6">
                     <span className="text-xs font-bold tracking-widest text-[#C99B53] uppercase block">
-                        — DOKUMENTASI KEGIATAN
+                        — DOKUMENTASI KEGIATAN —
                     </span>
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
                         {content('gallery_title', 'Galeri Sanggar')}
@@ -71,14 +93,14 @@ export default function Gallery({ content }) {
 
                 {/* Filters */}
                 <ScrollReveal distance="20px">
-                    <div className="flex flex-wrap justify-center gap-3 mb-12">
+                    <div className="flex flex-wrap justify-center gap-3 mb-12 max-w-4xl mx-auto">
                         {categories.map(cat => (
                             <button
                                 key={cat.id}
                                 onClick={() => setFilter(cat.id)}
-                                className={`px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 cursor-pointer ${
+                                className={`px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-200 cursor-pointer ${
                                     filter === cat.id
-                                        ? 'bg-[#C99B53] text-[#261E14] shadow-md'
+                                        ? 'bg-[#C99B53] text-[#261E14] shadow-md border border-[#C99B53]'
                                         : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                                 }`}
                             >
@@ -88,7 +110,7 @@ export default function Gallery({ content }) {
                     </div>
                 </ScrollReveal>
 
-                {/* Grid */}
+                {/* Photo Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filteredItems.map((item, idx) => (
                         <ScrollReveal
@@ -98,13 +120,12 @@ export default function Gallery({ content }) {
                             className="flex"
                         >
                             <div
-                                className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm group relative cursor-pointer w-full"
+                                className="overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 w-full group relative cursor-pointer aspect-[4/3] bg-gray-900"
                             >
-                                <div className="relative aspect-[4/3] overflow-hidden bg-gray-900">
                                 <img
-                                    src={`/storage/${item.image_path}`}
+                                    src={item.image_path && (item.image_path.startsWith('http') || item.image_path.startsWith('/')) ? item.image_path : `/storage/${item.image_path}`}
                                     alt={item.title}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 group-hover:opacity-75"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
                                 {/* Hover overlay */}
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -113,20 +134,70 @@ export default function Gallery({ content }) {
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-6">
-                                <span className="text-[9px] tracking-widest font-bold text-[#C99B53] uppercase mb-2 block">
-                                    {item.category}
-                                </span>
-                                <h3 className="text-lg font-serif font-bold text-[#261E14]">
-                                    {item.title}
-                                </h3>
-                            </div>
-                            </div>
                         </ScrollReveal>
                     ))}
                 </div>
 
+                {/* Center CTA Buttons */}
+                <div className="flex justify-center gap-4 mt-12 mb-20">
+                    <button className="px-6 py-3.5 bg-[#C99B53] hover:bg-[#B7863F] text-[#261E14] font-bold text-xs rounded-lg shadow-sm transition-colors duration-200 cursor-pointer">
+                        Lihat Semua Foto
+                    </button>
+                    <button className="px-6 py-3.5 bg-[#261E14] hover:bg-black text-[#FAF6F0] font-bold text-xs rounded-lg shadow-sm transition-colors duration-200 cursor-pointer">
+                        Tonton Video
+                    </button>
+                </div>
             </div>
+
+            {/* VIDEO DOKUMENTASI SECTION */}
+            <section className="py-24 bg-[#FAF6F0] border-t border-[#C99B53]/15">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <ScrollReveal className="text-center mb-16 space-y-3" distance="30px">
+                        <span className="text-xs font-bold tracking-widest text-[#C99B53] uppercase block">
+                            — PILIHAN PASTI —
+                        </span>
+                        <h2 className="text-3xl sm:text-4xl font-serif text-[#261E14] font-bold">
+                            Video Dokumentasi
+                        </h2>
+                        <div className="h-[2px] w-20 bg-[#C99B53] mx-auto mt-2" />
+                    </ScrollReveal>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {videos.map((vid, idx) => (
+                            <ScrollReveal
+                                key={idx}
+                                delay={idx * 150}
+                                distance="40px"
+                                className="flex flex-col space-y-4"
+                            >
+                                <div className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-md group cursor-pointer bg-gray-900">
+                                    <img
+                                        src={vid.thumbnail}
+                                        alt={vid.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                    {/* Play Overlay */}
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors duration-300 group-hover:bg-black/25">
+                                        <div className="w-12 h-12 rounded-full bg-[#C99B53] text-[#261E14] flex items-center justify-center shadow-md transition-transform duration-300 group-hover:scale-110">
+                                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current ml-0.5" stroke="none">
+                                                <path d="M8 5v14l11-7z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <h4 className="font-serif font-bold text-[#261E14] text-base leading-snug">
+                                        {vid.title}
+                                    </h4>
+                                    <p className="text-xs text-gray-500 font-sans">
+                                        {vid.views}
+                                    </p>
+                                </div>
+                            </ScrollReveal>
+                        ))}
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }

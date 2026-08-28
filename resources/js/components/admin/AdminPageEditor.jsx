@@ -207,6 +207,9 @@ export default function AdminPageEditor() {
                                         onChange={e => handleImageUpload(field.key, e.target.files[0], field.type, field.section)} 
                                         className="text-sm border border-admin-primary/20 p-2.5 rounded-lg w-full bg-admin-bg/30 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-admin-primary/10 file:text-admin-primary hover:file:bg-admin-primary/20" 
                                     />
+                                    <p className="mt-2 text-xs text-admin-text/60 italic">
+                                        * Maksimal ukuran 2MB. Resolusi ideal: 1920x1080px (Banner) atau 800x800px (Persegi).
+                                    </p>
                                 </div>
                             </div>
                         )}

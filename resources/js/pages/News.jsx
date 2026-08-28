@@ -1,5 +1,4 @@
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
 export default function News({ content }) {
@@ -37,7 +36,7 @@ export default function News({ content }) {
 
                 <div className="relative z-10 max-w-4xl mx-auto px-4 text-center mt-12 space-y-6">
                     <span className="text-xs font-bold tracking-widest text-[#C99B53] uppercase block">
-                        — INFORMASI & ACARA SANGGAR
+                        — INFORMASI & ACARA SANGGAR —
                     </span>
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
                         {content('news_hero_title', 'Berita Terkini')}
@@ -65,7 +64,7 @@ export default function News({ content }) {
 
                 {/* Hero Featured Article */}
                 <ScrollReveal distance="40px">
-                    <div className="bg-white rounded-2xl overflow-hidden border border-[#C99B53]/15 shadow-md mb-16 hover:shadow-lg transition-all duration-300">
+                    <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md mb-16 hover:shadow-lg transition-all duration-300">
                         <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
                             <div className="lg:col-span-6 relative min-h-[300px]">
                                 <img
@@ -75,7 +74,7 @@ export default function News({ content }) {
                                 />
                             </div>
                             <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-center space-y-6">
-                                <span className="self-start text-[10px] tracking-widest font-bold bg-[#FAF6F0] text-[#C99B53] px-3.5 py-1.5 rounded-full border border-[#C99B53]/15">
+                                <span className="self-start text-[9px] tracking-widest font-bold bg-[#E8F0EC] text-[#2F523E] px-2.5 py-1 rounded uppercase">
                                     ACARA KHUSUS
                                 </span>
                                 <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#261E14] leading-tight">
@@ -84,8 +83,8 @@ export default function News({ content }) {
                                 <p className="text-sm text-gray-600 leading-relaxed font-sans">
                                     Menyambut bulan purnama, sanggar kami menjadi tuan rumah bagi lebih dari 50 seniman gamelan dari seluruh penjuru Bali. Festival ini bertujuan untuk melestarikan langgam-langgam kuno yang jarang dimainkan di era modern.
                                 </p>
-                                <button className="self-start inline-flex items-center gap-1.5 text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors duration-200 mt-2 cursor-pointer">
-                                    BACA SELENGKAPNYA <ChevronRight size={16} />
+                                <button className="self-start inline-flex items-center text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors duration-200 mt-2 cursor-pointer">
+                                    BACA SELENGKAPNYA
                                 </button>
                             </div>
                         </div>
@@ -102,7 +101,7 @@ export default function News({ content }) {
                             className="flex"
                         >
                             <div
-                                className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:border-[#C99B53]/25 transition-all duration-300 flex flex-col justify-between w-full"
+                                className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between w-full pb-6"
                             >
                                 <div>
                                     <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
@@ -113,7 +112,7 @@ export default function News({ content }) {
                                         />
                                     </div>
                                     <div className="p-6 space-y-4">
-                                        <span className="text-[9px] tracking-widest font-bold text-[#C99B53] uppercase bg-[#FAF6F0] px-2.5 py-1 rounded border border-[#C99B53]/10 inline-block">
+                                        <span className="text-[9px] tracking-widest font-bold bg-[#E8F0EC] text-[#2F523E] px-2.5 py-1 rounded uppercase inline-block">
                                             {item.tag}
                                         </span>
                                         <h3 className="text-lg font-serif font-bold text-[#261E14] leading-snug">
@@ -124,9 +123,9 @@ export default function News({ content }) {
                                         </p>
                                     </div>
                                 </div>
-                                <div className="p-6 pt-0 border-t border-dashed border-gray-100 mt-4">
-                                    <button className="inline-flex items-center gap-1 text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors duration-200 cursor-pointer">
-                                        BACA SELENGKAPNYA <ChevronRight size={14} />
+                                <div className="px-6 pt-2">
+                                    <button className="inline-flex items-center text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors duration-200 cursor-pointer">
+                                        BACA SELENGKAPNYA
                                     </button>
                                 </div>
                             </div>
@@ -136,7 +135,7 @@ export default function News({ content }) {
 
                 {/* Pagination Button */}
                 <div className="flex justify-center">
-                    <button className="px-8 py-3.5 border border-[#C99B53]/40 text-[#261E14] hover:bg-[#C99B53] hover:text-white text-xs font-bold rounded-lg shadow-sm transition-all duration-200 cursor-pointer">
+                    <button className="px-8 py-3.5 border border-[#261E14] text-[#261E14] bg-transparent hover:bg-[#261E14] hover:text-white text-xs font-bold rounded-md shadow-sm transition-all duration-200 cursor-pointer uppercase tracking-wider">
                         MUAT LEBIH BANYAK
                     </button>
                 </div>

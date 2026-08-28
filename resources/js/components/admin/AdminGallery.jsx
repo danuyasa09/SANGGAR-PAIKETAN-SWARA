@@ -69,6 +69,7 @@ export default function AdminGallery() {
                     <div>
                         <label className="block text-sm mb-1">Pilih File</label>
                         <input type="file" onChange={e => setImage(e.target.files[0])} accept="image/*" required className="w-full" />
+                        <p className="text-[10px] text-gray-500 mt-1 italic">* Maks 2MB. Resolusi ideal: 800x600px.</p>
                     </div>
                     <div>
                         <label className="block text-sm mb-1">Judul / Keterangan</label>
