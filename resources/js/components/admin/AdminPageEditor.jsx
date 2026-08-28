@@ -96,7 +96,7 @@ const PAGE_SCHEMAS = {
 export default function AdminPageEditor() {
     const { slug } = useParams();
     const [contents, setContents] = useState([]);
-    const [saving, setSaving] = useState(false);
+    const [savingField, setSavingField] = useState(null);
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
     const showToast = (message, type = 'success') => {
@@ -153,15 +153,18 @@ export default function AdminPageEditor() {
         }
     };
 
-    const handleSave = async () => {
-        setSaving(true);
+    const handleSaveSingle = async (field) => {
+        setSavingField(field.key);
         try {
-            await axios.post('/api/content', { contents });
-            showToast('Berhasil disimpan!');
+            const item = contents.find(c => c.key === field.key);
+            if (item) {
+                await axios.post('/api/content', { contents: [item] });
+                showToast('Teks berhasil disimpan!');
+            }
         } catch (e) {
-            showToast('Gagal menyimpan perubahan.', 'error');
+            showToast('Gagal menyimpan teks.', 'error');
         }
-        setSaving(false);
+        setSavingField(null);
     };
 
     if (!PAGE_SCHEMAS[slug]) {
@@ -170,15 +173,8 @@ export default function AdminPageEditor() {
 
     return (
         <div className="max-w-4xl">
-            <div className="sticky top-0 z-40 flex justify-between items-center mb-8 bg-[#FAF6F0]/95 backdrop-blur-md py-4 border-b border-admin-primary/10 -mx-2 px-2 sm:-mx-6 sm:px-6">
+            <div className="flex justify-between items-center mb-8 border-b border-admin-primary/10 pb-4">
                 <h1 className="text-2xl sm:text-3xl font-bold font-admin-serif text-admin-primary">{schema.title}</h1>
-                <button 
-                    onClick={handleSave} 
-                    disabled={saving} 
-                    className="bg-admin-primary hover:bg-admin-primary/90 text-white px-6 py-2.5 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-2"
-                >
-                    {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
-                </button>
             </div>
             
             <div className="bg-white p-8 rounded-xl shadow-sm border border-admin-primary/10 space-y-8">
@@ -187,13 +183,22 @@ export default function AdminPageEditor() {
                         <label className="block text-sm font-semibold text-admin-text/80 mb-3">{field.label}</label>
                         
                         {field.type === 'text' && (
-                            <textarea 
-                                rows="3" 
-                                value={getValue(field.key)} 
-                                onChange={e => handleChange(field.key, e.target.value, field.type, field.section)} 
-                                className="w-full p-4 bg-admin-bg/30 border border-admin-primary/20 rounded-lg focus:outline-none focus:border-admin-secondary focus:ring-1 focus:ring-admin-secondary transition-colors" 
-                                placeholder={`Isi ${field.label}...`}
-                            ></textarea>
+                            <div className="flex flex-col items-end gap-3">
+                                <textarea 
+                                    rows="3" 
+                                    value={getValue(field.key)} 
+                                    onChange={e => handleChange(field.key, e.target.value, field.type, field.section)} 
+                                    className="w-full p-4 bg-admin-bg/30 border border-admin-primary/20 rounded-lg focus:outline-none focus:border-admin-secondary focus:ring-1 focus:ring-admin-secondary transition-colors" 
+                                    placeholder={`Isi ${field.label}...`}
+                                ></textarea>
+                                <button 
+                                    onClick={() => handleSaveSingle(field)} 
+                                    disabled={savingField === field.key}
+                                    className="bg-admin-secondary hover:bg-[#A37B3D] text-white px-5 py-2 rounded-md font-semibold text-xs shadow-sm transition-all"
+                                >
+                                    {savingField === field.key ? 'Menyimpan...' : 'Simpan Teks'}
+                                </button>
+                            </div>
                         )}
                         
                         {field.type === 'image' && (
