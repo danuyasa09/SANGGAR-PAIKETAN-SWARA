@@ -48,7 +48,8 @@ export default function Partnership({ content }) {
         if (banner.startsWith('http') || banner.startsWith('/')) {
             return banner;
         }
-    ];
+        return banner;
+    };
 
     return (
         <div className="bg-[#FAF6F0] min-h-screen pb-20 font-sans">
