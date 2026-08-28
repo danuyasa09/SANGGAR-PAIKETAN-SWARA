@@ -206,7 +206,7 @@ export default function Programs({ changePage, content }) {
                             />
                         </div>
                         {/* Translucent overlay matching mockup but pushed lower overlapping the bottom border */}
-                        <div className="bg-[#261E14]/90 backdrop-blur-md rounded-2xl p-5 border border-white/5 shadow-2xl space-y-3.5 -mt-10 mx-4 relative z-10">
+                        <div className="bg-[#261E14]/90 backdrop-blur-md rounded-2xl p-5 border border-white/5 shadow-2xl space-y-3.5 -mt-20 mx-4 relative z-10">
                             <h4 className="font-serif font-bold text-[#C99B53] text-sm tracking-wide text-center">
                                 Sebaran Peserta Edu-Wisata Kami
                             </h4>
