@@ -79,7 +79,7 @@ export default function App() {
             case 'home':
                 return <Home changePage={changePage} content={getContent} />;
             case 'about':
-                return <About content={getContent} />;
+                return <About content={getContent} changePage={changePage} />;
             case 'programs':
                 return <Programs changePage={changePage} content={getContent} />;
             case 'news':
