@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Landmark, GraduationCap, Home, Plane, Bed, Users, Newspaper, Heart, Handshake, Check } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
-export default function Partnership() {
+export default function Partnership({ content }) {
     const [submitted, setSubmitted] = useState(false);
     const formRef = useRef(null);
     const [formData, setFormData] = useState({
@@ -43,6 +43,13 @@ export default function Partnership() {
         { icon: <Handshake size={20} />, title: "Mitra Program CSR" }
     ];
 
+    const getBannerImage = () => {
+        const banner = content('partnership_banner', '/images/partnership_banner.png');
+        if (banner.startsWith('http') || banner.startsWith('/')) {
+            return banner;
+        }
+    ];
+
     return (
         <div className="bg-[#FAF6F0] min-h-screen pb-20 font-sans">
             
@@ -50,16 +57,16 @@ export default function Partnership() {
             <section className="relative py-32 md:py-40 flex items-center justify-center overflow-hidden">
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('/images/partnership_banner.png')` }}
+                    style={{ backgroundImage: `url('${getBannerImage()}')` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/55 to-[#261E14]/30" />
 
                 <div className="relative z-10 max-w-4xl mx-auto px-4 text-center mt-12 space-y-6">
                     <h1 className="text-3xl sm:text-5xl font-serif text-white font-bold leading-tight tracking-wide">
-                        Kemitraan & Kolaborasi Budaya
+                        {content('partnership_hero_title', 'Kemitraan & Kolaborasi Budaya')}
                     </h1>
-                    <p className="text-sm sm:text-base text-gray-200 max-w-2xl mx-auto leading-relaxed">
-                        Bergabunglah bersama Sanggar Paiketan Swara dalam misi melestarikan warisan seni budaya Bali melalui kemitraan strategis yang berkelanjutan.
+                    <p className="text-sm sm:text-base text-gray-200 max-w-2xl mx-auto leading-relaxed whitespace-pre-wrap">
+                        {content('partnership_hero_desc', 'Bergabunglah bersama Sanggar Paiketan Swara dalam misi melestarikan warisan seni budaya Bali melalui kemitraan strategis yang berkelanjutan.')}
                     </p>
                     <button 
                         onClick={scrollToForm}
@@ -114,15 +121,25 @@ export default function Partnership() {
                     </div>
                 </section>
 
-                {/* SECTION: BENTUK KERJA SAMA */}
-                <ScrollReveal distance="30px" className="mt-16">
-                    <div className="bg-[#FAF6F0] border border-[#C99B53]/20 rounded-2xl p-8 sm:p-10 text-center max-w-4xl mx-auto shadow-sm">
-                        <h3 className="font-serif text-[#261E14] text-lg sm:text-xl font-bold mb-3">
-                            Bentuk Kerja Sama
-                        </h3>
-                        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium">
-                            Bentuk kerja sama dapat berupa kunjungan edukasi, pelatihan, pertunjukan, promosi budaya, penelitian, pendampingan, festival, maupun pengembangan program wisata berbasis masyarakat.
-                        </p>
+                {/* Bottom Callout */}
+                <ScrollReveal distance="30px" className="mt-16 mb-20">
+                    <div className="bg-[#1A2F1C] text-[#FAF6F0] rounded-2xl p-8 sm:p-12 border border-[#C99B53]/20 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div className="lg:col-span-8 space-y-4">
+                            <span className="text-[#C99B53] font-bold text-xs uppercase tracking-wider flex items-center gap-2">
+                                <Heart size={16} /> Kolaborasi CSR & Penelitian
+                            </span>
+                            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white leading-tight">
+                                {content('partnership_callout_title', 'Bekerja Sama Membuat Dampak Sosial Nyata')}
+                            </h2>
+                            <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-2xl font-sans whitespace-pre-wrap">
+                                {content('partnership_callout_desc', 'Apakah institusi Anda memiliki fokus riset etnologi musik, program CSR pemberdayaan perempuan pelaku seni, atau kunjungan tahunan siswa? Kami dapat merancang proyek kerja sama jangka panjang yang relevan dan transparan.')}
+                            </p>
+                        </div>
+                        <div className="lg:col-span-4 flex justify-end">
+                            <button onClick={scrollToForm} className="w-full lg:w-auto px-6 py-3.5 bg-[#C99B53] hover:bg-[#B7863F] text-[#261E14] font-bold text-xs rounded-md shadow-md flex items-center justify-center gap-2 transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer">
+                                Ajukan Proposal
+                            </button>
+                        </div>
                     </div>
                 </ScrollReveal>
 
@@ -162,9 +179,11 @@ export default function Partnership() {
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="space-y-1 text-center">
-                                        <h2 className="text-2xl font-serif font-bold text-[#261E14]">Ajukan Kerja Sama</h2>
+                                        <h2 className="text-2xl font-serif font-bold text-[#261E14]">
+                                            {content('partnership_form_title', 'Ajukan Kerja Sama')}
+                                        </h2>
                                         <p className="text-xs sm:text-sm text-gray-500 max-w-2xl mx-auto">
-                                            Silakan lengkapi formulir di bawah ini dengan detail institusi dan bentuk kolaborasi yang Anda harapkan. Tim kami akan segera menghubungi Anda.
+                                            {content('partnership_form_desc', 'Silakan lengkapi formulir di bawah ini dengan detail institusi dan bentuk kolaborasi yang Anda harapkan. Tim kami akan segera menghubungi Anda.')}
                                         </p>
                                     </div>
 
@@ -283,7 +302,7 @@ export default function Partnership() {
                                     {/* Submit Button */}
                                     <button
                                         type="submit"
-                                        className="px-10 py-3.5 bg-black hover:bg-zinc-900 text-white font-bold text-xs rounded-lg shadow-sm transition-colors duration-200 cursor-pointer block mx-auto uppercase tracking-wider"
+                                        className="px-10 py-3.5 bg-black hover:bg-zinc-900 text-white font-bold text-sm rounded-lg shadow-sm transition-colors duration-200 cursor-pointer block mx-auto uppercase tracking-wider"
                                     >
                                         Ajukan Kerja Sama
                                     </button>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Clock, Users, Check, MessageSquare, BookOpen, Heart, Shield, UsersRound, School, Landmark, Home, Compass, UserCheck, Briefcase } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
-export default function Programs({ changePage }) {
+export default function Programs({ changePage, content }) {
     const targets = [
         { icon: <School className="w-5 h-5" />, label: "Siswa Sekolah" },
         { icon: <Landmark className="w-5 h-5" />, label: "Mahasiswa" },
@@ -85,7 +85,13 @@ export default function Programs({ changePage }) {
             <section className="relative py-32 md:py-40 pb-28 md:pb-36 lg:pb-44 flex items-center justify-center overflow-hidden">
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=1600&auto=format&fit=crop')` }}
+                    style={{ 
+                        backgroundImage: `url('${
+                            content('program_banner', 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=1600&auto=format&fit=crop').startsWith('http') || content('program_banner', 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=1600&auto=format&fit=crop').startsWith('/')
+                                ? content('program_banner', 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=1600&auto=format&fit=crop')
+                                : `/storage/${content('program_banner')}`
+                        }')` 
+                    }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/95 via-[#261E14]/85 to-[#261E14]/40" />
 

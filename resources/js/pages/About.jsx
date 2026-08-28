@@ -2,7 +2,7 @@ import React from 'react';
 import { Users, Award, Shield, Compass, Heart, Activity } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
-export default function About() {
+export default function About({ content }) {
     const coreValues = [
         {
             icon: <Users className="w-8 h-8 text-[#C99B53]" />,
@@ -38,7 +38,7 @@ export default function About() {
             <section className="relative py-32 md:py-44 flex items-center justify-center overflow-hidden">
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('/images/about_banner.png')` }}
+                    style={{ backgroundImage: `url('${content('about_banner_image', '/images/about_banner.png').startsWith('http') || content('about_banner_image', '/images/about_banner.png').startsWith('/') ? content('about_banner_image', '/images/about_banner.png') : `/storage/${content('about_banner_image', '/images/about_banner.png')}`}')` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-[#FAF6F0]" />
 
@@ -47,11 +47,11 @@ export default function About() {
                         — TENTANG KAMI
                     </span>
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                        Merajut Harmoni, Melestarikan Budaya
+                        {content('about_title', 'Merajut Harmoni, Melestarikan Budaya')}
                     </h1>
                     <div className="h-[2px] w-20 bg-[#C99B53] mx-auto" />
                     <p className="text-base sm:text-lg text-gray-100 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
-                        Menjaga tradisi, menghidupkan budaya, dan mewariskan keindahan seni Bali kepada dunia.
+                        {content('about_subtitle', 'Menjaga tradisi, menghidupkan budaya, dan mewariskan keindahan seni Bali kepada dunia.')}
                     </p>
                 </div>
             </section>
@@ -105,10 +105,10 @@ export default function About() {
                                 <Compass size={16} /> VISI KAMI
                             </span>
                             <h2 className="text-2xl sm:text-3xl font-serif text-[#261E14] font-bold">
-                                Pusat Pelestarian Seni Budaya Bali
+                                {content('about_visi_title', 'Pusat Pelestarian Seni Budaya Bali')}
                             </h2>
                             <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-sans border-l-4 border-[#C99B53] pl-4 py-1 italic">
-                                "Menjadi ruang terdepan dalam menjaga, mengembangkan, dan mempromosikan kekayaan seni tari dan tabuh tradisional Bali di kancah nasional maupun internasional."
+                                {content('about_visi_desc', '"Menjadi ruang terdepan dalam menjaga, mengembangkan, dan mempromosikan kekayaan seni tari dan tabuh tradisional Bali di kancah nasional maupun internasional."')}
                             </p>
                         </div>
 
@@ -121,22 +121,22 @@ export default function About() {
                                 <div className="flex gap-4">
                                     <span className="font-serif text-2xl font-bold text-[#C99B53] leading-none">01</span>
                                     <div>
-                                        <h4 className="font-serif font-bold text-[#261E14] text-base">Pendidikan Seni Berkualitas</h4>
-                                        <p className="text-sm text-gray-600 mt-1">Menyelenggarakan pendidikan dan pelatihan seni tari dan gamelan Bali yang berkualitas untuk segala usia dan tingkat keahlian.</p>
+                                        <h4 className="font-serif font-bold text-[#261E14] text-base">{content('about_misi1_title', 'Pendidikan Seni Berkualitas')}</h4>
+                                        <p className="text-sm text-gray-600 mt-1">{content('about_misi1_desc', 'Menyelenggarakan pendidikan dan pelatihan seni tari dan gamelan Bali yang berkualitas untuk segala usia dan tingkat keahlian.')}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
                                     <span className="font-serif text-2xl font-bold text-[#C99B53] leading-none">02</span>
                                     <div>
-                                        <h4 className="font-serif font-bold text-[#261E14] text-base">Inovasi Berakar Tradisi</h4>
-                                        <p className="text-sm text-gray-600 mt-1">Menciptakan karya seni inovatif dan kolaboratif yang tetap berakar kuat pada nilai-nilai tradisi leluhur Bali.</p>
+                                        <h4 className="font-serif font-bold text-[#261E14] text-base">{content('about_misi2_title', 'Inovasi Berakar Tradisi')}</h4>
+                                        <p className="text-sm text-gray-600 mt-1">{content('about_misi2_desc', 'Menciptakan karya seni inovatif dan kolaboratif yang tetap berakar kuat pada nilai-nilai tradisi leluhur Bali.')}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
                                     <span className="font-serif text-2xl font-bold text-[#C99B53] leading-none">03</span>
                                     <div>
-                                        <h4 className="font-serif font-bold text-[#261E14] text-base">Pemberdayaan Komunitas</h4>
-                                        <p className="text-sm text-gray-600 mt-1">Membangun komunitas seniman muda yang berdedikasi tinggi dan berdaya secara ekonomi maupun sosial di masyarakat.</p>
+                                        <h4 className="font-serif font-bold text-[#261E14] text-base">{content('about_misi3_title', 'Pemberdayaan Komunitas')}</h4>
+                                        <p className="text-sm text-gray-600 mt-1">{content('about_misi3_desc', 'Membangun komunitas seniman muda yang berdedikasi tinggi dan berdaya secara ekonomi maupun sosial di masyarakat.')}</p>
                                     </div>
                                 </div>
                             </div>

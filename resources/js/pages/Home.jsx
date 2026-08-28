@@ -2,31 +2,31 @@ import React from 'react';
 import { Music, Accessibility, Sparkles, GraduationCap, MessageCircle, Globe, Star, Heart, Users, Compass, ChevronRight } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
-export default function Home({ changePage }) {
+export default function Home({ changePage, content }) {
     const programs = [
         {
             icon: <Music className="w-6 h-6 text-[#C99B53]" />,
-            title: "Belajar Gamelan Bali",
-            desc: "Kenali berbagai instrumen gamelan, cara memainkannya, serta peran setiap instrumen dalam menciptakan sebuah komposisi yang harmonis.",
-            img: "/images/news_banner.png"
+            title: content('home_program_1_title', 'Belajar Gamelan Bali'),
+            desc: content('home_program_1_desc', 'Kenali berbagai instrumen gamelan, cara memainkannya, serta peran setiap instrumen dalam menciptakan sebuah komposisi yang harmonis.'),
+            img: content('home_program_1_img', '/images/news_banner.png').startsWith('http') || content('home_program_1_img', '/images/news_banner.png').startsWith('/') ? content('home_program_1_img', '/images/news_banner.png') : `/storage/${content('home_program_1_img')}`
         },
         {
             icon: <Accessibility className="w-6 h-6 text-[#C99B53]" />,
-            title: "Belajar Tari Bali",
-            desc: "Pelajari gerak-gerak dasar, ekspresi, postur dan kelenturan yang menjadi ciri khas tari Bali dari para penari terlatih dan berpengalaman.",
-            img: "/images/about_banner.png"
+            title: content('home_program_2_title', 'Belajar Tari Bali'),
+            desc: content('home_program_2_desc', 'Pelajari gerak-gerak dasar, ekspresi, postur dan kelenturan yang menjadi ciri khas tari Bali dari para penari terlatih dan berpengalaman.'),
+            img: content('home_program_2_img', '/images/about_banner.png').startsWith('http') || content('home_program_2_img', '/images/about_banner.png').startsWith('/') ? content('home_program_2_img', '/images/about_banner.png') : `/storage/${content('home_program_2_img')}`
         },
         {
             icon: <Sparkles className="w-6 h-6 text-[#C99B53]" />,
-            title: "Pertunjukan Seni",
-            desc: "Saksikan kolaborasi pertunjukan gamelan dan tari yang dibawakan oleh para seniman berbakat dari Sanggar Paiketan Swara.",
-            img: "/images/partnership_banner.png"
+            title: content('home_program_3_title', 'Pertunjukan Seni'),
+            desc: content('home_program_3_desc', 'Saksikan kolaborasi pertunjukan gamelan dan tari yang dibawakan oleh para seniman berbakat dari Sanggar Paiketan Swara.'),
+            img: content('home_program_3_img', '/images/partnership_banner.png').startsWith('http') || content('home_program_3_img', '/images/partnership_banner.png').startsWith('/') ? content('home_program_3_img', '/images/partnership_banner.png') : `/storage/${content('home_program_3_img')}`
         },
         {
             icon: <GraduationCap className="w-6 h-6 text-[#C99B53]" />,
-            title: "Kunjungan Edukasi",
-            desc: "Program khusus untuk sekolah, universitas, komunitas, atau kelompok wisatawan yang ingin mendalami budaya Bali secara komprehensif.",
-            img: "/images/gallery_banner.png"
+            title: content('home_program_4_title', 'Kunjungan Edukasi'),
+            desc: content('home_program_4_desc', 'Program khusus untuk sekolah, universitas, komunitas, atau kelompok wisatawan yang ingin mendalami budaya Bali secara komprehensif.'),
+            img: content('home_program_4_img', '/images/gallery_banner.png').startsWith('http') || content('home_program_4_img', '/images/gallery_banner.png').startsWith('/') ? content('home_program_4_img', '/images/gallery_banner.png') : `/storage/${content('home_program_4_img')}`
         }
     ];
 
@@ -96,17 +96,21 @@ export default function Home({ changePage }) {
                 {/* Background image overlay */}
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('/images/image.png')` }}
+                    style={{ 
+                        backgroundImage: `url('${
+                            content('home_hero_bg', '/images/image.png').startsWith('http') || content('home_hero_bg', '/images/image.png').startsWith('/') 
+                                ? content('home_hero_bg', '/images/image.png') 
+                                : `/storage/${content('home_hero_bg')}`
+                        }')` 
+                    }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/90 via-[#261E14]/80 to-[#261E14]/40" />
  
                 <div className="relative z-10 max-w-5xl mx-auto px-4 text-center mt-8">
-                    <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif text-[#FAF6F0] font-bold leading-[1.1] mb-6">
-                        Mengenal <span className="font-serif italic font-normal text-[#C99B53]">Budaya Bali</span> <br />
-                        melalui <span className="font-serif italic font-normal text-[#C99B53]">Gamelan</span> dan <span className="font-serif italic font-normal text-[#C99B53]">Tari</span>
+                    <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif text-[#FAF6F0] font-bold leading-[1.1] mb-6" dangerouslySetInnerHTML={{ __html: content('home_hero_title', 'Mengenal <span class="font-serif italic font-normal text-[#C99B53]">Budaya Bali</span> <br /> melalui <span class="font-serif italic font-normal text-[#C99B53]">Gamelan</span> dan <span class="font-serif italic font-normal text-[#C99B53]">Tari</span>') }}>
                     </h1>
                     <p className="text-base sm:text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto font-sans leading-relaxed mb-10">
-                        Selamat datang di <span className="text-[#C99B53] font-semibold">Sanggar Paiketan Swara</span>, ruang pelestarian seni, pembelajaran budaya, dan kebersamaan masyarakat di <span className="text-white underline decoration-[#C99B53]">Desa Bantas, Tabanan, Bali</span>. Kami mengajak Anda mengenal gamelan dan tari secara langsung bersama para pelaku seni lokal.
+                        {content('home_hero_desc', 'Selamat datang di Sanggar Paiketan Swara, ruang pelestarian seni, pembelajaran budaya, dan kebersamaan masyarakat di Desa Bantas, Tabanan, Bali. Kami mengajak Anda mengenal gamelan dan tari secara langsung bersama para pelaku seni lokal.')}
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <button
@@ -146,14 +150,14 @@ export default function Home({ changePage }) {
                                 — TENTANG KAMI
                             </span>
                             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#261E14] font-bold leading-tight">
-                                Belajar, Berinteraksi, dan Berkarya Bersama
+                                {content('home_about_title', 'Belajar, Berinteraksi, dan Berkarya Bersama')}
                             </h2>
                             <div className="h-[2px] w-20 bg-[#C99B53]" />
                             <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-sans">
-                                Sanggar Paiketan Swara bukan sekadar tempat berlatih, melainkan wadah komunitas di mana nilai-nilai luhur Bali dihidupkan kembali. Melalui program edu-wisata kami, pengunjung diajak untuk tidak hanya menonton, tetapi juga terlibat langsung, menyentuh instrumen, dan merasakan ritme pernapasan tarian Bali.
+                                {content('home_about_desc1', 'Sanggar Paiketan Swara bukan sekadar tempat berlatih, melainkan wadah komunitas di mana nilai-nilai luhur Bali dihidupkan kembali. Melalui program edu-wisata kami, pengunjung diajak untuk tidak hanya menonton, tetapi juga terlibat langsung, menyentuh instrumen, dan merasakan ritme pernapasan tarian Bali.')}
                             </p>
                             <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-sans">
-                                Kami merancang pengalaman partisipatif yang otentik, menghubungkan kearifan lokal dengan rasa ingin tahu wisatawan global maupun pelajar lokal.
+                                {content('home_about_desc2', 'Kami merancang pengalaman partisipatif yang otentik, menghubungkan kearifan lokal dengan rasa ingin tahu wisatawan global maupun pelajar lokal.')}
                             </p>
                             <button
                                 onClick={() => changePage('about')}
@@ -166,7 +170,7 @@ export default function Home({ changePage }) {
                         <ScrollReveal className="lg:col-span-5" delay={200} distance="40px">
                             <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-[#C99B53]/10 transform hover:scale-[1.01] transition-transform duration-300">
                                 <img
-                                    src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop"
+                                    src={content('home_about_image', 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop').startsWith('http') ? content('home_about_image', 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop') : `/storage/${content('home_about_image')}`}
                                     alt="Belajar Gamelan"
                                     className="w-full h-auto object-cover aspect-[4/3]"
                                 />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from '../lib/axios';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import PageWrapper from './PageWrapper';
@@ -17,6 +18,7 @@ export default function App() {
     const [visible, setVisible] = useState(true);
     const [progress, setProgress] = useState(0);
     const [progressVisible, setProgressVisible] = useState(false);
+    const [siteContent, setSiteContent] = useState([]);
 
     const changePage = (newPage) => {
         if (newPage === page) return;
@@ -28,6 +30,13 @@ export default function App() {
         setVisible(false);
         setPage(newPage);
     };
+
+    useEffect(() => {
+        // Fetch dynamic content
+        axios.get('/api/content').then(res => {
+            setSiteContent(res.data);
+        }).catch(err => console.error(err));
+    }, []);
 
     useEffect(() => {
         if (!visible) {
@@ -60,26 +69,31 @@ export default function App() {
         }
     }, [page, visible]);
 
+    const getContent = (key, fallback) => {
+        const item = siteContent.find(c => c.key === key);
+        return item ? item.value : fallback;
+    };
+
     const renderCurrentPage = () => {
         switch (renderedPage) {
             case 'home':
-                return <Home changePage={changePage} />;
+                return <Home changePage={changePage} content={getContent} />;
             case 'about':
-                return <About />;
+                return <About content={getContent} />;
             case 'programs':
-                return <Programs changePage={changePage} />;
+                return <Programs changePage={changePage} content={getContent} />;
             case 'news':
-                return <News />;
+                return <News content={getContent} />;
             case 'gallery':
-                return <Gallery />;
+                return <Gallery content={getContent} />;
             case 'partnership':
-                return <Partnership />;
+                return <Partnership content={getContent} />;
             case 'contact':
-                return <Contact />;
+                return <Contact content={getContent} />;
             case 'reservation':
-                return <Reservation />;
+                return <Reservation content={getContent} />;
             default:
-                return <Home changePage={changePage} />;
+                return <Home changePage={changePage} content={getContent} />;
         }
     };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
-export default function Contact() {
+export default function Contact({ content }) {
     return (
         <div className="bg-[#FAF6F0] min-h-screen">
             
@@ -10,7 +10,7 @@ export default function Contact() {
             <section className="relative py-32 md:py-40 pb-24 md:pb-32 flex items-center justify-center overflow-hidden">
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('/images/contact_banner.png')` }}
+                    style={{ backgroundImage: `url('${content('contact_banner', '/images/contact_banner.png').startsWith('http') || content('contact_banner', '/images/contact_banner.png').startsWith('/') ? content('contact_banner', '/images/contact_banner.png') : `/storage/${content('contact_banner', '')}`}')` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/95 via-[#261E14]/85 to-[#261E14]/40" />
 
@@ -19,11 +19,11 @@ export default function Contact() {
                         — HUBUNGI KAMI —
                     </span>
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                        Ada Pertanyaan?
+                        {content('contact_hero_title', 'Ada Pertanyaan?')}
                     </h1>
                     <div className="h-[2px] w-20 bg-[#C99B53] mx-auto" />
-                    <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                        Kami sangat terbuka untuk berdiskusi tentang program, kunjungan khusus, maupun rencana kolaborasi seni. Silakan hubungi kami.
+                    <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed whitespace-pre-wrap">
+                        {content('contact_hero_desc', 'Kami sangat terbuka untuk berdiskusi tentang program, kunjungan khusus, maupun rencana kolaborasi seni. Silakan hubungi kami.')}
                     </p>
                 </div>
 
@@ -56,28 +56,28 @@ export default function Contact() {
                                         <MapPin className="text-[#C99B53] shrink-0 mt-1" size={20} />
                                         <div>
                                             <h4 className="font-serif font-bold text-sm text-white">Alamat Sanggar</h4>
-                                            <p className="text-xs text-gray-400 mt-1">Banjar Dinas Bantas Tengah Kaja, Desa Bantas, Kecamatan Selemadeg Timur, Kabupaten Tabanan, Bali.</p>
+                                            <p className="text-xs text-gray-400 mt-1 whitespace-pre-wrap">{content('contact_address', 'Banjar Dinas Bantas Tengah Kaja, Desa Bantas, Kecamatan Selemadeg Timur, Kabupaten Tabanan, Bali.')}</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
                                         <Phone className="text-[#C99B53] shrink-0 mt-1" size={20} />
                                         <div>
                                             <h4 className="font-serif font-bold text-sm text-white">Telepon / WhatsApp</h4>
-                                            <p className="text-xs text-gray-400 mt-1">+62 812-3456-7890 (Kemitraan)</p>
+                                            <p className="text-xs text-gray-400 mt-1 whitespace-pre-wrap">{content('contact_phone', '+62 812-3456-7890 (Kemitraan)')}</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
                                         <Mail className="text-[#C99B53] shrink-0 mt-1" size={20} />
                                         <div>
                                             <h4 className="font-serif font-bold text-sm text-white">Email</h4>
-                                            <p className="text-xs text-gray-400 mt-1">info@sanggarpaiketanswara.org</p>
+                                            <p className="text-xs text-gray-400 mt-1 whitespace-pre-wrap">{content('contact_email', 'info@sanggarpaiketanswara.org')}</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
                                         <Clock className="text-[#C99B53] shrink-0 mt-1" size={20} />
                                         <div>
                                             <h4 className="font-serif font-bold text-sm text-white">Jam Operasional</h4>
-                                            <p className="text-xs text-gray-400 mt-1">Setiap Hari: 08:00 - 18:00 WITA</p>
+                                            <p className="text-xs text-gray-400 mt-1 whitespace-pre-wrap">{content('contact_hours', 'Setiap Hari: 08:00 - 18:00 WITA')}</p>
                                         </div>
                                     </div>
                                 </div>

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Eye, Image as ImageIcon } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
-export default function Gallery() {
+export default function Gallery({ content }) {
     const [filter, setFilter] = useState('all');
+    const [items, setItems] = useState([]);
 
     const categories = [
         { id: 'all', label: 'Semua' },
@@ -12,14 +13,12 @@ export default function Gallery() {
         { id: 'upacara', label: 'Upacara & Sosial' },
     ];
 
-    const items = [
-        { image: "https://images.unsplash.com/photo-1513829096963-8a30ef68ad66?q=80&w=800&auto=format&fit=crop", category: "gamelan", title: "Latihan Bersama Gamelan", desc: "Masyarakat Desa Bantas berlatih tabuh bersama di Wantilan Sanggar." },
-        { image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=800&auto=format&fit=crop", category: "tari", title: "Pementasan Tari Anak-anak", desc: "Generasi muda melestarikan Tari Legong di panggung pementasan." },
-        { image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800&auto=format&fit=crop", category: "upacara", title: "Upacara Piodalan Sanggar", desc: "Piodalan dan sembahyang bersama memohon kelancaran pelestarian seni." },
-        { image: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop", category: "gamelan", title: "Praktik Teknik Gamelan", desc: "Para wisatawan asing antusias mempelajari ketukan instrumen Gangsa." },
-        { image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=800&auto=format&fit=crop", category: "tari", title: "Tari Condong Bali", desc: "Detail ekspresi penari Condong yang penuh dinamika dan taksu." },
-        { image: "https://images.unsplash.com/photo-1518548419070-2c61b169c79d?q=80&w=800&auto=format&fit=crop", category: "upacara", title: "Pameran Kerajinan Tradisional", desc: "Eksibisi ukiran kayu tradisional untuk instrumen musik di sanggar." },
-    ];
+    React.useEffect(() => {
+        fetch('/api/gallery')
+            .then(res => res.json())
+            .then(data => setItems(data))
+            .catch(err => console.error(err));
+    }, []);
 
     const filteredItems = filter === 'all' 
         ? items 
@@ -32,7 +31,13 @@ export default function Gallery() {
             <section className="relative py-32 md:py-40 pb-24 md:pb-32 flex items-center justify-center overflow-hidden">
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('/images/gallery_banner.png')` }}
+                    style={{ 
+                        backgroundImage: `url('${
+                            content('gallery_banner', '/images/gallery_banner.png').startsWith('http') || content('gallery_banner', '/images/gallery_banner.png').startsWith('/') 
+                                ? content('gallery_banner', '/images/gallery_banner.png') 
+                                : `/storage/${content('gallery_banner')}`
+                        }')` 
+                    }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/95 via-[#261E14]/85 to-[#261E14]/40" />
 
@@ -41,11 +46,11 @@ export default function Gallery() {
                         — DOKUMENTASI KEGIATAN
                     </span>
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                        Galeri Sanggar
+                        {content('gallery_title', 'Galeri Sanggar')}
                     </h1>
                     <div className="h-[2px] w-20 bg-[#C99B53] mx-auto" />
                     <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                        Mengabadikan momen pembelajaran, pementasan, dan kebersamaan pelestarian budaya di Sanggar Paiketan Swara.
+                        {content('gallery_desc', 'Mengabadikan momen pembelajaran, pementasan, dan kebersamaan pelestarian budaya di Sanggar Paiketan Swara.')}
                     </p>
                 </div>
 
@@ -97,7 +102,7 @@ export default function Gallery() {
                             >
                                 <div className="relative aspect-[4/3] overflow-hidden bg-gray-900">
                                 <img
-                                    src={item.image}
+                                    src={`/storage/${item.image_path}`}
                                     alt={item.title}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 group-hover:opacity-75"
                                 />
@@ -112,12 +117,9 @@ export default function Gallery() {
                                 <span className="text-[9px] tracking-widest font-bold text-[#C99B53] uppercase mb-2 block">
                                     {item.category}
                                 </span>
-                                <h3 className="text-lg font-serif font-bold text-[#261E14] mb-2">
+                                <h3 className="text-lg font-serif font-bold text-[#261E14]">
                                     {item.title}
                                 </h3>
-                                <p className="text-xs text-gray-500 font-sans leading-relaxed">
-                                    {item.desc}
-                                </p>
                             </div>
                             </div>
                         </ScrollReveal>

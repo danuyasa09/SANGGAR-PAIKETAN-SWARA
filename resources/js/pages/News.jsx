@@ -2,7 +2,7 @@ import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
-export default function News() {
+export default function News({ content }) {
     const articles = [
         {
             image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=800&auto=format&fit=crop",
@@ -31,7 +31,7 @@ export default function News() {
             <section className="relative py-32 md:py-40 pb-24 md:pb-32 flex items-center justify-center overflow-hidden">
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('/images/news_banner.png')` }}
+                    style={{ backgroundImage: `url('${content('news_banner', '/images/news_banner.png').startsWith('http') || content('news_banner', '/images/news_banner.png').startsWith('/') ? content('news_banner', '/images/news_banner.png') : `/storage/${content('news_banner', '')}`}')` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/95 via-[#261E14]/85 to-[#261E14]/40" />
 
@@ -40,11 +40,11 @@ export default function News() {
                         — INFORMASI & ACARA SANGGAR
                     </span>
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                        Berita Terkini
+                        {content('news_hero_title', 'Berita Terkini')}
                     </h1>
                     <div className="h-[2px] w-20 bg-[#C99B53] mx-auto" />
-                    <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                        Ikuti perkembangan terbaru, acara, dan cerita seputar pelestarian seni budaya Bali di Sanggar Paiketan Swara.
+                    <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed whitespace-pre-wrap">
+                        {content('news_hero_desc', 'Ikuti perkembangan terbaru, acara, dan cerita seputar pelestarian seni budaya Bali di Sanggar Paiketan Swara.')}
                     </p>
                 </div>
 

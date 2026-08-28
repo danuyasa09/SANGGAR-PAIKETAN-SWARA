@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap');
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -13,6 +14,14 @@
   --color-brand-gold-hover: #B7863F;
   --color-brand-forest: #1A2F1C;
   --color-brand-red: #8B261E;
+
+  --color-admin-primary: #5d4037;
+  --color-admin-secondary: #d4af37;
+  --color-admin-bg: #f5f5dc;
+  --color-admin-text: #2d2926;
+  
+  --font-admin-sans: 'Work Sans', sans-serif;
+  --font-admin-serif: 'Manrope', sans-serif;
 }
 
 
