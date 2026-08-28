@@ -48,7 +48,8 @@ export default function Partnership({ content }) {
         if (banner.startsWith('http') || banner.startsWith('/')) {
             return banner;
         }
-    ];
+        return `/storage/${banner}`;
+    };
 
     return (
         <div className="bg-[#FAF6F0] min-h-screen pb-20 font-sans">
@@ -121,25 +122,15 @@ export default function Partnership({ content }) {
                     </div>
                 </section>
 
-                {/* Bottom Callout */}
-                <ScrollReveal distance="30px" className="mt-16 mb-20">
-                    <div className="bg-[#1A2F1C] text-[#FAF6F0] rounded-2xl p-8 sm:p-12 border border-[#C99B53]/20 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                        <div className="lg:col-span-8 space-y-4">
-                            <span className="text-[#C99B53] font-bold text-xs uppercase tracking-wider flex items-center gap-2">
-                                <Heart size={16} /> Kolaborasi CSR & Penelitian
-                            </span>
-                            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white leading-tight">
-                                {content('partnership_callout_title', 'Bekerja Sama Membuat Dampak Sosial Nyata')}
-                            </h2>
-                            <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-2xl font-sans whitespace-pre-wrap">
-                                {content('partnership_callout_desc', 'Apakah institusi Anda memiliki fokus riset etnologi musik, program CSR pemberdayaan perempuan pelaku seni, atau kunjungan tahunan siswa? Kami dapat merancang proyek kerja sama jangka panjang yang relevan dan transparan.')}
-                            </p>
-                        </div>
-                        <div className="lg:col-span-4 flex justify-end">
-                            <button onClick={scrollToForm} className="w-full lg:w-auto px-6 py-3.5 bg-[#C99B53] hover:bg-[#B7863F] text-[#261E14] font-bold text-xs rounded-md shadow-md flex items-center justify-center gap-2 transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer">
-                                Ajukan Proposal
-                            </button>
-                        </div>
+                {/* SECTION: BENTUK KERJA SAMA */}
+                <ScrollReveal distance="30px" className="mt-16">
+                    <div className="bg-[#FAF6F0] border border-[#C99B53]/20 rounded-2xl p-8 sm:p-10 text-center max-w-4xl mx-auto shadow-sm">
+                        <h3 className="font-serif text-[#261E14] text-lg sm:text-xl font-bold mb-3">
+                            Bentuk Kerja Sama
+                        </h3>
+                        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium">
+                            {content('partnership_collaboration_forms', 'Bentuk kerja sama dapat berupa kunjungan edukasi, pelatihan, pertunjukan, promosi budaya, penelitian, pendampingan, festival, maupun pengembangan program wisata berbasis masyarakat.')}
+                        </p>
                     </div>
                 </ScrollReveal>
 
@@ -302,7 +293,7 @@ export default function Partnership({ content }) {
                                     {/* Submit Button */}
                                     <button
                                         type="submit"
-                                        className="px-10 py-3.5 bg-black hover:bg-zinc-900 text-white font-bold text-sm rounded-lg shadow-sm transition-colors duration-200 cursor-pointer block mx-auto uppercase tracking-wider"
+                                        className="px-10 py-3.5 bg-black hover:bg-zinc-900 text-white font-bold text-xs rounded-lg shadow-sm transition-colors duration-200 cursor-pointer block mx-auto uppercase tracking-wider"
                                     >
                                         Ajukan Kerja Sama
                                     </button>
