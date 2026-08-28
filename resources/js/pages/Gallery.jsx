@@ -123,7 +123,7 @@ export default function Gallery({ content }) {
                                 className="overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 w-full group relative cursor-pointer aspect-[4/3] bg-gray-900"
                             >
                                 <img
-                                    src={`/storage/${item.image_path}`}
+                                    src={item.image_path && (item.image_path.startsWith('http') || item.image_path.startsWith('/')) ? item.image_path : `/storage/${item.image_path}`}
                                     alt={item.title}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
