@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
+use App\Mail\ReservationReceived;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class ReservationController extends Controller
@@ -24,6 +26,12 @@ class ReservationController extends Controller
         ]);
 
         $reservation = Reservation::create($validated);
+
+        try {
+            Mail::to($reservation->email)->send(new ReservationReceived($reservation));
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengirim email reservasi: ' . $e->getMessage());
+        }
 
         return response()->json([
             'message' => 'Reservasi berhasil dikirim.',
@@ -67,7 +75,21 @@ class ReservationController extends Controller
         ]);
 
         $reservation = Reservation::findOrFail($id);
+        $oldStatus = $reservation->status;
+        
         $reservation->update(['status' => $request->status]);
+
+        if ($oldStatus !== $request->status) {
+            try {
+                if ($request->status === 'confirmed') {
+                    \Illuminate\Support\Facades\Mail::to($reservation->email)->send(new \App\Mail\ReservationConfirmed($reservation));
+                } elseif ($request->status === 'rejected') {
+                    \Illuminate\Support\Facades\Mail::to($reservation->email)->send(new \App\Mail\ReservationRejected($reservation));
+                }
+            } catch (\Exception $e) {
+                \Log::error('Gagal mengirim email status reservasi: ' . $e->getMessage());
+            }
+        }
 
         return response()->json([
             'message' => 'Status reservasi berhasil diperbarui.',
