@@ -13,18 +13,6 @@ const PAGE_SCHEMAS = {
             { key: 'home_about_desc1', label: 'Paragraf Tentang Kami 1', type: 'text', section: 'beranda' },
             { key: 'home_about_desc2', label: 'Paragraf Tentang Kami 2', type: 'text', section: 'beranda' },
             { key: 'home_about_image', label: 'Gambar Tentang Kami', type: 'image', section: 'beranda' },
-            { key: 'home_program_1_title', label: 'Judul Program 1', type: 'text', section: 'beranda' },
-            { key: 'home_program_1_desc', label: 'Deskripsi Program 1', type: 'text', section: 'beranda' },
-            { key: 'home_program_1_img', label: 'Gambar Program 1', type: 'image', section: 'beranda' },
-            { key: 'home_program_2_title', label: 'Judul Program 2', type: 'text', section: 'beranda' },
-            { key: 'home_program_2_desc', label: 'Deskripsi Program 2', type: 'text', section: 'beranda' },
-            { key: 'home_program_2_img', label: 'Gambar Program 2', type: 'image', section: 'beranda' },
-            { key: 'home_program_3_title', label: 'Judul Program 3', type: 'text', section: 'beranda' },
-            { key: 'home_program_3_desc', label: 'Deskripsi Program 3', type: 'text', section: 'beranda' },
-            { key: 'home_program_3_img', label: 'Gambar Program 3', type: 'image', section: 'beranda' },
-            { key: 'home_program_4_title', label: 'Judul Program 4', type: 'text', section: 'beranda' },
-            { key: 'home_program_4_desc', label: 'Deskripsi Program 4', type: 'text', section: 'beranda' },
-            { key: 'home_program_4_img', label: 'Gambar Program 4', type: 'image', section: 'beranda' },
             { key: 'home_cta_bg', label: 'Gambar Latar Bawah (CTA)', type: 'image', section: 'beranda' },
             { key: 'home_cta_title', label: 'Judul Bagian Bawah (CTA)', type: 'text', section: 'beranda' },
             { key: 'home_cta_desc', label: 'Deskripsi Bagian Bawah (CTA)', type: 'text', section: 'beranda' }
@@ -140,13 +128,22 @@ export default function AdminPageEditor() {
         if (!file) return;
         const formData = new FormData();
         formData.append('image', file);
+        if (section) formData.append('section', section);
 
         try {
             const res = await axios.post('/api/content/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
+            
+            // Update state lokal
             handleChange(key, res.data.path, type, section);
-            showToast('Gambar berhasil diupload!');
+            
+            // Langsung simpan ke database
+            await axios.post('/api/content', { 
+                contents: [{ key, value: res.data.path }] 
+            });
+
+            showToast('Gambar berhasil diupload dan disimpan!');
         } catch (err) {
             const errorMsg = err.response?.data?.message || 'Gagal upload gambar konten.';
             showToast(errorMsg, 'error');

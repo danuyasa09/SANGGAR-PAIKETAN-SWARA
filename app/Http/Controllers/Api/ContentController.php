@@ -36,9 +36,11 @@ class ContentController extends Controller
     {
         $request->validate([
             'image' => 'required|image|max:2048',
+            'section' => 'nullable|string'
         ]);
 
-        $path = $request->file('image')->store('contents', 'public');
+        $folder = $request->filled('section') ? 'contents/' . $request->section : 'contents';
+        $path = $request->file('image')->store($folder, 'public');
         
         return response()->json(['path' => $path]);
     }
