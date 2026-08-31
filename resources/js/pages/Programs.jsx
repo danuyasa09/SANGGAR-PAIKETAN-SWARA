@@ -1,82 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Clock, Users, Check, MessageSquare, BookOpen, Heart, Shield, UsersRound, School, Landmark, Home, Compass, UserCheck, Briefcase, Award, Calendar, ChevronDown, Flag, GraduationCap, Globe, Building, Phone } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
+import axios from '../lib/axios';
 
 export default function Programs({ changePage, content }) {
     const [openFaq, setOpenFaq] = useState(null);
+    const [packageDetails, setPackageDetails] = useState([]);
+    const [loadingPackages, setLoadingPackages] = useState(true);
+
+    // Icon mapping for packages based on order
+    const packageIcons = [
+        <Award className="w-5 h-5" />,
+        <UserCheck className="w-5 h-5" />,
+        <UsersRound className="w-5 h-5" />,
+        <GraduationCap className="w-5 h-5" />,
+        <Globe className="w-5 h-5" />,
+    ];
+
+    useEffect(() => {
+        axios.get('/api/programs')
+            .then(res => {
+                const mapped = res.data.map((prog, idx) => ({
+                    id: prog.id,
+                    num: prog.code || `Paket ${idx + 1}`,
+                    title: prog.title,
+                    desc: prog.description,
+                    activities: prog.activities || [],
+                    duration: prog.duration,
+                    capacity: prog.capacity,
+                    btnLabel: prog.btn_label || 'Pesan Sekarang',
+                    thumbnail: prog.thumbnail_url || 'https://images.unsplash.com/photo-1513829096963-8a30ef68ad66?q=80&w=600&auto=format&fit=crop',
+                    icon: packageIcons[idx % packageIcons.length],
+                    customBtn: prog.is_custom_btn,
+                }));
+                setPackageDetails(mapped);
+            })
+            .catch(() => {
+                // Fallback to default data if API fails
+                setPackageDetails([
+                    {
+                        num: "Paket A", title: "Pengenalan Gamelan Bali",
+                        desc: "Peserta diajak mengenal gamelan Bali, memahami fungsi beberapa instrumen, menyaksikan demonstrasi, dan mencoba memainkan pola sederhana bersama anggota sanggar.",
+                        activities: ["Pengenalan sanggar dan budaya Desa Bantas","Pengenalan instrumen gamelan","Demonstrasi oleh anggota sanggar","Praktik teknik dasar","Permainan gamelan secara berkelompok","Dokumentasi bersama"],
+                        duration: "60 - 90 menit", capacity: "10 - 30 peserta", btnLabel: "Pesan Paket Gamelan",
+                        thumbnail: "https://images.unsplash.com/photo-1513829096963-8a30ef68ad66?q=80&w=600&auto=format&fit=crop",
+                        icon: <Award className="w-5 h-5" />, customBtn: false
+                    },
+                    {
+                        num: "Paket B", title: "Pengalaman Tari Bali",
+                        desc: "Peserta diperkenalkan pada karakteristik tari Bali, mulai dari posisi tubuh, gerak tangan, langkah, hingga ekspresi dasar (nyeledet).",
+                        activities: ["Pengenalan seni tari Bali","Penjelasan makna dan karakter tari","Demonstrasi oleh penari sanggar","Latihan gerakan dasar","Praktik singkat secara berkelompok","Dokumentasi bersama"],
+                        duration: "60 - 90 menit", capacity: "10 - 30 peserta", btnLabel: "Pesan Paket Tari",
+                        thumbnail: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=600&auto=format&fit=crop",
+                        icon: <UserCheck className="w-5 h-5" />, customBtn: false
+                    },
+                    {
+                        num: "Paket C", title: "Kemah Budaya Bali",
+                        desc: "Pengalaman terpadu bagi peserta yang ingin mengenal dua unsur penting seni pertunjukan Bali dalam satu kunjungan menginap yang mendalam.",
+                        activities: ["Penyambutan dan pengenalan budaya","Demonstrasi gamelan dan tari","Praktik gamelan intensif","Praktik gerakan tari intensif","Kolaborasi atau pertunjukan malam penutup","Dokumentasi bersama"],
+                        duration: "2 Hari 1 Malam", capacity: "15 - 40 peserta", btnLabel: "Minta Program Khusus",
+                        thumbnail: "https://images.unsplash.com/photo-1537884944318-390069bb8665?q=80&w=600&auto=format&fit=crop",
+                        icon: <UsersRound className="w-5 h-5" />, customBtn: true
+                    }
+                ]);
+            })
+            .finally(() => setLoadingPackages(false));
+    }, []);
 
     const resolveImage = (key, def) => {
         const src = content(key, def);
         if (!src) return def || '';
-        if (src.startsWith('http') || src.startsWith('/')) {
-            return src;
-        }
+        if (src.startsWith('http') || src.startsWith('/')) return src;
         return `/storage/${src}`;
     };
 
     const toggleFaq = (idx) => {
         setOpenFaq(openFaq === idx ? null : idx);
     };
-
-    const packageDetails = [
-        {
-            num: "Paket A",
-            title: "Pengenalan Gamelan Bali",
-            desc: "Peserta diajak mengenal gamelan Bali, memahami fungsi beberapa instrumen, menyaksikan demonstrasi, dan mencoba memainkan pola sederhana bersama anggota sanggar.",
-            activities: [
-                "Pengenalan sanggar dan budaya Desa Bantas",
-                "Pengenalan instrumen gamelan",
-                "Demonstrasi oleh anggota sanggar",
-                "Praktik teknik dasar",
-                "Permainan gamelan secara berkelompok",
-                "Dokumentasi bersama"
-            ],
-            duration: "60 - 90 menit",
-            capacity: "10 - 30 peserta",
-            btnLabel: "Pesan Paket Gamelan",
-            thumbnail: "https://images.unsplash.com/photo-1513829096963-8a30ef68ad66?q=80&w=600&auto=format&fit=crop",
-            icon: <Award className="w-5 h-5" />,
-            customBtn: false
-        },
-        {
-            num: "Paket B",
-            title: "Pengalaman Tari Bali",
-            desc: "Peserta diperkenalkan pada karakteristik tari Bali, mulai dari posisi tubuh, gerak tangan, langkah, hingga ekspresi dasar (nyeledet).",
-            activities: [
-                "Pengenalan seni tari Bali",
-                "Penjelasan makna dan karakter tari",
-                "Demonstrasi oleh penari sanggar",
-                "Latihan gerakan dasar",
-                "Praktik singkat secara berkelompok",
-                "Dokumentasi bersama"
-            ],
-            duration: "60 - 90 menit",
-            capacity: "10 - 30 peserta",
-            btnLabel: "Pesan Paket Tari",
-            thumbnail: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=600&auto=format&fit=crop",
-            icon: <UserCheck className="w-5 h-5" />,
-            customBtn: false
-        },
-        {
-            num: "Paket C",
-            title: "Kemah Budaya Bali",
-            desc: "Pengalaman terpadu bagi peserta yang ingin mengenal dua unsur penting seni pertunjukan Bali dalam satu kunjungan menginap yang mendalam.",
-            activities: [
-                "Penyambutan dan pengenalan budaya",
-                "Demonstrasi gamelan dan tari",
-                "Praktik gamelan intensif",
-                "Praktik gerakan tari intensif",
-                "Kolaborasi atau pertunjukan malam penutup",
-                "Dokumentasi bersama"
-            ],
-            duration: "2 Hari 1 Malam",
-            capacity: "15 - 40 peserta",
-            btnLabel: "Minta Program Khusus",
-            thumbnail: "https://images.unsplash.com/photo-1537884944318-390069bb8665?q=80&w=600&auto=format&fit=crop",
-            icon: <UsersRound className="w-5 h-5" />,
-            customBtn: true
-        }
-    ];
 
     const customNeeds = [
         "Kunjungan sekolah/perguruan tinggi",
@@ -249,7 +249,21 @@ export default function Programs({ changePage, content }) {
                     </ScrollReveal>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-                        {packageDetails.map((pkg, idx) => (
+                        {loadingPackages ? (
+                            // Skeleton loading cards
+                            [1,2,3].map(i => (
+                                <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-md overflow-hidden animate-pulse">
+                                    <div className="aspect-[16/10] bg-gray-200" />
+                                    <div className="p-8 space-y-4">
+                                        <div className="h-5 bg-gray-200 rounded w-2/3" />
+                                        <div className="h-3 bg-gray-100 rounded w-full" />
+                                        <div className="h-3 bg-gray-100 rounded w-4/5" />
+                                        <div className="h-10 bg-gray-200 rounded-xl mt-6" />
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                        packageDetails.map((pkg, idx) => (
                             <ScrollReveal
                                 key={idx}
                                 delay={idx * 150}
@@ -322,7 +336,8 @@ export default function Programs({ changePage, content }) {
                                     </div>
                                 </div>
                             </ScrollReveal>
-                        ))}
+                        ))
+                        )}
                     </div>
                     <p className="text-center text-xs text-gray-400 mt-10 italic">
                         * Silakan hubungi kami untuk menyesuaikan pilihan durasi, kapasitas peserta, dan kustomisasi aktivitas khusus.

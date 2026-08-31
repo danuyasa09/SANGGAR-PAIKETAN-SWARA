@@ -8,11 +8,13 @@ use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\PartnershipController;
 use App\Http\Controllers\Api\ReservationController;
+use App\Http\Controllers\Api\ProgramController;
 
 // Public endpoints
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/content', [ContentController::class, 'index']);
 Route::get('/gallery', [GalleryController::class, 'index']);
+Route::get('/programs', [ProgramController::class, 'index']);
 
 // Public form submissions (no auth required)
 Route::post('/partnerships', [PartnershipController::class, 'store']);
@@ -37,4 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reservations', [ReservationController::class, 'index']);
     Route::patch('/reservations/{id}', [ReservationController::class, 'update']);
     Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
+
+    // Admin: Programs management
+    Route::get('/admin/programs', [ProgramController::class, 'adminIndex']);
+    Route::post('/programs', [ProgramController::class, 'store']);
+    Route::put('/programs/{id}', [ProgramController::class, 'update']);
+    Route::delete('/programs/{id}', [ProgramController::class, 'destroy']);
+    Route::post('/programs/upload-thumbnail', [ProgramController::class, 'uploadThumbnail']);
 });
