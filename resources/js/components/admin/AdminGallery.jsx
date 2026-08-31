@@ -37,7 +37,7 @@ const toEmbedUrl = (url) => {
 export default function AdminGallery() {
     const [items, setItems]         = useState([]);
     const [loading, setLoading]     = useState(true);
-    const [filterType, setFilterType] = useState('all'); // 'all' | 'photo' | 'video'
+    const [filterType, setFilterType] = useState('photo'); // 'all' | 'photo' | 'video'
     const [deletingId, setDeletingId] = useState(null);
     const [toast, setToast]         = useState(null);
 
@@ -169,11 +169,11 @@ export default function AdminGallery() {
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 {/* Tab Header */}
                 <div className="flex border-b border-gray-100">
-                    <button onClick={() => setActiveTab('photo')}
+                    <button onClick={() => { setActiveTab('photo'); setFilterType('photo'); }}
                         className={`flex items-center gap-2 px-6 py-4 text-sm font-semibold transition-colors border-b-2 ${activeTab === 'photo' ? 'border-admin-primary text-admin-primary' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
                         <ImageIcon size={16} />Tambah Foto
                     </button>
-                    <button onClick={() => setActiveTab('video')}
+                    <button onClick={() => { setActiveTab('video'); setFilterType('video'); }}
                         className={`flex items-center gap-2 px-6 py-4 text-sm font-semibold transition-colors border-b-2 ${activeTab === 'video' ? 'border-admin-primary text-admin-primary' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
                         <Video size={16} />Tambah Video
                     </button>
