@@ -7,6 +7,7 @@ import Home from '../pages/Home';
 import About from '../pages/About';
 import Programs from '../pages/Programs';
 import News from '../pages/News';
+import NewsDetail from '../pages/NewsDetail';
 import Gallery from '../pages/Gallery';
 import Partnership from '../pages/Partnership';
 import Contact from '../pages/Contact';
@@ -14,21 +15,23 @@ import Reservation from '../pages/Reservation';
 
 export default function App() {
     const [page, setPage] = useState('home');
+    const [articleId, setArticleId] = useState(null);
     const [renderedPage, setRenderedPage] = useState('home');
     const [visible, setVisible] = useState(true);
     const [progress, setProgress] = useState(0);
     const [progressVisible, setProgressVisible] = useState(false);
     const [siteContent, setSiteContent] = useState([]);
 
-    const changePage = (newPage) => {
-        if (newPage === page) return;
-        
+    const changePage = (newPage, id = null) => {
+        if (newPage === page && id === articleId) return;
+
         // Start gold loading bar
         setProgressVisible(true);
         setProgress(30);
-        
+
         setVisible(false);
         setPage(newPage);
+        setArticleId(id);
     };
 
     useEffect(() => {
@@ -83,7 +86,9 @@ export default function App() {
             case 'programs':
                 return <Programs changePage={changePage} content={getContent} />;
             case 'news':
-                return <News content={getContent} />;
+                return <News content={getContent} changePage={changePage} />;
+            case 'news-detail':
+                return <NewsDetail changePage={changePage} articleId={articleId} />;
             case 'gallery':
                 return <Gallery content={getContent} />;
             case 'partnership':

@@ -1,7 +1,7 @@
 import React from 'react';
 import ScrollReveal from '../components/ScrollReveal';
 
-export default function News({ content }) {
+export default function News({ content, changePage }) {
     const articles = [
         {
             image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=800&auto=format&fit=crop",
@@ -83,7 +83,9 @@ export default function News({ content }) {
                                 <p className="text-sm text-gray-600 leading-relaxed font-sans">
                                     Menyambut bulan purnama, sanggar kami menjadi tuan rumah bagi lebih dari 50 seniman gamelan dari seluruh penjuru Bali. Festival ini bertujuan untuk melestarikan langgam-langgam kuno yang jarang dimainkan di era modern.
                                 </p>
-                                <button className="self-start inline-flex items-center text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors duration-200 mt-2 cursor-pointer">
+                                <button
+                                    onClick={() => changePage('news-detail', 0)}
+                                    className="self-start inline-flex items-center text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors duration-200 mt-2 cursor-pointer">
                                     BACA SELENGKAPNYA
                                 </button>
                             </div>
@@ -124,7 +126,9 @@ export default function News({ content }) {
                                     </div>
                                 </div>
                                 <div className="px-6 pt-2">
-                                    <button className="inline-flex items-center text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors duration-200 cursor-pointer">
+                                    <button
+                                        onClick={() => changePage('news-detail', idx)}
+                                        className="inline-flex items-center text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors duration-200 cursor-pointer">
                                         BACA SELENGKAPNYA
                                     </button>
                                 </div>
