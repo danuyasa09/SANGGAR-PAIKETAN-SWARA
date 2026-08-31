@@ -321,13 +321,22 @@ export default function AdminGallery() {
                     {filtered.map(item => {
                         const isVideo = item.type === 'video';
                         const thumbSrc = item.image_path ? resolveImg(item.image_path) : null;
+                        const embedUrl = isVideo ? toEmbedUrl(item.video_url) : null;
                         const catLabel = CATEGORIES.find(c => c.id === item.category)?.label ?? item.category;
 
                         return (
                             <div key={item.id} className="group relative bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all">
                                 {/* Thumbnail */}
                                 <div className="aspect-square bg-gray-100 relative overflow-hidden">
-                                    {isVideo && !thumbSrc ? (
+                                    {isVideo && embedUrl ? (
+                                        <iframe
+                                            src={embedUrl}
+                                            title={item.title}
+                                            className="w-full h-full pointer-events-none"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        />
+                                    ) : isVideo && !thumbSrc ? (
                                         /* No thumbnail: show embed preview link */
                                         <div className="w-full h-full flex flex-col items-center justify-center bg-[#1A2F1C] text-white gap-2">
                                             <div className="w-10 h-10 rounded-full bg-[#C99B53] flex items-center justify-center">
