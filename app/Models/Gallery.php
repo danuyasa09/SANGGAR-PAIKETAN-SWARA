@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gallery extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'image_path',
+        'title',
+        'category',
+        'type',
+        'video_url',
+        'views',
+    ];
 }

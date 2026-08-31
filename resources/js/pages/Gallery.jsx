@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, Image as ImageIcon } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
+const toEmbedUrl = (url) => {
+    if (!url) return url;
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+    if (m) return `https://www.youtube.com/embed/${m[1]}`;
+    return url;
+};
+
 export default function Gallery({ content }) {
     const [filter, setFilter] = useState('all');
-    const [items, setItems] = useState([]);
+    const [photos, setPhotos]   = useState([]);
+    const [videos, setVideos]   = useState([]);
 
     const categories = [
         { id: 'all', label: 'Semua' },
@@ -17,34 +25,20 @@ export default function Gallery({ content }) {
         { id: 'bantas', label: 'Dokumentasi Desa Bantas' }
     ];
 
-    const videos = [
-        {
-            thumbnail: "https://images.unsplash.com/photo-1513829096963-8a30ef68ad66?q=80&w=600&auto=format&fit=crop",
-            title: "Latihan Gamelan - Paiketan Swara",
-            views: "28,567 views"
-        },
-        {
-            thumbnail: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=600&auto=format&fit=crop",
-            title: "Pentas Tari Legong - Paiketan Swara",
-            views: "35,150 views"
-        },
-        {
-            thumbnail: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=600&auto=format&fit=crop",
-            title: "Kegiatan Sosial - Paiketan Swara",
-            views: "26,592 views"
-        }
-    ];
-
-    React.useEffect(() => {
+    useEffect(() => {
         fetch('/api/gallery')
             .then(res => res.json())
-            .then(data => setItems(data))
+            .then(data => {
+                setPhotos(data.filter(i => (i.type || 'photo') === 'photo'));
+                setVideos(data.filter(i => i.type === 'video'));
+            })
             .catch(err => console.error(err));
     }, []);
 
-    const filteredItems = filter === 'all' 
-        ? items 
-        : items.filter(item => item.category === filter);
+    const filteredPhotos = filter === 'all'
+        ? photos
+        : photos.filter(item => item.category === filter);
+
 
     return (
         <div className="bg-[#FAF6F0] min-h-screen">
@@ -112,7 +106,7 @@ export default function Gallery({ content }) {
 
                 {/* Photo Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredItems.map((item, idx) => (
+                    {filteredPhotos.map((item, idx) => (
                         <ScrollReveal
                             key={idx}
                             delay={(idx % 3) * 150}
@@ -149,7 +143,8 @@ export default function Gallery({ content }) {
                 </div>
             </div>
 
-            {/* VIDEO DOKUMENTASI SECTION */}
+            {/* VIDEO DOKUMENTASI SECTION — from API */}
+            {videos.length > 0 && (
             <section className="py-24 bg-[#FAF6F0] border-t border-[#C99B53]/15">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <ScrollReveal className="text-center mb-16 space-y-3" distance="30px">
@@ -163,41 +158,39 @@ export default function Gallery({ content }) {
                     </ScrollReveal>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {videos.map((vid, idx) => (
-                            <ScrollReveal
-                                key={idx}
-                                delay={idx * 150}
-                                distance="40px"
-                                className="flex flex-col space-y-4"
-                            >
-                                <div className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-md group cursor-pointer bg-gray-900">
-                                    <img
-                                        src={vid.thumbnail}
-                                        alt={vid.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                    {/* Play Overlay */}
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors duration-300 group-hover:bg-black/25">
-                                        <div className="w-12 h-12 rounded-full bg-[#C99B53] text-[#261E14] flex items-center justify-center shadow-md transition-transform duration-300 group-hover:scale-110">
-                                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current ml-0.5" stroke="none">
-                                                <path d="M8 5v14l11-7z" />
-                                            </svg>
-                                        </div>
+                        {videos.map((vid, idx) => {
+                            const embedUrl = toEmbedUrl(vid.video_url);
+                            const thumbSrc = vid.image_path
+                                ? (vid.image_path.startsWith('http') || vid.image_path.startsWith('/') ? vid.image_path : `/storage/${vid.image_path}`)
+                                : null;
+                            return (
+                                <ScrollReveal key={vid.id ?? idx} delay={idx * 150} distance="40px" className="flex flex-col space-y-4">
+                                    <div className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-md group bg-gray-900">
+                                        {embedUrl ? (
+                                            <iframe
+                                                src={embedUrl}
+                                                title={vid.title}
+                                                className="w-full h-full"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            />
+                                        ) : thumbSrc ? (
+                                            <img src={thumbSrc} alt={vid.title} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-[#1A2F1C] text-gray-400">No preview</div>
+                                        )}
                                     </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <h4 className="font-serif font-bold text-[#261E14] text-base leading-snug">
-                                        {vid.title}
-                                    </h4>
-                                    <p className="text-xs text-gray-500 font-sans">
-                                        {vid.views}
-                                    </p>
-                                </div>
-                            </ScrollReveal>
-                        ))}
+                                    <div className="space-y-1">
+                                        <h4 className="font-serif font-bold text-[#261E14] text-base leading-snug">{vid.title || 'Video Dokumentasi'}</h4>
+                                        {vid.views && <p className="text-xs text-gray-500 font-sans">{vid.views}</p>}
+                                    </div>
+                                </ScrollReveal>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
+            )}
         </div>
     );
 }
