@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Clock, Eye, Calendar, Share2, Facebook, Twitter, MessageCircle, Link2, ChevronRight, BookOpen, Tag } from 'lucide-react';
+import { ArrowLeft, Clock, Eye, Calendar, Share2, MessageCircle, Link2, ChevronRight, BookOpen, Tag } from 'lucide-react';
+
+// Inline SVG for social icons removed from lucide-react
+const IconFacebook = () => (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+    </svg>
+);
+const IconTwitterX = () => (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    </svg>
+);
 import ScrollReveal from '../components/ScrollReveal';
 
 /* ─────────────────────────────────────────────
@@ -211,15 +223,15 @@ export default function NewsDetail({ changePage, articleId }) {
                                         className="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:opacity-80 transition-opacity shadow-sm"
                                         title="Bagikan ke Facebook"
                                     >
-                                        <Facebook size={14} />
+                                        <IconFacebook />
                                     </a>
                                     <a
                                         href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(ARTICLE.title)}&url=${encodeURIComponent(window.location.href)}`}
                                         target="_blank" rel="noopener noreferrer"
-                                        className="w-8 h-8 rounded-full bg-[#1DA1F2] flex items-center justify-center text-white hover:opacity-80 transition-opacity shadow-sm"
-                                        title="Bagikan ke Twitter/X"
+                                        className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white hover:opacity-80 transition-opacity shadow-sm"
+                                        title="Bagikan ke X (Twitter)"
                                     >
-                                        <Twitter size={14} />
+                                        <IconTwitterX />
                                     </a>
                                     <a
                                         href={`https://wa.me/?text=${encodeURIComponent(ARTICLE.title + ' ' + window.location.href)}`}
