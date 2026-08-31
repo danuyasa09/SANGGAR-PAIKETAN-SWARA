@@ -9,12 +9,15 @@ use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\PartnershipController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\ProgramController;
+use App\Http\Controllers\Api\ArticleController;
 
 // Public endpoints
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/content', [ContentController::class, 'index']);
 Route::get('/gallery', [GalleryController::class, 'index']);
 Route::get('/programs', [ProgramController::class, 'index']);
+Route::get('/articles', [ArticleController::class, 'index']);
+Route::get('/articles/{id}', [ArticleController::class, 'show']);
 
 // Public form submissions (no auth required)
 Route::post('/partnerships', [PartnershipController::class, 'store']);
@@ -30,20 +33,27 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/gallery', [GalleryController::class, 'store']);
     Route::delete('/gallery/{id}', [GalleryController::class, 'destroy']);
 
-    // Admin: Partnerships management
+    // Admin: Partnerships
     Route::get('/partnerships', [PartnershipController::class, 'index']);
     Route::patch('/partnerships/{id}', [PartnershipController::class, 'update']);
     Route::delete('/partnerships/{id}', [PartnershipController::class, 'destroy']);
 
-    // Admin: Reservations management
+    // Admin: Reservations
     Route::get('/reservations', [ReservationController::class, 'index']);
     Route::patch('/reservations/{id}', [ReservationController::class, 'update']);
     Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
 
-    // Admin: Programs management
+    // Admin: Programs
     Route::get('/admin/programs', [ProgramController::class, 'adminIndex']);
     Route::post('/programs', [ProgramController::class, 'store']);
     Route::put('/programs/{id}', [ProgramController::class, 'update']);
     Route::delete('/programs/{id}', [ProgramController::class, 'destroy']);
     Route::post('/programs/upload-thumbnail', [ProgramController::class, 'uploadThumbnail']);
+
+    // Admin: Articles (Berita)
+    Route::get('/admin/articles', [ArticleController::class, 'adminIndex']);
+    Route::post('/articles', [ArticleController::class, 'store']);
+    Route::put('/articles/{id}', [ArticleController::class, 'update']);
+    Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
+    Route::post('/articles/upload-cover', [ArticleController::class, 'uploadCover']);
 });

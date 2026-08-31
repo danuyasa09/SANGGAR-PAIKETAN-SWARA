@@ -11,6 +11,7 @@ import AdminPageEditor from './components/admin/AdminPageEditor';
 import AdminPartnerships from './components/admin/AdminPartnerships';
 import AdminReservations from './components/admin/AdminReservations';
 import AdminPrograms from './components/admin/AdminPrograms';
+import AdminNews from './components/admin/AdminNews';
 
 const root = document.getElementById('app');
 if (root) {
@@ -27,6 +28,7 @@ if (root) {
                         <Route path="partnerships" element={<AdminPartnerships />} />
                         <Route path="reservations" element={<AdminReservations />} />
                         <Route path="programs" element={<AdminPrograms />} />
+                        <Route path="news" element={<AdminNews />} />
                     </Route>
                     <Route path="/*" element={<App />} />
                 </Routes>

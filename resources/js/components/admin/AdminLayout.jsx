@@ -48,7 +48,7 @@ export default function AdminLayout() {
         { path: '/admin/page/beranda', label: 'Beranda', icon: <Home size={18} /> },
         { path: '/admin/page/tentangkami', label: 'Tentang Kami', icon: <Info size={18} /> },
         { path: '/admin/programs', label: 'Program Edu-Wisata', icon: <Map size={18} /> },
-        { path: '/admin/page/berita', label: 'Berita', icon: <Newspaper size={18} /> },
+        { path: '/admin/news', label: 'Berita', icon: <Newspaper size={18} /> },
         { path: '/admin/page/kemitraan', label: 'Kemitraan', icon: <Handshake size={18} /> },
         { path: '/admin/page/kontak', label: 'Kontak', icon: <Phone size={18} /> },
         { path: '/admin/gallery', label: 'Galeri', icon: <Image size={18} /> },
