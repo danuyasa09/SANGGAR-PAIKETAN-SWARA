@@ -1,9 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { Landmark, GraduationCap, Home, Plane, Bed, Users, Newspaper, Heart, Handshake, Check } from 'lucide-react';
+import { Landmark, GraduationCap, Home, Plane, Bed, Users, Newspaper, Heart, Handshake, Check, Loader2, AlertCircle } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
+import axios from '../lib/axios';
 
 export default function Partnership({ content }) {
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const formRef = useRef(null);
     const [formData, setFormData] = useState({
         name: '',
@@ -19,12 +22,26 @@ export default function Partnership({ content }) {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Simulate API call
-        setTimeout(() => {
+        setLoading(true);
+        setError(null);
+        try {
+            await axios.post('/api/partnerships', {
+                name: formData.name,
+                institution: formData.institution,
+                email: formData.email,
+                phone: formData.phone,
+                partnership_type: formData.partnershipType,
+                notes: formData.notes,
+            });
             setSubmitted(true);
-        }, 500);
+        } catch (err) {
+            const msg = err.response?.data?.message || 'Terjadi kesalahan. Silakan coba lagi.';
+            setError(msg);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const scrollToForm = () => {
@@ -290,12 +307,21 @@ export default function Partnership({ content }) {
                                         </div>
                                     </div>
 
+                                    {/* Error Message */}
+                                    {error && (
+                                        <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-xs">
+                                            <AlertCircle size={14} className="shrink-0" />
+                                            <span>{error}</span>
+                                        </div>
+                                    )}
+
                                     {/* Submit Button */}
                                     <button
                                         type="submit"
-                                        className="px-10 py-3.5 bg-black hover:bg-zinc-900 text-white font-bold text-xs rounded-lg shadow-sm transition-colors duration-200 cursor-pointer block mx-auto uppercase tracking-wider"
+                                        disabled={loading}
+                                        className="px-10 py-3.5 bg-black hover:bg-zinc-900 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-xs rounded-lg shadow-sm transition-colors duration-200 cursor-pointer block mx-auto uppercase tracking-wider flex items-center gap-2"
                                     >
-                                        Ajukan Kerja Sama
+                                        {loading ? <><Loader2 size={14} className="animate-spin" /> Mengirim...</> : 'Ajukan Kerja Sama'}
                                     </button>
                                 </form>
                             )}

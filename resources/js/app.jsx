@@ -7,8 +7,9 @@ import AdminLayout from './components/admin/AdminLayout';
 import Login from './components/admin/Login';
 import AdminContent from './components/admin/AdminContent';
 import AdminGallery from './components/admin/AdminGallery';
-
 import AdminPageEditor from './components/admin/AdminPageEditor';
+import AdminPartnerships from './components/admin/AdminPartnerships';
+import AdminReservations from './components/admin/AdminReservations';
 
 const root = document.getElementById('app');
 if (root) {
@@ -22,6 +23,8 @@ if (root) {
                         <Route path="content" element={<Navigate to="/admin/page/beranda" replace />} />
                         <Route path="page/:slug" element={<AdminPageEditor />} />
                         <Route path="gallery" element={<AdminGallery />} />
+                        <Route path="partnerships" element={<AdminPartnerships />} />
+                        <Route path="reservations" element={<AdminReservations />} />
                     </Route>
                     <Route path="/*" element={<App />} />
                 </Routes>

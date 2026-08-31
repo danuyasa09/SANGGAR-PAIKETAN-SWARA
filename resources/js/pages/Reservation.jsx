@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Calendar, Users, Info, Send, Lock, Phone, Mail, User, MessageSquare, Check, Clock, Tag } from 'lucide-react';
+import { Calendar, Users, Info, Send, Lock, Phone, Mail, User, MessageSquare, Check, Clock, Tag, Loader2, AlertCircle } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
+import axios from '../lib/axios';
 
-export default function Reservation() {
+export default function Reservation({ content }) {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -19,12 +22,32 @@ export default function Reservation() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Simulate API call
-        setTimeout(() => {
+        setLoading(true);
+        setError(null);
+        try {
+            await axios.post('/api/reservations', {
+                name: formData.name,
+                phone: formData.phone,
+                email: formData.email,
+                visit_date: formData.visitDate,
+                participants: formData.participants,
+                package_type: formData.packageType,
+                notes: formData.notes,
+            });
             setSubmitted(true);
-        }, 500);
+        } catch (err) {
+            const errors = err.response?.data?.errors;
+            if (errors) {
+                const first = Object.values(errors)[0];
+                setError(Array.isArray(first) ? first[0] : first);
+            } else {
+                setError(err.response?.data?.message || 'Terjadi kesalahan. Silakan coba lagi.');
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -282,12 +305,18 @@ export default function Reservation() {
 
                                     {/* Submit Button */}
                                     <div className="space-y-3 pt-2">
+                                        {error && (
+                                            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-xs">
+                                                <AlertCircle size={14} className="shrink-0" />
+                                                <span>{error}</span>
+                                            </div>
+                                        )}
                                         <button
                                             type="submit"
-                                            className="w-full py-3.5 bg-[#1A2F1C] hover:bg-[#0f1d11] text-white font-bold text-sm rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                                            disabled={loading}
+                                            className="w-full py-3.5 bg-[#1A2F1C] hover:bg-[#0f1d11] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                                         >
-                                            <Send size={14} />
-                                            <span>Kirim Reservasi</span>
+                                            {loading ? <><Loader2 size={14} className="animate-spin" /><span>Mengirim...</span></> : <><Send size={14} /><span>Kirim Reservasi</span></>}
                                         </button>
                                         
                                         <div className="flex items-center justify-center gap-2 text-gray-400 text-xs">
