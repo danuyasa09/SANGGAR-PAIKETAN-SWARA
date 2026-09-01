@@ -81,7 +81,7 @@ export default function AdminGallery() {
 
     /* ─── Upload Photo ─── */
     const handlePhotoUpload = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         if (!photoFile) return;
         setUploadingPhoto(true);
         const fd = new FormData();
@@ -221,7 +221,7 @@ export default function AdminGallery() {
                                             {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                                         </select>
                                     </div>
-                                    <button type="submit" disabled={uploadingPhoto || !photoFile}
+                                    <button type="button" onClick={handlePhotoUpload} disabled={uploadingPhoto || !photoFile}
                                         className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-admin-primary text-white rounded-xl font-bold text-sm hover:bg-admin-primary/90 disabled:opacity-50 transition-colors shadow-sm">
                                         {uploadingPhoto ? <><Loader2 size={14} className="animate-spin" />Mengupload...</> : <><Upload size={14} />Upload Foto</>}
                                     </button>

@@ -9,13 +9,18 @@ const PAGE_SCHEMAS = {
             { key: 'home_hero_bg', label: 'Gambar Latar (Hero Background)', type: 'image', section: 'beranda' },
             { key: 'home_hero_title', label: 'Judul Utama (Hero)', type: 'text', section: 'beranda' },
             { key: 'home_hero_desc', label: 'Deskripsi Singkat (Hero)', type: 'text', section: 'beranda' },
-            { key: 'home_about_title', label: 'Judul Tentang Kami', type: 'text', section: 'beranda' },
-            { key: 'home_about_desc1', label: 'Paragraf Tentang Kami 1', type: 'text', section: 'beranda' },
-            { key: 'home_about_desc2', label: 'Paragraf Tentang Kami 2', type: 'text', section: 'beranda' },
-            { key: 'home_about_image', label: 'Gambar Tentang Kami', type: 'image', section: 'beranda' },
-            { key: 'home_cta_bg', label: 'Gambar Latar Bawah (CTA)', type: 'image', section: 'beranda' },
-            { key: 'home_cta_title', label: 'Judul Bagian Bawah (CTA)', type: 'text', section: 'beranda' },
-            { key: 'home_cta_desc', label: 'Deskripsi Bagian Bawah (CTA)', type: 'text', section: 'beranda' }
+            { key: 'home_about_title', label: 'Judul Belajar Bersama', type: 'text', section: 'beranda' },
+            { key: 'home_about_desc1', label: 'Paragraf Belajar Bersama 1', type: 'text', section: 'beranda' },
+            { key: 'home_about_desc2', label: 'Paragraf Belajar Bersama 2', type: 'text', section: 'beranda' },
+            { key: 'home_about_image', label: 'Gambar Belajar Bersama', type: 'image', section: 'beranda' },
+            { key: 'home_eduwisata_title', label: 'Judul Paket Edu-Wisata', type: 'text', section: 'beranda' },
+            { key: 'home_eduwisata_desc', label: 'Deskripsi Paket Edu-Wisata', type: 'text', section: 'beranda' },
+            { key: 'home_why_title', label: 'Judul Mengapa Berkunjung', type: 'text', section: 'beranda' },
+            { key: 'home_about_teaser_p1', label: 'Paragraf Tentang Kami 1 (Alamat Desa Bantas)', type: 'text', section: 'beranda' },
+            { key: 'home_about_teaser_p2', label: 'Paragraf Tentang Kami 2 (Ruang Latihan & Eduwisata)', type: 'text', section: 'beranda' },
+            { key: 'home_about_teaser_p3', label: 'Paragraf Tentang Kami 3 (Gotong Royong & Regenerasi)', type: 'text', section: 'beranda' },
+            { key: 'cta_bottom_title', label: 'Judul Ajakan Bawah (CTA)', type: 'text', section: 'global' },
+            { key: 'cta_bottom_desc', label: 'Deskripsi Ajakan Bawah (CTA)', type: 'text', section: 'global' }
         ]
     },
     tentangkami: {
@@ -24,59 +29,62 @@ const PAGE_SCHEMAS = {
             { key: 'about_banner_image', label: 'Gambar Banner Atas', type: 'image', section: 'tentangkami' },
             { key: 'about_title', label: 'Judul Halaman', type: 'text', section: 'tentangkami' },
             { key: 'about_subtitle', label: 'Sub Judul Halaman', type: 'text', section: 'tentangkami' },
+            { key: 'about_story_title', label: 'Judul Cerita Kami', type: 'text', section: 'tentangkami' },
+            { key: 'about_story_p1', label: 'Cerita Kami - Paragraf 1 (Seni & Masyarakat)', type: 'text', section: 'tentangkami' },
+            { key: 'about_story_p2', label: 'Cerita Kami - Paragraf 2 (Perkembangan Sanggar)', type: 'text', section: 'tentangkami' },
+            { key: 'about_story_p3', label: 'Cerita Kami - Paragraf 3 (Inisiasi Edu-Wisata)', type: 'text', section: 'tentangkami' },
+            { key: 'about_story_p4', label: 'Cerita Kami - Paragraf 4 (Autentisitas & Nilai Sakral)', type: 'text', section: 'tentangkami' },
             { key: 'about_visi_title', label: 'Judul Visi', type: 'text', section: 'tentangkami' },
             { key: 'about_visi_desc', label: 'Deskripsi Visi', type: 'text', section: 'tentangkami' },
-            { key: 'about_misi1_title', label: 'Judul Misi 1', type: 'text', section: 'tentangkami' },
-            { key: 'about_misi1_desc', label: 'Deskripsi Misi 1', type: 'text', section: 'tentangkami' },
-            { key: 'about_misi2_title', label: 'Judul Misi 2', type: 'text', section: 'tentangkami' },
-            { key: 'about_misi2_desc', label: 'Deskripsi Misi 2', type: 'text', section: 'tentangkami' },
-            { key: 'about_misi3_title', label: 'Judul Misi 3', type: 'text', section: 'tentangkami' },
-            { key: 'about_misi3_desc', label: 'Deskripsi Misi 3', type: 'text', section: 'tentangkami' }
+            { key: 'about_misi_title', label: 'Judul Misi', type: 'text', section: 'tentangkami' }
         ]
     },
     program: {
         title: "Kelola Halaman Program Edu-Wisata",
         fields: [
-            { key: 'program_banner', label: 'Gambar Banner Program', type: 'image', section: 'program' },
-            { key: 'program_title', label: 'Judul Program', type: 'text', section: 'program' }
+            { key: 'programs_banner_image', label: 'Gambar Banner Program', type: 'image', section: 'program' },
+            { key: 'programs_hero_title', label: 'Judul Utama', type: 'text', section: 'program' },
+            { key: 'programs_hero_subtitle', label: 'Sub-Judul Hero', type: 'text', section: 'program' },
+            { key: 'programs_hero_desc', label: 'Deskripsi Hero', type: 'text', section: 'program' }
         ]
     },
     berita: {
         title: "Kelola Halaman Berita",
         fields: [
-            { key: 'news_banner', label: 'Gambar Banner Berita', type: 'image', section: 'berita' },
-            { key: 'news_hero_title', label: 'Judul Hero', type: 'text', section: 'berita' },
-            { key: 'news_hero_desc', label: 'Deskripsi Hero', type: 'text', section: 'berita' }
+            { key: 'news_banner_image', label: 'Gambar Banner Berita', type: 'image', section: 'berita' },
+            { key: 'news_title', label: 'Judul Halaman Berita', type: 'text', section: 'berita' },
+            { key: 'news_subtitle', label: 'Deskripsi Halaman Berita', type: 'text', section: 'berita' }
         ]
     },
     galeri: {
         title: "Kelola Halaman Galeri",
         fields: [
             { key: 'gallery_banner', label: 'Gambar Banner Galeri', type: 'image', section: 'galeri' },
-            { key: 'gallery_title', label: 'Judul Halaman', type: 'text', section: 'galeri' },
-            { key: 'gallery_desc', label: 'Deskripsi Halaman', type: 'text', section: 'galeri' }
+            { key: 'gallery_title', label: 'Judul Galeri', type: 'text', section: 'galeri' },
+            { key: 'gallery_desc', label: 'Deskripsi Galeri', type: 'text', section: 'galeri' }
         ]
     },
     kemitraan: {
         title: "Kelola Halaman Kemitraan",
         fields: [
-            { key: 'partnership_banner', label: 'Gambar Banner Kemitraan', type: 'image', section: 'kemitraan' },
-            { key: 'partnership_hero_title', label: 'Judul Hero', type: 'text', section: 'kemitraan' },
-            { key: 'partnership_hero_desc', label: 'Deskripsi Hero', type: 'text', section: 'kemitraan' },
-            { key: 'partnership_callout_title', label: 'Judul Callout CSR', type: 'text', section: 'kemitraan' },
-            { key: 'partnership_callout_desc', label: 'Deskripsi Callout CSR', type: 'text', section: 'kemitraan' }
+            { key: 'partnership_banner_image', label: 'Gambar Banner Kemitraan', type: 'image', section: 'kemitraan' },
+            { key: 'partnership_title', label: 'Judul Halaman', type: 'text', section: 'kemitraan' },
+            { key: 'partnership_desc', label: 'Deskripsi Halaman', type: 'text', section: 'kemitraan' }
         ]
     },
     kontak: {
         title: "Kelola Halaman Kontak",
         fields: [
-            { key: 'contact_banner', label: 'Gambar Banner Kontak', type: 'image', section: 'kontak' },
-            { key: 'contact_hero_title', label: 'Judul Hero', type: 'text', section: 'kontak' },
-            { key: 'contact_hero_desc', label: 'Deskripsi Hero', type: 'text', section: 'kontak' },
+            { key: 'contact_banner_image', label: 'Gambar Banner Kontak', type: 'image', section: 'kontak' },
+            { key: 'contact_title', label: 'Judul Halaman', type: 'text', section: 'kontak' },
+            { key: 'contact_desc', label: 'Deskripsi Halaman', type: 'text', section: 'kontak' },
             { key: 'contact_address', label: 'Alamat Sanggar', type: 'text', section: 'kontak' },
             { key: 'contact_phone', label: 'Telepon / WhatsApp', type: 'text', section: 'kontak' },
             { key: 'contact_email', label: 'Email', type: 'text', section: 'kontak' },
-            { key: 'contact_hours', label: 'Jam Operasional', type: 'text', section: 'kontak' }
+            { key: 'contact_hours', label: 'Jam Operasional', type: 'text', section: 'kontak' },
+            { key: 'contact_instagram', label: 'URL Instagram', type: 'text', section: 'kontak' },
+            { key: 'contact_facebook', label: 'URL Facebook', type: 'text', section: 'kontak' },
+            { key: 'contact_youtube', label: 'URL YouTube', type: 'text', section: 'kontak' }
         ]
     }
 };

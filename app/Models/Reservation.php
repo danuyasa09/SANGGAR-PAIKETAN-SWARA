@@ -10,9 +10,13 @@ class Reservation extends Model
         'name',
         'phone',
         'email',
+        'origin',
         'visit_date',
+        'visit_time',
         'participants',
+        'age_group',
         'package_type',
+        'language',
         'notes',
         'status',
     ];

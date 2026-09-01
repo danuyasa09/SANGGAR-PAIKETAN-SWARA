@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Users, Info, Send, Lock, Phone, Mail, User, MessageSquare, Check, Clock, Tag, Loader2, AlertCircle } from 'lucide-react';
+import { Calendar, Users, Info, Send, Lock, Phone, Mail, User, MessageSquare, Check, Clock, Tag, Loader2, AlertCircle, MapPin, Globe, HelpCircle } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 import axios from '../lib/axios';
 
@@ -11,9 +11,13 @@ export default function Reservation({ content }) {
         name: '',
         phone: '',
         email: '',
+        origin: '',
         visitDate: '',
+        visitTime: 'Pagi (09.00 - 11.00 WITA)',
         participants: '',
-        packageType: '',
+        ageGroup: 'Campuran / Umum',
+        packageType: 'Paket 1: Pengalaman Gamelan Bali',
+        language: 'Bahasa Indonesia',
         notes: ''
     });
 
@@ -31,9 +35,13 @@ export default function Reservation({ content }) {
                 name: formData.name,
                 phone: formData.phone,
                 email: formData.email,
+                origin: formData.origin,
                 visit_date: formData.visitDate,
+                visit_time: formData.visitTime,
                 participants: formData.participants,
+                age_group: formData.ageGroup,
                 package_type: formData.packageType,
+                language: formData.language,
                 notes: formData.notes,
             });
             setSubmitted(true);
@@ -54,22 +62,24 @@ export default function Reservation({ content }) {
         <div className="bg-[#FAF6F0] min-h-screen font-sans pb-16">
             
             {/* HERO BANNER */}
-            <section className="relative py-28 md:py-32 flex items-center justify-center overflow-hidden">
+            <section className="relative py-28 md:py-36 flex items-center justify-center overflow-hidden">
                 <div 
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('/images/reservation_banner.png')` }}
+                    style={{ backgroundImage: `url('${content('reservation_banner_image', '/images/reservation_banner.png').startsWith('http') || content('reservation_banner_image', '/images/reservation_banner.png').startsWith('/') ? content('reservation_banner_image', '/images/reservation_banner.png') : `/storage/${content('reservation_banner_image', '')}`}')` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/90 via-[#261E14]/75 to-[#261E14]/30" />
 
                 <div className="relative z-10 max-w-4xl mx-auto px-4 text-center mt-12 space-y-4">
+                    <span className="text-xs font-bold tracking-widest text-[#C99B53] uppercase block">
+                        — FORMULIR KUNJUNGAN —
+                    </span>
                     <h1 className="text-3xl sm:text-5xl font-serif text-white font-bold leading-tight tracking-wide">
-                        Reservasi Kunjungan
+                        {content('reservation_title', 'Rencanakan Kunjungan Anda')}
                     </h1>
-                    <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-medium">
-                        <span className="text-gray-300 hover:text-white transition-colors cursor-pointer">Beranda</span>
-                        <span className="text-gray-400">&gt;</span>
-                        <span className="text-[#C99B53]">Reservasi Kunjungan</span>
-                    </div>
+                    <div className="h-[2px] w-20 bg-[#C99B53] mx-auto" />
+                    <p className="text-sm sm:text-base text-gray-200 font-medium max-w-2xl mx-auto leading-relaxed">
+                        {content('reservation_desc', 'Lengkapi formulir berikut agar kami dapat menyiapkan kegiatan yang sesuai. Tim Sanggar Paiketan Swara akan menghubungi Anda untuk mengonfirmasi ketersediaan jadwal, susunan kegiatan, dan biaya.')}
+                    </p>
                 </div>
 
                 {/* SVG Curve Divider */}
@@ -99,366 +109,319 @@ export default function Reservation({ content }) {
                                     </div>
                                     <div className="space-y-2">
                                         <h3 className="text-2xl font-serif font-bold text-[#261E14]">
-                                            Reservasi Diterima!
+                                            Permintaan Reservasi Terkirim!
                                         </h3>
                                         <p className="text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
-                                            Terima kasih, <span className="font-semibold text-[#261E14]">{formData.name}</span>. Permintaan reservasi kunjungan Anda pada tanggal <span className="font-semibold text-[#261E14]">{formData.visitDate}</span> telah terdaftar di sistem kami.
+                                            Terima kasih telah mengajukan reservasi. Tim pengelola Sanggar Paiketan Swara akan segera menghubungi Anda melalui WhatsApp atau Email untuk konfirmasi detail kegiatan.
                                         </p>
                                     </div>
-                                    <div className="bg-[#FAF6F0] rounded-xl p-6 border border-[#C99B53]/15 max-w-md mx-auto text-left text-xs space-y-2.5">
-                                        <div className="flex justify-between"><span className="text-gray-500">Pilihan Paket:</span> <span className="font-semibold text-[#261E14]">{formData.packageType === 'paket1' ? 'Paket 1: Gamelan' : formData.packageType === 'paket2' ? 'Paket 2: Tari' : formData.packageType === 'paket3' ? 'Paket 3: Gamelan & Tari' : 'Program Khusus'}</span></div>
-                                        <div className="flex justify-between"><span className="text-gray-500">Jumlah Peserta:</span> <span className="font-semibold text-[#261E14]">{formData.participants} Orang</span></div>
-                                        <div className="flex justify-between"><span className="text-gray-500">Nomor WhatsApp:</span> <span className="font-semibold text-[#261E14]">{formData.phone}</span></div>
-                                        <div className="flex justify-between"><span className="text-gray-500">Email:</span> <span className="font-semibold text-[#261E14]">{formData.email}</span></div>
-                                    </div>
-                                    <p className="text-xs text-gray-400 max-w-sm mx-auto">
-                                        Detail konfirmasi ketersediaan jadwal beserta langkah selanjutnya sedang kami siapkan untuk dikirimkan melalui WhatsApp/email.
-                                    </p>
                                     <button
-                                        onClick={() => setSubmitted(false)}
-                                        className="px-6 py-2.5 bg-[#C99B53] text-[#261E14] font-bold text-xs rounded-md shadow-sm hover:bg-[#B7863F] transition-colors cursor-pointer"
+                                        onClick={() => {
+                                            setSubmitted(false);
+                                            setFormData({
+                                                name: '', phone: '', email: '', origin: '',
+                                                visitDate: '', visitTime: 'Pagi (09.00 - 11.00 WITA)',
+                                                participants: '', ageGroup: 'Campuran / Umum',
+                                                packageType: 'Paket 1: Pengalaman Gamelan Bali',
+                                                language: 'Bahasa Indonesia', notes: ''
+                                            });
+                                        }}
+                                        className="px-6 py-2.5 bg-[#C99B53] text-[#261E14] font-bold text-xs rounded-xl shadow-sm hover:bg-[#B7863F] transition-colors uppercase tracking-wider"
                                     >
-                                        Buat Pemesanan Baru
+                                        Ajukan Reservasi Lain
                                     </button>
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div className="space-y-1">
-                                        <h2 className="text-2xl font-serif font-bold text-[#261E14]">Formulir Reservasi</h2>
-                                        <p className="text-xs sm:text-sm text-gray-500">
-                                            Isi formulir di bawah ini untuk melakukan reservasi kunjungan ke Sanggar Paiketan Swara.
+                                    <div className="border-b border-gray-100 pb-4">
+                                        <h2 className="text-xl font-serif font-bold text-[#261E14]">
+                                            Data Pemesan & Jadwal Kunjungan
+                                        </h2>
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Mohon isi seluruh data berikut dengan benar agar tim kami dapat memproses permohonan Anda.
                                         </p>
                                     </div>
 
-                                    <div className="space-y-5">
-                                        {/* Nama Lengkap */}
-                                        <div className="space-y-2">
-                                            <label htmlFor="name" className="text-xs font-bold text-gray-700">
-                                                Nama Lengkap <span className="text-red-500">*</span>
+                                    {error && (
+                                        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-xs text-red-600 font-medium">
+                                            <AlertCircle size={16} className="shrink-0" />
+                                            <span>{error}</span>
+                                        </div>
+                                    )}
+
+                                    {/* Grid Input Fields */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                        {/* Nama Pemesan atau Organisasi */}
+                                        <div className="space-y-1.5 md:col-span-2">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <User size={13} className="text-[#C99B53]" />
+                                                Nama Pemesan / Organisasi <span className="text-red-500">*</span>
                                             </label>
-                                            <div className="relative">
-                                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                                    <User size={16} />
-                                                </span>
-                                                <input
-                                                    type="text"
-                                                    id="name"
-                                                    name="name"
-                                                    required
-                                                    value={formData.name}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Masukkan nama lengkap Anda"
-                                                    className="w-full px-4 py-3 pl-11 rounded-lg border border-gray-200 focus:border-[#C99B53] focus:ring-1 focus:ring-[#C99B53] outline-none text-sm transition-all duration-200 bg-white"
-                                                />
-                                            </div>
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                required
+                                                value={formData.name}
+                                                onChange={handleInputChange}
+                                                placeholder="Contoh: Bpk. Wayan / Komunitas Seni Nusantara"
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            />
                                         </div>
 
-                                        {/* WhatsApp */}
-                                        <div className="space-y-2">
-                                            <label htmlFor="phone" className="text-xs font-bold text-gray-700">
-                                                WhatsApp <span className="text-red-500">*</span>
+                                        {/* Telepon / WhatsApp */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <Phone size={13} className="text-[#C99B53]" />
+                                                Nomor Telepon / WhatsApp <span className="text-red-500">*</span>
                                             </label>
-                                            <div className="relative">
-                                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                                    <Phone size={16} />
-                                                </span>
-                                                <input
-                                                    type="tel"
-                                                    id="phone"
-                                                    name="phone"
-                                                    required
-                                                    value={formData.phone}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Contoh: 0812 3456 7890"
-                                                    className="w-full px-4 py-3 pl-11 rounded-lg border border-gray-200 focus:border-[#C99B53] focus:ring-1 focus:ring-[#C99B53] outline-none text-sm transition-all duration-200 bg-white"
-                                                />
-                                            </div>
+                                            <input
+                                                type="tel"
+                                                name="phone"
+                                                required
+                                                value={formData.phone}
+                                                onChange={handleInputChange}
+                                                placeholder="Contoh: 081234567890"
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            />
                                         </div>
 
-                                        {/* Email */}
-                                        <div className="space-y-2">
-                                            <label htmlFor="email" className="text-xs font-bold text-gray-700">
-                                                Email <span className="text-red-500">*</span>
+                                        {/* Alamat Email */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <Mail size={13} className="text-[#C99B53]" />
+                                                Alamat Email <span className="text-red-500">*</span>
                                             </label>
-                                            <div className="relative">
-                                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                                    <Mail size={16} />
-                                                </span>
-                                                <input
-                                                    type="email"
-                                                    id="email"
-                                                    name="email"
-                                                    required
-                                                    value={formData.email}
-                                                    onChange={handleInputChange}
-                                                    placeholder="nama@email.com"
-                                                    className="w-full px-4 py-3 pl-11 rounded-lg border border-gray-200 focus:border-[#C99B53] focus:ring-1 focus:ring-[#C99B53] outline-none text-sm transition-all duration-200 bg-white"
-                                                />
-                                            </div>
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                required
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                placeholder="email@domain.com"
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            />
+                                        </div>
+
+                                        {/* Asal Kota atau Negara */}
+                                        <div className="space-y-1.5 md:col-span-2">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <MapPin size={13} className="text-[#C99B53]" />
+                                                Asal Kota atau Negara
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="origin"
+                                                value={formData.origin}
+                                                onChange={handleInputChange}
+                                                placeholder="Contoh: Denpasar, Jakarta, Australia, Jepang"
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            />
                                         </div>
 
                                         {/* Tanggal Kunjungan */}
-                                        <div className="space-y-2">
-                                            <label htmlFor="visitDate" className="text-xs font-bold text-gray-700">
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <Calendar size={13} className="text-[#C99B53]" />
                                                 Tanggal Kunjungan <span className="text-red-500">*</span>
                                             </label>
-                                            <div className="relative">
-                                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                                    <Calendar size={16} />
-                                                </span>
-                                                <input
-                                                    type="date"
-                                                    id="visitDate"
-                                                    name="visitDate"
-                                                    required
-                                                    value={formData.visitDate}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-4 py-3 pl-11 rounded-lg border border-gray-200 focus:border-[#C99B53] focus:ring-1 focus:ring-[#C99B53] outline-none text-sm transition-all duration-200 bg-white"
-                                                />
-                                            </div>
+                                            <input
+                                                type="date"
+                                                name="visitDate"
+                                                required
+                                                value={formData.visitDate}
+                                                onChange={handleInputChange}
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            />
                                         </div>
 
-                                        {/* Jumlah Peserta & Pilihan Paket (Two Columns) */}
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <label htmlFor="participants" className="text-xs font-bold text-gray-700">
-                                                    Jumlah Peserta <span className="text-red-500">*</span>
-                                                </label>
-                                                <div className="relative">
-                                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                                        <Users size={16} />
-                                                    </span>
-                                                    <select
-                                                        id="participants"
-                                                        name="participants"
-                                                        required
-                                                        value={formData.participants}
-                                                        onChange={handleInputChange}
-                                                        className="w-full px-4 py-3 pl-11 pr-8 rounded-lg border border-gray-200 focus:border-[#C99B53] focus:ring-1 focus:ring-[#C99B53] outline-none text-sm transition-all duration-200 bg-white appearance-none cursor-pointer"
-                                                    >
-                                                        <option value="" disabled>Pilih jumlah peserta</option>
-                                                        <option value="10-20">10 - 20 Orang</option>
-                                                        <option value="21-30">21 - 30 Orang</option>
-                                                        <option value="31-50">31 - 50 Orang</option>
-                                                        <option value="50+">Lebih dari 50 Orang</option>
-                                                    </select>
-                                                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-500 w-0 h-0" />
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                <label htmlFor="packageType" className="text-xs font-bold text-gray-700">
-                                                    Pilihan Paket <span className="text-red-500">*</span>
-                                                </label>
-                                                <div className="relative">
-                                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                                        <Tag size={16} />
-                                                    </span>
-                                                    <select
-                                                        id="packageType"
-                                                        name="packageType"
-                                                        required
-                                                        value={formData.packageType}
-                                                        onChange={handleInputChange}
-                                                        className="w-full px-4 py-3 pl-11 pr-8 rounded-lg border border-gray-200 focus:border-[#C99B53] focus:ring-1 focus:ring-[#C99B53] outline-none text-sm transition-all duration-200 bg-white appearance-none cursor-pointer"
-                                                    >
-                                                        <option value="" disabled>Pilih paket edu-wisata</option>
-                                                        <option value="paket1">Paket 1: Pengalaman Gamelan Bali</option>
-                                                        <option value="paket2">Paket 2: Pengalaman Tari Bali</option>
-                                                        <option value="paket3">Paket 3: Gamelan dan Tari Bali</option>
-                                                        <option value="custom">Kustom / Program Khusus</option>
-                                                    </select>
-                                                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-500 w-0 h-0" />
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Pesan Tambahan */}
-                                        <div className="space-y-2">
-                                            <label htmlFor="notes" className="text-xs font-bold text-gray-700">
-                                                Pesan Tambahan (Opsional)
+                                        {/* Waktu Kunjungan */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <Clock size={13} className="text-[#C99B53]" />
+                                                Waktu Kunjungan
                                             </label>
-                                            <div className="relative">
-                                                <span className="absolute left-3.5 top-5 text-gray-400 pointer-events-none">
-                                                    <MessageSquare size={16} />
-                                                </span>
-                                                <textarea
-                                                    id="notes"
-                                                    name="notes"
-                                                    rows="4"
-                                                    value={formData.notes}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Tuliskan kebutuhan khusus atau informasi tambahan lainnya"
-                                                    className="w-full px-4 py-3 pl-11 rounded-lg border border-gray-200 focus:border-[#C99B53] focus:ring-1 focus:ring-[#C99B53] outline-none text-sm resize-none transition-all duration-200 bg-white"
-                                                />
-                                            </div>
+                                            <select
+                                                name="visitTime"
+                                                value={formData.visitTime}
+                                                onChange={handleInputChange}
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            >
+                                                <option value="Pagi (09.00 - 11.00 WITA)">Pagi (09.00 - 11.00 WITA)</option>
+                                                <option value="Siang (13.00 - 15.00 WITA)">Siang (13.00 - 15.00 WITA)</option>
+                                                <option value="Sore (15.30 - 17.30 WITA)">Sore (15.30 - 17.30 WITA)</option>
+                                                <option value="Waktu Khusus (Sesuai Kesepakatan)">Waktu Khusus (Sesuai Kesepakatan)</option>
+                                            </select>
                                         </div>
-                                    </div>
 
-                                    {/* Info Alert */}
-                                    <div className="bg-[#FAF6F0] rounded-xl p-4 border border-[#C99B53]/20 flex items-start gap-3">
-                                        <Info className="text-[#C99B53] shrink-0 mt-0.5" size={16} />
-                                        <p className="text-xs text-gray-600 leading-relaxed font-medium">
-                                            Reservasi akan kami konfirmasi melalui WhatsApp atau email maksimal 1x24 jam pada hari kerja.
-                                        </p>
+                                        {/* Jumlah Peserta */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <Users size={13} className="text-[#C99B53]" />
+                                                Jumlah Peserta <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="participants"
+                                                required
+                                                value={formData.participants}
+                                                onChange={handleInputChange}
+                                                placeholder="Contoh: 15 orang"
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            />
+                                        </div>
+
+                                        {/* Rentang Usia Peserta */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <Users size={13} className="text-[#C99B53]" />
+                                                Rentang Usia Peserta
+                                            </label>
+                                            <select
+                                                name="ageGroup"
+                                                value={formData.ageGroup}
+                                                onChange={handleInputChange}
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            >
+                                                <option value="Anak-anak (TK - SD)">Anak-anak (TK - SD)</option>
+                                                <option value="Remaja / Pelajar (SMP - SMA)">Remaja / Pelajar (SMP - SMA)</option>
+                                                <option value="Mahasiswa / Dewasa">Mahasiswa / Dewasa</option>
+                                                <option value="Campuran / Umum / Keluarga">Campuran / Umum / Keluarga</option>
+                                                <option value="Lanjut Usia (Senior)">Lanjut Usia (Senior)</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Paket yang Dipilih */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <Tag size={13} className="text-[#C99B53]" />
+                                                Paket yang Dipilih <span className="text-red-500">*</span>
+                                            </label>
+                                            <select
+                                                name="packageType"
+                                                value={formData.packageType}
+                                                onChange={handleInputChange}
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            >
+                                                <option value="Paket 1: Pengalaman Gamelan Bali">Paket 1: Pengalaman Gamelan Bali</option>
+                                                <option value="Paket 2: Pengalaman Tari Bali">Paket 2: Pengalaman Tari Bali</option>
+                                                <option value="Paket 3: Gamelan dan Tari Bali">Paket 3: Gamelan dan Tari Bali</option>
+                                                <option value="Program Khusus / Kustom">Program Khusus / Kustom</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Pilihan Bahasa Pendampingan */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <Globe size={13} className="text-[#C99B53]" />
+                                                Pilihan Bahasa Pendampingan
+                                            </label>
+                                            <select
+                                                name="language"
+                                                value={formData.language}
+                                                onChange={handleInputChange}
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                            >
+                                                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                                                <option value="Bahasa Bali">Bahasa Bali</option>
+                                                <option value="Bahasa Inggris (English)">Bahasa Inggris (English)</option>
+                                                <option value="Bahasa Lainnya">Bahasa Lainnya</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Tujuan atau Kebutuhan Khusus */}
+                                        <div className="space-y-1.5 md:col-span-2">
+                                            <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                                <MessageSquare size={13} className="text-[#C99B53]" />
+                                                Tujuan atau Kebutuhan Khusus (Catatan Tambahan)
+                                            </label>
+                                            <textarea
+                                                name="notes"
+                                                rows="3"
+                                                value={formData.notes}
+                                                onChange={handleInputChange}
+                                                placeholder="Contoh: Kunjungan studi budaya, permintaan materi tabuh tertentu, fasilitas ramah disabilitas, dll."
+                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all resize-none"
+                                            ></textarea>
+                                        </div>
                                     </div>
 
                                     {/* Submit Button */}
-                                    <div className="space-y-3 pt-2">
-                                        {error && (
-                                            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-xs">
-                                                <AlertCircle size={14} className="shrink-0" />
-                                                <span>{error}</span>
-                                            </div>
-                                        )}
+                                    <div className="pt-4 border-t border-gray-100">
                                         <button
                                             type="submit"
                                             disabled={loading}
-                                            className="w-full py-3.5 bg-[#1A2F1C] hover:bg-[#0f1d11] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                                            className="w-full py-4 bg-[#C99B53] hover:bg-[#B7863F] text-[#261E14] font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 uppercase tracking-wider transition-all cursor-pointer disabled:opacity-60"
                                         >
-                                            {loading ? <><Loader2 size={14} className="animate-spin" /><span>Mengirim...</span></> : <><Send size={14} /><span>Kirim Reservasi</span></>}
+                                            {loading ? (
+                                                <>
+                                                    <Loader2 size={16} className="animate-spin" />
+                                                    <span>Memproses Permintaan...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Send size={15} />
+                                                    <span>Kirim Permintaan Reservasi</span>
+                                                </>
+                                            )}
                                         </button>
-                                        
-                                        <div className="flex items-center justify-center gap-2 text-gray-400 text-xs">
-                                            <Lock size={12} />
-                                            <span>Data Anda aman dan hanya digunakan untuk keperluan reservasi.</span>
-                                        </div>
                                     </div>
                                 </form>
                             )}
                         </div>
                     </ScrollReveal>
 
-                    {/* RIGHT COLUMN: SIDEBAR WIDGETS */}
-                    <ScrollReveal className="lg:col-span-5 xl:col-span-4 flex flex-col space-y-6" delay={200} distance="40px">
-                        <div className="w-full space-y-6">
-                            
-                            {/* WIDGET 1: INFORMASI PENTING */}
-                            <div className="bg-[#FAF6F0] rounded-2xl p-6 border border-[#C99B53]/15 shadow-sm space-y-5">
-                                <h3 className="text-lg font-serif font-bold text-[#261E14]">
-                                    Informasi Penting
-                                </h3>
-                                <ul className="space-y-4">
-                                    <li className="flex items-start gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-white border border-[#C99B53]/25 flex items-center justify-center text-[#C99B53] shrink-0">
-                                            <Users size={14} />
-                                        </div>
-                                        <p className="text-xs text-gray-600 leading-relaxed">
-                                            Minimal peserta <span className="font-bold">10 orang</span> dan maksimal 30 orang.
-                                        </p>
-                                    </li>
-                                    <li className="flex items-start gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-white border border-[#C99B53]/25 flex items-center justify-center text-[#C99B53] shrink-0">
-                                            <Calendar size={14} />
-                                        </div>
-                                        <p className="text-xs text-gray-600 leading-relaxed">
-                                            Reservasi sebaiknya dilakukan <span className="font-bold">minimal 2 hari</span> sebelumnya.
-                                        </p>
-                                    </li>
-                                    <li className="flex items-start gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-white border border-[#C99B53]/25 flex items-center justify-center text-[#C99B53] shrink-0">
-                                            <Clock size={14} />
-                                        </div>
-                                        <p className="text-xs text-gray-600 leading-relaxed">
-                                            Paket dan jadwal dapat <span className="font-bold">disesuaikan dengan kebutuhan</span> kelompok Anda.
-                                        </p>
-                                    </li>
-                                    <li className="flex items-start gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-white border border-[#C99B53]/25 flex items-center justify-center text-[#C99B53] shrink-0">
-                                            <Phone size={14} />
-                                        </div>
-                                        <p className="text-xs text-gray-600 leading-relaxed">
-                                            Untuk informasi lebih lanjut, <span className="font-bold">silakan hubungi kami melalui WhatsApp</span>.
-                                        </p>
-                                    </li>
-                                </ul>
-                            </div>
+                    {/* RIGHT COLUMN: SUMMARY & CATATAN PENTING */}
+                    <ScrollReveal className="lg:col-span-5 xl:col-span-4 space-y-6" delay={200} distance="40px">
+                        {/* Summary Widget */}
+                        <div className="bg-[#261E14] text-[#FAF6F0] rounded-2xl p-6 sm:p-7 border border-[#C99B53]/20 shadow-xl space-y-5">
+                            <h3 className="text-lg font-serif font-bold text-[#C99B53] border-b border-gray-800 pb-3">
+                                Ringkasan Permintaan
+                            </h3>
 
-                            {/* WIDGET 2: PILIHAN PAKET EDU-WISATA */}
-                            <div className="space-y-4">
-                                <h3 className="text-lg font-serif font-bold text-[#261E14] px-1">
-                                    Pilihan Paket Edu-Wisata
-                                </h3>
-                                <div className="space-y-3">
-                                    {/* Paket 1 */}
-                                    <div className="bg-white border border-gray-100 rounded-xl p-3.5 flex gap-3.5 shadow-sm hover:shadow-md transition-shadow">
-                                        <div 
-                                            className="w-16 h-16 rounded-lg bg-cover bg-center shrink-0 bg-gray-100"
-                                            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1620801582341-237ab047de0f?q=80&w=200&auto=format&fit=crop')` }}
-                                        />
-                                        <div className="space-y-1">
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Paket 1</span>
-                                            <h4 className="text-xs sm:text-sm font-bold text-[#261E14] font-serif leading-tight">Pengalaman Gamelan Bali</h4>
-                                            <p className="text-[10px] text-gray-400">60 - 90 menit | 10 - 30 orang</p>
-                                            <p className="text-xs font-bold text-[#C99B53]">Rp150.000 <span className="text-[10px] text-gray-400 font-normal">/ peserta</span></p>
-                                        </div>
-                                    </div>
-
-                                    {/* Paket 2 */}
-                                    <div className="bg-white border border-gray-100 rounded-xl p-3.5 flex gap-3.5 shadow-sm hover:shadow-md transition-shadow">
-                                        <div 
-                                            className="w-16 h-16 rounded-lg bg-cover bg-center shrink-0 bg-gray-100"
-                                            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=200&auto=format&fit=crop')` }}
-                                        />
-                                        <div className="space-y-1">
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Paket 2</span>
-                                            <h4 className="text-xs sm:text-sm font-bold text-[#261E14] font-serif leading-tight">Pengalaman Tari Bali</h4>
-                                            <p className="text-[10px] text-gray-400">60 - 90 menit | 10 - 30 orang</p>
-                                            <p className="text-xs font-bold text-[#C99B53]">Rp150.000 <span className="text-[10px] text-gray-400 font-normal">/ peserta</span></p>
-                                        </div>
-                                    </div>
-
-                                    {/* Paket 3 */}
-                                    <div className="bg-white border border-gray-100 rounded-xl p-3.5 flex gap-3.5 shadow-sm hover:shadow-md transition-shadow">
-                                        <div 
-                                            className="w-16 h-16 rounded-lg bg-cover bg-center shrink-0 bg-gray-100"
-                                            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=200&auto=format&fit=crop')` }}
-                                        />
-                                        <div className="space-y-1">
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Paket 3</span>
-                                            <h4 className="text-xs sm:text-sm font-bold text-[#261E14] font-serif leading-tight">Gamelan dan Tari Bali</h4>
-                                            <p className="text-[10px] text-gray-400">90 - 120 menit | 10 - 30 orang</p>
-                                            <p className="text-xs font-bold text-[#C99B53]">Rp220.000 <span className="text-[10px] text-gray-400 font-normal">/ peserta</span></p>
-                                        </div>
-                                    </div>
+                            <div className="space-y-3.5 text-xs">
+                                <div>
+                                    <span className="text-gray-400 block text-[10px] uppercase font-bold">Paket Pilihan</span>
+                                    <span className="font-semibold text-white">{formData.packageType}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400 block text-[10px] uppercase font-bold">Tanggal & Waktu</span>
+                                    <span className="font-semibold text-white">
+                                        {formData.visitDate || 'Belum dipilih'} · {formData.visitTime}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400 block text-[10px] uppercase font-bold">Jumlah & Usia Peserta</span>
+                                    <span className="font-semibold text-white">
+                                        {formData.participants || '-'} ({formData.ageGroup})
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400 block text-[10px] uppercase font-bold">Bahasa Pendampingan</span>
+                                    <span className="font-semibold text-white">{formData.language}</span>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* WIDGET 3: BUTUH BANTUAN? */}
-                            <div className="bg-[#F3EFE9] rounded-2xl p-6 border border-gray-200/50 shadow-sm text-center relative overflow-hidden group">
-                                {/* Decorative background outline icon */}
-                                <div className="absolute -right-8 -top-8 text-gray-300/15 pointer-events-none transition-transform group-hover:scale-110 duration-500">
-                                    <MessageSquare size={130} />
-                                </div>
-
-                                <div className="relative z-10 space-y-4">
-                                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#1A2F1C] mx-auto shadow-sm">
-                                        <MessageSquare size={18} />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <h4 className="text-sm font-bold text-[#261E14]">Butuh Bantuan?</h4>
-                                        <p className="text-[11px] text-gray-500 leading-relaxed max-w-[220px] mx-auto">
-                                            Hubungi kami langsung melalui WhatsApp untuk konsultasi atau informasi lebih lanjut.
-                                        </p>
-                                    </div>
-                                    <a 
-                                        href="https://wa.me/6281234567890" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="w-full py-2.5 bg-[#1A2F1C] hover:bg-[#0f1d11] text-white font-bold text-xs rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                                    >
-                                        <Phone size={12} />
-                                        <span>Chat WhatsApp</span>
-                                    </a>
-                                </div>
-                            </div>
-
+                        {/* Catatan Penting Sesuai Docx */}
+                        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-3 text-xs text-gray-600 leading-relaxed font-sans">
+                            <h4 className="font-serif font-bold text-sm text-[#261E14] flex items-center gap-2">
+                                <Info size={15} className="text-[#C99B53]" />
+                                Catatan Reservasi:
+                            </h4>
+                            <p>
+                                1. Reservasi dinyatakan berlaku setelah memperoleh konfirmasi dari pengelola sanggar.
+                            </p>
+                            <p>
+                                2. Susunan kegiatan dapat disesuaikan dengan kondisi lapangan, jumlah peserta, dan kesepakatan bersama.
+                            </p>
+                            <p>
+                                3. Apabila membutuhkan penawaran khusus atau pendampingan bahasa asing, silakan cantumkan pada kolom catatan.
+                            </p>
                         </div>
                     </ScrollReveal>
 
                 </div>
             </div>
-
         </div>
     );
 }

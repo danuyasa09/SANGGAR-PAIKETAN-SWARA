@@ -297,18 +297,37 @@ export default function AdminReservations() {
                                         </div>
                                     </div>
 
-                                    {/* Expanded Notes */}
+                                    {/* Expanded Detail */}
                                     {isExpanded && (
-                                        <div className="px-6 pb-4">
+                                        <div className="px-6 pb-4 space-y-3">
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-gray-50/80 rounded-xl p-3.5 border border-gray-100 text-xs">
+                                                <div>
+                                                    <span className="text-gray-400 block text-[10px] uppercase font-bold">Asal Kota / Negara</span>
+                                                    <span className="font-semibold text-admin-text">{item.origin || '-'}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="text-gray-400 block text-[10px] uppercase font-bold">Waktu Kunjungan</span>
+                                                    <span className="font-semibold text-admin-text">{item.visit_time || '-'}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="text-gray-400 block text-[10px] uppercase font-bold">Rentang Usia Peserta</span>
+                                                    <span className="font-semibold text-admin-text">{item.age_group || '-'}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="text-gray-400 block text-[10px] uppercase font-bold">Bahasa Pendampingan</span>
+                                                    <span className="font-semibold text-admin-text">{item.language || '-'}</span>
+                                                </div>
+                                            </div>
+
                                             <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                                                <p className="text-xs font-bold text-gray-500 mb-2 flex items-center gap-1.5">
+                                                <p className="text-xs font-bold text-gray-500 mb-1.5 flex items-center gap-1.5">
                                                     <MessageSquare size={12} />
-                                                    Pesan Tambahan
+                                                    Tujuan / Kebutuhan Khusus
                                                 </p>
                                                 {item.notes ? (
                                                     <p className="text-sm text-admin-text leading-relaxed">{item.notes}</p>
                                                 ) : (
-                                                    <p className="text-xs text-gray-400 italic">Tidak ada pesan tambahan.</p>
+                                                    <p className="text-xs text-gray-400 italic">Tidak ada catatan tambahan.</p>
                                                 )}
                                             </div>
                                         </div>

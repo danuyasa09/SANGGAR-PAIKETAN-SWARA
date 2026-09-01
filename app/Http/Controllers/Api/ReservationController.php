@@ -19,9 +19,13 @@ class ReservationController extends Controller
             'name'         => 'required|string|max:255',
             'phone'        => 'required|string|max:50',
             'email'        => 'required|email|max:255',
+            'origin'       => 'nullable|string|max:255',
             'visit_date'   => 'required|date|after:today',
+            'visit_time'   => 'nullable|string|max:100',
             'participants' => 'required|string|max:50',
+            'age_group'    => 'nullable|string|max:100',
             'package_type' => 'required|string|max:100',
+            'language'     => 'nullable|string|max:100',
             'notes'        => 'nullable|string',
         ]);
 

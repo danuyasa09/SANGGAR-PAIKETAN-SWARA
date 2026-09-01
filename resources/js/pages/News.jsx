@@ -43,14 +43,14 @@ export default function News({ content, changePage }) {
 
                 <div className="relative z-10 max-w-4xl mx-auto px-4 text-center mt-12 space-y-6">
                     <span className="text-xs font-bold tracking-widest text-[#C99B53] uppercase block">
-                        — INFORMASI &amp; ACARA SANGGAR —
+                        — DOKUMENTASI & KABAR —
                     </span>
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                        {content('news_hero_title', 'Berita Terkini')}
+                        {content('news_title', 'Kabar dari Sanggar')}
                     </h1>
                     <div className="h-[2px] w-20 bg-[#C99B53] mx-auto" />
                     <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                        {content('news_hero_desc', 'Ikuti perkembangan terbaru, acara, dan cerita seputar pelestarian seni budaya Bali di Sanggar Paiketan Swara.')}
+                        {content('news_subtitle', 'Ikuti perkembangan, kegiatan, dan cerita terbaru dari Sanggar Paiketan Swara.')}
                     </p>
                 </div>
 
