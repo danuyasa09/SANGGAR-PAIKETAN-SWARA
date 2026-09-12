@@ -83,14 +83,14 @@ export default function Reservation({ content }) {
                 </div>
 
                 {/* SVG Curve Divider */}
-                <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-20 pointer-events-none">
+                <div className="absolute -bottom-[2px] left-0 w-full overflow-hidden leading-[0] z-20 pointer-events-none">
                     <svg 
                         viewBox="0 0 1200 120" 
                         preserveAspectRatio="none" 
-                        className="relative block w-full h-[35px] md:h-[50px] text-[#FAF6F0]"
+                        className="relative block w-full h-[35px] md:h-[50px] text-[#FAF6F0] translate-y-px"
                         fill="currentColor"
                     >
-                        <path d="M0,0 C600,120 1200,0 1200,0 L1200,120 L0,120 Z"></path>
+                        <path d="M0,0 C150,0 350,100 600,100 C850,100 1050,0 1200,0 L1200,125 L0,125 Z"></path>
                     </svg>
                 </div>
             </section>

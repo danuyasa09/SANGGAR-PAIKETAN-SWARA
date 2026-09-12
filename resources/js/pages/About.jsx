@@ -50,7 +50,7 @@ export default function About({ content, changePage }) {
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url('${content('about_banner_image', '/images/about_banner.png').startsWith('http') || content('about_banner_image', '/images/about_banner.png').startsWith('/') ? content('about_banner_image', '/images/about_banner.png') : `/storage/${content('about_banner_image', '/images/about_banner.png')}`}')` }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/55 to-[#FAF6F0]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/90 via-[#261E14]/75 to-[#261E14]/30" />
 
                 <div className="relative z-10 max-w-4xl mx-auto px-4 text-center mt-12 space-y-6">
                     <span className="text-xs font-bold tracking-widest text-[#C99B53] uppercase block">
@@ -63,6 +63,18 @@ export default function About({ content, changePage }) {
                     <p className="text-base sm:text-lg text-gray-100 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
                         {content('about_subtitle', 'Ruang latihan gamelan dan tari, pembinaan karakter, pelestarian budaya, serta kebersamaan lintas generasi di Desa Bantas.')}
                     </p>
+                </div>
+
+                {/* SVG Curve Divider */}
+                <div className="absolute -bottom-[2px] left-0 w-full overflow-hidden leading-[0] z-20 pointer-events-none">
+                    <svg 
+                        viewBox="0 0 1200 120" 
+                        preserveAspectRatio="none" 
+                        className="relative block w-full h-[35px] md:h-[50px] text-[#FAF6F0] translate-y-px"
+                        fill="currentColor"
+                    >
+                        <path d="M0,0 C150,0 350,100 600,100 C850,100 1050,0 1200,0 L1200,125 L0,125 Z"></path>
+                    </svg>
                 </div>
             </section>
 

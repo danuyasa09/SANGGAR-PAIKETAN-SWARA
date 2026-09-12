@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Eye, Calendar, Loader2 } from 'lucide-react';
+import { Clock, Eye, Calendar, Loader2, ArrowRight } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 import axios from '../lib/axios';
 
@@ -21,9 +21,6 @@ export default function News({ content, changePage }) {
             .catch(() => setArticles([]))
             .finally(() => setLoading(false));
     }, []);
-
-    const featured   = articles[0] ?? null;
-    const restList   = articles.slice(1);
 
     const resolveContent = (key, fallback) => {
         const src = content(key, fallback);
@@ -54,9 +51,9 @@ export default function News({ content, changePage }) {
                     </p>
                 </div>
 
-                <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-20 pointer-events-none">
-                    <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[40px] md:h-[60px] text-[#FAF6F0]" fill="currentColor">
-                        <path d="M0,120 L600,45 L1200,120 Z" />
+                <div className="absolute -bottom-[2px] left-0 w-full overflow-hidden leading-[0] z-20 pointer-events-none">
+                    <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[35px] md:h-[50px] text-[#FAF6F0] translate-y-px" fill="currentColor">
+                        <path d="M0,0 C150,0 350,100 600,100 C850,100 1050,0 1200,0 L1200,125 L0,125 Z" />
                     </svg>
                 </div>
             </section>
@@ -72,84 +69,69 @@ export default function News({ content, changePage }) {
                         <p className="text-lg font-serif">Belum ada berita yang dipublikasikan.</p>
                     </div>
                 ) : (
-                    <>
-                        {/* Featured Article */}
-                        {featured && (
-                            <ScrollReveal distance="40px">
-                                <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md mb-16 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                                    onClick={() => changePage('news-detail', featured.id)}>
-                                    <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
-                                        <div className="lg:col-span-6 relative min-h-[280px] overflow-hidden bg-gray-100">
-                                            <img src={resolveUrl(featured.cover_url)} alt={featured.title}
-                                                className="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                        {articles.map((art, idx) => (
+                            <ScrollReveal key={art.id} delay={(idx % 3) * 120} distance="30px" className="flex">
+                                <div 
+                                    className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between w-full cursor-pointer group hover:-translate-y-1"
+                                    onClick={() => changePage('news-detail', art.id)}
+                                >
+                                    <div>
+                                        {/* Cover Image with fixed uniform aspect ratio */}
+                                        <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
+                                            <img 
+                                                src={resolveUrl(art.cover_url)} 
+                                                alt={art.title}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                                            />
                                         </div>
-                                        <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-center space-y-5">
-                                            <span className="self-start text-[9px] tracking-widest font-bold bg-[#E8F0EC] text-[#2F523E] px-2.5 py-1 rounded uppercase">
-                                                {featured.tag}
+
+                                        {/* Content */}
+                                        <div className="p-6 space-y-3">
+                                            <span className="text-[9px] tracking-widest font-bold bg-[#E8F0EC] text-[#2F523E] px-2.5 py-1 rounded uppercase inline-block">
+                                                {art.tag}
                                             </span>
-                                            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#261E14] leading-tight group-hover:text-[#C99B53] transition-colors">
-                                                {featured.title}
-                                            </h2>
-                                            <div className="flex flex-wrap gap-4 text-xs text-gray-400">
-                                                {featured.published_at && <span className="flex items-center gap-1"><Calendar size={11} />{formatDate(featured.published_at)}</span>}
-                                                {featured.read_time && <span className="flex items-center gap-1"><Clock size={11} />{featured.read_time}</span>}
-                                                {featured.views > 0 && <span className="flex items-center gap-1"><Eye size={11} />Dibaca {featured.views.toLocaleString()} kali</span>}
-                                            </div>
-                                            {featured.content?.[0]?.text && (
-                                                <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 font-sans">{featured.content[0].text}</p>
+                                            <h3 className="text-lg font-serif font-bold text-[#261E14] leading-snug line-clamp-2 min-h-[3.25rem] group-hover:text-[#C99B53] transition-colors">
+                                                {art.title}
+                                            </h3>
+                                            {art.content?.[0]?.text && (
+                                                <p className="text-xs text-gray-500 leading-relaxed line-clamp-3 font-sans">
+                                                    {art.content[0].text}
+                                                </p>
                                             )}
-                                            <button onClick={e => { e.stopPropagation(); changePage('news-detail', featured.id); }}
-                                                className="self-start inline-flex items-center text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors cursor-pointer mt-2">
-                                                BACA SELENGKAPNYA
-                                            </button>
+                                            <div className="flex flex-wrap gap-3 text-[11px] text-gray-400 pt-1">
+                                                {art.published_at && (
+                                                    <span className="flex items-center gap-1">
+                                                        <Calendar size={11} />{formatDate(art.published_at)}
+                                                    </span>
+                                                )}
+                                                {art.read_time && (
+                                                    <span className="flex items-center gap-1">
+                                                        <Clock size={11} />{art.read_time}
+                                                    </span>
+                                                )}
+                                                {art.views > 0 && (
+                                                    <span className="flex items-center gap-1">
+                                                        <Eye size={11} />{art.views.toLocaleString()}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
+                                    </div>
+
+                                    <div className="px-6 pb-6 pt-2 border-t border-gray-100/80 mt-auto">
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); changePage('news-detail', art.id); }}
+                                            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C99B53] group-hover:text-[#B7863F] uppercase tracking-wider transition-colors cursor-pointer"
+                                        >
+                                            <span>Baca Selengkapnya</span>
+                                            <ArrowRight size={13} className="transition-transform duration-200 group-hover:translate-x-1" />
+                                        </button>
                                     </div>
                                 </div>
                             </ScrollReveal>
-                        )}
-
-                        {/* Articles Grid */}
-                        {restList.length > 0 && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-                                {restList.map((art, idx) => (
-                                    <ScrollReveal key={art.id} delay={(idx % 3) * 150} distance="30px" className="flex">
-                                        <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between w-full pb-6 cursor-pointer group"
-                                            onClick={() => changePage('news-detail', art.id)}>
-                                            <div>
-                                                <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
-                                                    <img src={resolveUrl(art.cover_url)} alt={art.title}
-                                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                                                </div>
-                                                <div className="p-6 space-y-3">
-                                                    <span className="text-[9px] tracking-widest font-bold bg-[#E8F0EC] text-[#2F523E] px-2.5 py-1 rounded uppercase inline-block">
-                                                        {art.tag}
-                                                    </span>
-                                                    <h3 className="text-lg font-serif font-bold text-[#261E14] leading-snug group-hover:text-[#C99B53] transition-colors">
-                                                        {art.title}
-                                                    </h3>
-                                                    {art.content?.[0]?.text && (
-                                                        <p className="text-xs text-gray-500 leading-relaxed line-clamp-3 font-sans">
-                                                            {art.content[0].text}
-                                                        </p>
-                                                    )}
-                                                    <div className="flex gap-3 text-[10px] text-gray-400 pt-1">
-                                                        {art.published_at && <span className="flex items-center gap-1"><Calendar size={10} />{formatDate(art.published_at)}</span>}
-                                                        {art.read_time && <span className="flex items-center gap-1"><Clock size={10} />{art.read_time}</span>}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="px-6 pt-2">
-                                                <button onClick={e => { e.stopPropagation(); changePage('news-detail', art.id); }}
-                                                    className="inline-flex items-center text-xs font-bold text-[#C99B53] hover:text-[#B7863F] uppercase tracking-wider transition-colors cursor-pointer">
-                                                    BACA SELENGKAPNYA
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </ScrollReveal>
-                                ))}
-                            </div>
-                        )}
-                    </>
+                        ))}
+                    </div>
                 )}
             </div>
         </div>

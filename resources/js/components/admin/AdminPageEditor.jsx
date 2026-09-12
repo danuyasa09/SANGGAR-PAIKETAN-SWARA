@@ -13,12 +13,19 @@ const PAGE_SCHEMAS = {
             { key: 'home_about_desc1', label: 'Paragraf Belajar Bersama 1', type: 'text', section: 'beranda' },
             { key: 'home_about_desc2', label: 'Paragraf Belajar Bersama 2', type: 'text', section: 'beranda' },
             { key: 'home_about_image', label: 'Gambar Belajar Bersama', type: 'image', section: 'beranda' },
+            { key: 'home_program_1_img', label: 'Gambar Pengalaman 1 (Belajar Gamelan Bali)', type: 'image', section: 'beranda' },
+            { key: 'home_program_2_img', label: 'Gambar Pengalaman 2 (Belajar Tari Bali)', type: 'image', section: 'beranda' },
+            { key: 'home_program_3_img', label: 'Gambar Pengalaman 3 (Pertunjukan Seni)', type: 'image', section: 'beranda' },
+            { key: 'home_program_4_img', label: 'Gambar Pengalaman 4 (Kunjungan Edukasi)', type: 'image', section: 'beranda' },
             { key: 'home_eduwisata_title', label: 'Judul Paket Edu-Wisata', type: 'text', section: 'beranda' },
             { key: 'home_eduwisata_desc', label: 'Deskripsi Paket Edu-Wisata', type: 'text', section: 'beranda' },
+            { key: 'home_package_image', label: 'Gambar Paket Edu-Wisata', type: 'image', section: 'beranda' },
             { key: 'home_why_title', label: 'Judul Mengapa Berkunjung', type: 'text', section: 'beranda' },
+            { key: 'home_about_us_image', label: 'Gambar Tentang Kami (Teaser Beranda)', type: 'image', section: 'beranda' },
             { key: 'home_about_teaser_p1', label: 'Paragraf Tentang Kami 1 (Alamat Desa Bantas)', type: 'text', section: 'beranda' },
             { key: 'home_about_teaser_p2', label: 'Paragraf Tentang Kami 2 (Ruang Latihan & Eduwisata)', type: 'text', section: 'beranda' },
             { key: 'home_about_teaser_p3', label: 'Paragraf Tentang Kami 3 (Gotong Royong & Regenerasi)', type: 'text', section: 'beranda' },
+            { key: 'home_cta_bg', label: 'Gambar Latar Ajakan Bawah (CTA Background)', type: 'image', section: 'beranda' },
             { key: 'cta_bottom_title', label: 'Judul Ajakan Bawah (CTA)', type: 'text', section: 'global' },
             { key: 'cta_bottom_desc', label: 'Deskripsi Ajakan Bawah (CTA)', type: 'text', section: 'global' }
         ]
@@ -42,10 +49,18 @@ const PAGE_SCHEMAS = {
     program: {
         title: "Kelola Halaman Program Edu-Wisata",
         fields: [
-            { key: 'programs_banner_image', label: 'Gambar Banner Program', type: 'image', section: 'program' },
-            { key: 'programs_hero_title', label: 'Judul Utama', type: 'text', section: 'program' },
-            { key: 'programs_hero_subtitle', label: 'Sub-Judul Hero', type: 'text', section: 'program' },
-            { key: 'programs_hero_desc', label: 'Deskripsi Hero', type: 'text', section: 'program' }
+            { key: 'programs_banner_image', label: 'Gambar Latar Hero (Background Banner)', type: 'image', section: 'program' },
+            { key: 'programs_hero_badge', label: 'Label Atas Hero (Badge)', type: 'text', section: 'program' },
+            { key: 'programs_hero_subtitle', label: 'Judul Utama Hero (Heading)', type: 'text', section: 'program' },
+            { key: 'programs_hero_desc', label: 'Deskripsi Hero', type: 'text', section: 'program' },
+            { key: 'programs_packages_badge', label: 'Label Atas Pilihan Paket (Badge)', type: 'text', section: 'program' },
+            { key: 'programs_packages_title', label: 'Judul Seksi Pilihan Paket', type: 'text', section: 'program' },
+            { key: 'programs_custom_badge', label: 'Label Atas Program Khusus (Badge)', type: 'text', section: 'program' },
+            { key: 'programs_custom_title', label: 'Judul Seksi Program Khusus', type: 'text', section: 'program' },
+            { key: 'programs_custom_desc', label: 'Deskripsi Seksi Program Khusus', type: 'text', section: 'program' },
+            { key: 'programs_custom_note', label: 'Catatan / Keterangan Program Khusus', type: 'text', section: 'program' },
+            { key: 'programs_custom_image', label: 'Gambar Seksi Program Khusus', type: 'image', section: 'program' },
+            { key: 'programs_custom_btn_label', label: 'Teks Tombol Konsultasi Program', type: 'text', section: 'program' },
         ]
     },
     berita: {

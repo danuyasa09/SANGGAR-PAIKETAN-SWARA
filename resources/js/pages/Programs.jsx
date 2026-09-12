@@ -7,6 +7,15 @@ export default function Programs({ changePage, content }) {
     const [packageDetails, setPackageDetails] = useState([]);
     const [loadingPackages, setLoadingPackages] = useState(true);
 
+    const resolveUrl = (val, fallback = '') => {
+        const src = val || fallback;
+        if (!src) return '';
+        if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/')) {
+            return src;
+        }
+        return `/storage/${src}`;
+    };
+
     const packageIcons = [
         <Award className="w-5 h-5" />,
         <UserCheck className="w-5 h-5" />,
@@ -28,7 +37,7 @@ export default function Programs({ changePage, content }) {
                     capacity: prog.capacity,
                     price: prog.price || 'Hubungi kami untuk penawaran',
                     btnLabel: prog.btn_label || 'Pesan Reservasi',
-                    thumbnail: prog.thumbnail_url || 'https://images.unsplash.com/photo-1513829096963-8a30ef68ad66?q=80&w=600&auto=format&fit=crop',
+                    thumbnail: resolveUrl(prog.thumbnail_url, 'https://images.unsplash.com/photo-1513829096963-8a30ef68ad66?q=80&w=600&auto=format&fit=crop'),
                     icon: packageIcons[idx % packageIcons.length],
                     customBtn: prog.is_custom_btn,
                 }));
@@ -114,14 +123,14 @@ export default function Programs({ changePage, content }) {
             {/* HERO HEADER */}
             <section className="relative py-32 md:py-44 flex items-center justify-center overflow-hidden">
                 <div 
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('${content('programs_banner_image', '/images/programs_banner.png').startsWith('http') || content('programs_banner_image', '/images/programs_banner.png').startsWith('/') ? content('programs_banner_image', '/images/programs_banner.png') : `/storage/${content('programs_banner_image', '/images/programs_banner.png')}`}')` }}
+                    className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+                    style={{ backgroundImage: `url('${resolveUrl(content('programs_banner_image'), '/images/programs_banner.png')}')` }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/55 to-[#FAF6F0]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/90 via-[#261E14]/75 to-[#261E14]/30" />
 
                 <div className="relative z-10 max-w-4xl mx-auto px-4 text-center mt-12 space-y-6">
                     <span className="text-xs font-bold tracking-widest text-[#C99B53] uppercase block">
-                        — EDU-WISATA SENI BUDAYA —
+                        {content('programs_hero_badge', content('programs_hero_title', '— EDU-WISATA SENI BUDAYA —'))}
                     </span>
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
                         {content('programs_hero_subtitle', 'Belajar Budaya Bali Bersama Pelaku Seni Lokal')}
@@ -131,24 +140,36 @@ export default function Programs({ changePage, content }) {
                         {content('programs_hero_desc', 'Program edu-wisata Sanggar Paiketan Swara menghadirkan pengalaman belajar gamelan dan tari secara langsung. Peserta akan didampingi oleh anggota sanggar dalam suasana yang ramah dan interaktif.')}
                     </p>
                 </div>
+
+                {/* SVG Curve Divider */}
+                <div className="absolute -bottom-[2px] left-0 w-full overflow-hidden leading-[0] z-20 pointer-events-none">
+                    <svg 
+                        viewBox="0 0 1200 120" 
+                        preserveAspectRatio="none" 
+                        className="relative block w-full h-[35px] md:h-[50px] text-[#FAF6F0] translate-y-px"
+                        fill="currentColor"
+                    >
+                        <path d="M0,0 C150,0 350,100 600,100 C850,100 1050,0 1200,0 L1200,125 L0,125 Z"></path>
+                    </svg>
+                </div>
             </section>
 
             {/* TARGET PESERTA */}
-            <section className="py-12 bg-white border-b border-gray-100">
+            <section className="py-12 bg-[#FAF6F0]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <ScrollReveal distance="20px" className="text-center mb-8">
                         <span className="text-[10px] font-bold tracking-widest text-[#C99B53] uppercase block">
-                            — PESERTA PROGRAM —
+                            {content('programs_target_badge', '— PESERTA PROGRAM —')}
                         </span>
                         <h3 className="text-xl sm:text-2xl font-serif text-[#261E14] font-bold mt-1">
-                            Program Ini Cocok Untuk:
+                            {content('programs_target_title', 'Program Ini Cocok Untuk:')}
                         </h3>
                     </ScrollReveal>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4">
                         {targetAudiences.map((aud, idx) => (
                             <ScrollReveal key={idx} delay={idx * 50} distance="20px" className="flex">
-                                <div className="bg-[#FAF6F0]/60 hover:bg-[#FAF6F0] p-4 rounded-xl border border-gray-100 flex items-center gap-3 w-full transition-all">
+                                <div className="bg-white hover:border-[#C99B53]/40 p-4 rounded-xl border border-gray-200/80 shadow-xs flex items-center gap-3 w-full transition-all">
                                     <div className="w-9 h-9 rounded-lg bg-white shadow-xs flex items-center justify-center shrink-0">
                                         {aud.icon}
                                     </div>
@@ -164,10 +185,10 @@ export default function Programs({ changePage, content }) {
             <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <ScrollReveal distance="30px" className="text-center mb-16 space-y-2">
                     <span className="text-[10px] font-bold tracking-widest text-[#C99B53] uppercase block">
-                        — PILIHAN PAKET —
+                        {content('programs_packages_badge', '— PILIHAN PAKET —')}
                     </span>
                     <h2 className="text-3xl sm:text-4xl font-serif text-[#261E14] font-bold">
-                        Pilihan Paket Edu-Wisata
+                        {content('programs_packages_title', 'Pilihan Paket Edu-Wisata')}
                     </h2>
                     <div className="h-[2px] w-20 bg-[#C99B53] mx-auto mt-2" />
                 </ScrollReveal>
@@ -261,14 +282,14 @@ export default function Programs({ changePage, content }) {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                         <ScrollReveal className="lg:col-span-6 space-y-6" distance="30px">
                             <span className="text-xs font-bold tracking-widest text-[#C99B53] uppercase block">
-                                — PROGRAM KHUSUS —
+                                {content('programs_custom_badge', '— PROGRAM KHUSUS —')}
                             </span>
                             <h2 className="text-3xl sm:text-4xl font-serif text-[#261E14] font-bold leading-tight">
-                                Program Khusus & Kustom
+                                {content('programs_custom_title', 'Program Khusus & Kustom')}
                             </h2>
                             <div className="h-[2px] w-16 bg-[#C99B53]" />
                             <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans font-medium">
-                                Kami dapat membantu menyusun kegiatan khusus yang disesuaikan dengan kebutuhan institusi, rombongan, atau agenda pembelajaran Anda.
+                                {content('programs_custom_desc', 'Kami dapat membantu menyusun kegiatan khusus yang disesuaikan dengan kebutuhan institusi, rombongan, atau agenda pembelajaran Anda.')}
                             </p>
 
                             <div className="space-y-2.5 pt-2">
@@ -283,14 +304,14 @@ export default function Programs({ changePage, content }) {
                             </div>
 
                             <p className="text-xs text-gray-500 italic pt-2">
-                                Silakan sampaikan jumlah peserta, rentang usia, waktu kunjungan, dan tujuan kegiatan. Tim kami akan membantu menyiapkan program yang sesuai.
+                                {content('programs_custom_note', 'Silakan sampaikan jumlah peserta, rentang usia, waktu kunjungan, dan tujuan kegiatan. Tim kami akan membantu menyiapkan program yang sesuai.')}
                             </p>
 
                             <button
                                 onClick={() => changePage('contact')}
                                 className="px-8 py-3.5 bg-[#C99B53] hover:bg-[#B7863F] text-[#261E14] font-bold text-xs rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer uppercase tracking-wider inline-flex items-center gap-2"
                             >
-                                <span>Konsultasikan Program</span>
+                                <span>{content('programs_custom_btn_label', 'Konsultasikan Program')}</span>
                                 <ArrowRight size={14} />
                             </button>
                         </ScrollReveal>
@@ -298,7 +319,7 @@ export default function Programs({ changePage, content }) {
                         <ScrollReveal className="lg:col-span-6" delay={200} distance="30px">
                             <div className="relative rounded-3xl overflow-hidden shadow-xl border border-gray-100">
                                 <img
-                                    src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop"
+                                    src={resolveUrl(content('programs_custom_image'), 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop')}
                                     alt="Program Edu-Wisata Khusus"
                                     className="w-full h-auto object-cover aspect-[4/3]"
                                 />

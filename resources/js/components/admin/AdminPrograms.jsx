@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import axios from '../../lib/axios';
 import {
     Map, Plus, Pencil, Trash2, RefreshCw, X, Check,
     GripVertical, ChevronUp, ChevronDown, ImagePlus,
-    Clock, Users, Tag, Loader2, Eye, EyeOff, AlertCircle
+    Clock, Users, Tag, Loader2, Eye, EyeOff, AlertCircle,
+    Layers, Sparkles, UploadCloud, Save, Image, ExternalLink
 } from 'lucide-react';
 
 const EMPTY_FORM = {
@@ -22,6 +24,11 @@ const EMPTY_FORM = {
 };
 
 export default function AdminPrograms() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const initialTab = searchParams.get('tab') === 'content' ? 'content' : 'cards';
+    const [activeTab, setActiveTab]         = useState(initialTab);
+
+    // Program cards state
     const [programs, setPrograms]           = useState([]);
     const [loading, setLoading]             = useState(true);
     const [modalOpen, setModalOpen]         = useState(false);
@@ -33,6 +40,13 @@ export default function AdminPrograms() {
     const [error, setError]                 = useState(null);
     const [toast, setToast]                 = useState(null);
     const [previewImg, setPreviewImg]       = useState('');
+
+    // Page content state
+    const [pageContents, setPageContents]   = useState({});
+    const [contentLoading, setContentLoading] = useState(false);
+    const [savingContent, setSavingContent] = useState(false);
+    const [uploadingBanner, setUploadingBanner] = useState(false);
+    const [uploadingCustomImg, setUploadingCustomImg] = useState(false);
 
     const showToast = (msg, type = 'success') => {
         setToast({ msg, type });
@@ -53,7 +67,116 @@ export default function AdminPrograms() {
         }
     }, []);
 
-    useEffect(() => { fetchPrograms(); }, [fetchPrograms]);
+    const fetchPageContents = useCallback(async () => {
+        setContentLoading(true);
+        try {
+            const token = localStorage.getItem('admin_token');
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            const res = await axios.get('/api/content');
+            const map = {};
+            res.data.forEach(item => {
+                map[item.key] = item.value;
+            });
+            setPageContents(map);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setContentLoading(false);
+        }
+    }, []);
+
+    useEffect(() => { 
+        fetchPrograms(); 
+        fetchPageContents();
+    }, [fetchPrograms, fetchPageContents]);
+
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        setSearchParams(tab === 'content' ? { tab: 'content' } : {});
+    };
+
+    const handleContentChange = (key, val) => {
+        setPageContents(prev => ({ ...prev, [key]: val }));
+    };
+
+    const handleSaveAllContent = async () => {
+        setSavingContent(true);
+        try {
+            const keysToSave = [
+                'programs_banner_image',
+                'programs_hero_badge',
+                'programs_hero_title',
+                'programs_hero_subtitle',
+                'programs_hero_desc',
+                'programs_packages_badge',
+                'programs_packages_title',
+                'programs_target_badge',
+                'programs_target_title',
+                'programs_custom_badge',
+                'programs_custom_title',
+                'programs_custom_desc',
+                'programs_custom_note',
+                'programs_custom_image',
+                'programs_custom_btn_label',
+            ];
+            const payload = keysToSave
+                .filter(k => pageContents[k] !== undefined)
+                .map(k => ({ key: k, value: pageContents[k] }));
+
+            await axios.post('/api/content', { contents: payload });
+            showToast('Teks & pengaturan halaman berhasil disimpan!');
+        } catch (e) {
+            showToast('Gagal menyimpan pengaturan halaman.', 'error');
+        } finally {
+            setSavingContent(false);
+        }
+    };
+
+    const handleUploadHeroBanner = async (file) => {
+        if (!file) return;
+        setUploadingBanner(true);
+        const fd = new FormData();
+        fd.append('image', file);
+        fd.append('section', 'program');
+        try {
+            const res = await axios.post('/api/content/upload', fd, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            const path = res.data.path;
+            handleContentChange('programs_banner_image', path);
+            await axios.post('/api/content', {
+                contents: [{ key: 'programs_banner_image', value: path }]
+            });
+            showToast('Background hero berhasil diperbarui!');
+        } catch (e) {
+            showToast('Gagal mengunggah background hero.', 'error');
+        } finally {
+            setUploadingBanner(false);
+        }
+    };
+
+    const handleUploadCustomImg = async (file) => {
+        if (!file) return;
+        setUploadingCustomImg(true);
+        const fd = new FormData();
+        fd.append('image', file);
+        fd.append('section', 'program');
+        try {
+            const res = await axios.post('/api/content/upload', fd, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            const path = res.data.path;
+            handleContentChange('programs_custom_image', path);
+            await axios.post('/api/content', {
+                contents: [{ key: 'programs_custom_image', value: path }]
+            });
+            showToast('Gambar program khusus berhasil diperbarui!');
+        } catch (e) {
+            showToast('Gagal mengunggah gambar program khusus.', 'error');
+        } finally {
+            setUploadingCustomImg(false);
+        }
+    };
 
     /* -------- Modal Helpers -------- */
     const openCreate = () => {
@@ -207,135 +330,550 @@ export default function AdminPrograms() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-admin-primary/10 flex items-center justify-center text-admin-primary">
+                    <div className="w-10 h-10 rounded-xl bg-admin-primary/10 flex items-center justify-center text-admin-primary shrink-0">
                         <Map size={20} />
                     </div>
                     <div>
                         <h1 className="text-2xl font-admin-serif font-bold text-admin-text">Program Edu-Wisata</h1>
-                        <p className="text-sm text-admin-text/50">Kelola paket program yang tampil di halaman publik</p>
+                        <p className="text-sm text-admin-text/50">
+                            {activeTab === 'cards' 
+                                ? 'Kelola paket program yang tampil di halaman publik' 
+                                : 'Atur gambar background hero, judul, subjudul, dan teks seksi halaman'}
+                        </p>
                     </div>
                 </div>
-                <div className="flex gap-2">
-                    <button onClick={fetchPrograms} disabled={loading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-admin-text/70 shadow-sm transition-colors">
-                        <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-                        Refresh
-                    </button>
-                    <button onClick={openCreate}
-                        className="flex items-center gap-2 px-4 py-2 text-sm bg-admin-primary text-white rounded-lg hover:bg-admin-primary/90 shadow-sm transition-colors font-semibold">
-                        <Plus size={16} />
-                        Tambah Program
-                    </button>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                    {activeTab === 'cards' ? (
+                        <>
+                            <button onClick={fetchPrograms} disabled={loading}
+                                className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-admin-text/70 shadow-sm transition-colors cursor-pointer">
+                                <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+                                Refresh
+                            </button>
+                            <button onClick={openCreate}
+                                className="flex items-center gap-2 px-4 py-2 text-sm bg-admin-primary text-white rounded-lg hover:bg-admin-primary/90 shadow-sm transition-colors font-semibold cursor-pointer">
+                                <Plus size={16} />
+                                Tambah Program
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button onClick={fetchPageContents} disabled={contentLoading}
+                                className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-admin-text/70 shadow-sm transition-colors cursor-pointer">
+                                <RefreshCw size={14} className={contentLoading ? 'animate-spin' : ''} />
+                                Refresh Konten
+                            </button>
+                            <button onClick={handleSaveAllContent} disabled={savingContent}
+                                className="flex items-center gap-2 px-4 py-2 text-sm bg-admin-secondary hover:bg-[#A37B3D] text-white rounded-lg shadow-sm transition-colors font-semibold cursor-pointer disabled:opacity-60">
+                                {savingContent ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                                Simpan Perubahan Teks
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
 
-            {/* Program Cards */}
-            {loading ? (
-                <div className="flex items-center justify-center py-24 text-admin-text/40">
-                    <Loader2 size={28} className="animate-spin mr-2" /> Memuat program...
-                </div>
-            ) : programs.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-24 text-admin-text/40 gap-4 border-2 border-dashed border-gray-200 rounded-2xl">
-                    <Map size={48} strokeWidth={1} />
-                    <p className="text-sm">Belum ada program. Klik "Tambah Program" untuk mulai.</p>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-                    {programs.map((prog) => (
-                        <div key={prog.id}
-                            className={`bg-white rounded-2xl border shadow-sm overflow-hidden flex flex-col transition-all ${prog.is_active ? 'border-gray-200' : 'border-gray-200 opacity-60'}`}>
-                            {/* Thumbnail */}
-                            <div className="relative h-44 bg-gray-100 overflow-hidden">
-                                {prog.thumbnail_url ? (
-                                    <img src={resolveImg(prog.thumbnail_url)} alt={prog.title}
-                                        className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-gray-300">
-                                        <ImagePlus size={40} strokeWidth={1} />
-                                    </div>
-                                )}
-                                {/* Code Badge */}
-                                <span className="absolute top-3 left-3 bg-[#C99B53] text-[#261E14] text-[10px] font-bold tracking-wider px-3 py-1 rounded-md uppercase shadow">
-                                    {prog.code || '—'}
-                                </span>
-                                {/* Active Badge */}
-                                <span className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full ${prog.is_active ? 'bg-emerald-500 text-white' : 'bg-gray-400 text-white'}`}>
-                                    {prog.is_active ? 'Aktif' : 'Nonaktif'}
-                                </span>
-                                {/* Order Badge */}
-                                <span className="absolute bottom-3 left-3 bg-black/50 text-white text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
-                                    Urutan #{prog.order}
-                                </span>
-                            </div>
+            {/* Navigation Tabs */}
+            <div className="flex border-b border-gray-200 gap-8">
+                <button
+                    onClick={() => handleTabChange('cards')}
+                    className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+                        activeTab === 'cards'
+                            ? 'border-admin-secondary text-admin-primary font-bold'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                >
+                    <Layers size={17} />
+                    <span>Kartu Paket Program</span>
+                    <span className={`text-[11px] px-2 py-0.5 rounded-full font-bold ${
+                        activeTab === 'cards' ? 'bg-admin-secondary/20 text-admin-secondary' : 'bg-gray-100 text-gray-500'
+                    }`}>
+                        {programs.length}
+                    </span>
+                </button>
 
-                            {/* Body */}
-                            <div className="p-5 flex-1 flex flex-col gap-3">
-                                <div>
-                                    <h3 className="font-admin-serif font-bold text-admin-text text-lg leading-tight">{prog.title}</h3>
-                                    <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">{prog.description}</p>
-                                </div>
+                <button
+                    onClick={() => handleTabChange('content')}
+                    className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+                        activeTab === 'content'
+                            ? 'border-admin-secondary text-admin-primary font-bold'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                >
+                    <Sparkles size={17} />
+                    <span>Hero & Teks Halaman</span>
+                </button>
+            </div>
 
-                                <div className="flex flex-wrap gap-2">
-                                    {prog.duration && (
-                                        <span className="flex items-center gap-1 text-[11px] text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">
-                                            <Clock size={11} />{prog.duration}
-                                        </span>
-                                    )}
-                                    {prog.capacity && (
-                                        <span className="flex items-center gap-1 text-[11px] text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">
-                                            <Users size={11} />{prog.capacity}
-                                        </span>
-                                    )}
-                                    {prog.price && (
-                                        <span className="flex items-center gap-1 text-[11px] text-[#C99B53] bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full font-semibold">
-                                            <Tag size={11} />{prog.price}
-                                        </span>
-                                    )}
-                                </div>
-
-                                {prog.activities?.length > 0 && (
-                                    <ul className="text-xs text-gray-500 space-y-0.5">
-                                        {prog.activities.slice(0, 3).map((a, i) => (
-                                            <li key={i} className="flex items-start gap-1.5">
-                                                <span className="text-[#C99B53] mt-0.5">•</span>{a}
-                                            </li>
-                                        ))}
-                                        {prog.activities.length > 3 && (
-                                            <li className="text-gray-400 italic">+{prog.activities.length - 3} aktivitas lainnya</li>
-                                        )}
-                                    </ul>
-                                )}
-
-                                {/* Actions */}
-                                <div className="flex items-center gap-2 pt-2 border-t border-gray-100 mt-auto flex-wrap">
-                                    <button onClick={() => openEdit(prog)}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-semibold">
-                                        <Pencil size={12} /> Edit
-                                    </button>
-                                    <button onClick={() => toggleActive(prog)}
-                                        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg transition-colors font-semibold ${prog.is_active ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'}`}>
-                                        {prog.is_active ? <><EyeOff size={12} /> Nonaktifkan</> : <><Eye size={12} /> Aktifkan</>}
-                                    </button>
-                                    <div className="flex gap-1 ml-auto">
-                                        <button onClick={() => moveOrder(prog, -1)} title="Naik"
-                                            className="p-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors">
-                                            <ChevronUp size={14} />
-                                        </button>
-                                        <button onClick={() => moveOrder(prog, 1)} title="Turun"
-                                            className="p-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors">
-                                            <ChevronDown size={14} />
-                                        </button>
-                                        <button onClick={() => handleDelete(prog.id)} disabled={deletingId === prog.id}
-                                            className="p-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors disabled:opacity-50">
-                                            {deletingId === prog.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+            {/* TAB 1: PROGRAM CARDS */}
+            {activeTab === 'cards' && (
+                <>
+                    {loading ? (
+                        <div className="flex items-center justify-center py-24 text-admin-text/40">
+                            <Loader2 size={28} className="animate-spin mr-2" /> Memuat program...
                         </div>
-                    ))}
+                    ) : programs.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-24 text-admin-text/40 gap-4 border-2 border-dashed border-gray-200 rounded-2xl">
+                            <Map size={48} strokeWidth={1} />
+                            <p className="text-sm">Belum ada program. Klik "Tambah Program" untuk mulai.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                            {programs.map((prog) => (
+                                <div key={prog.id}
+                                    className={`bg-white rounded-2xl border shadow-sm overflow-hidden flex flex-col transition-all ${prog.is_active ? 'border-gray-200' : 'border-gray-200 opacity-60'}`}>
+                                    {/* Thumbnail */}
+                                    <div className="relative h-44 bg-gray-100 overflow-hidden">
+                                        {prog.thumbnail_url ? (
+                                            <img src={resolveImg(prog.thumbnail_url)} alt={prog.title}
+                                                className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                                <ImagePlus size={40} strokeWidth={1} />
+                                            </div>
+                                        )}
+                                        {/* Code Badge */}
+                                        <span className="absolute top-3 left-3 bg-[#C99B53] text-[#261E14] text-[10px] font-bold tracking-wider px-3 py-1 rounded-md uppercase shadow">
+                                            {prog.code || '—'}
+                                        </span>
+                                        {/* Active Badge */}
+                                        <span className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full ${prog.is_active ? 'bg-emerald-500 text-white' : 'bg-gray-400 text-white'}`}>
+                                            {prog.is_active ? 'Aktif' : 'Nonaktif'}
+                                        </span>
+                                        {/* Order Badge */}
+                                        <span className="absolute bottom-3 left-3 bg-black/50 text-white text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
+                                            Urutan #{prog.order}
+                                        </span>
+                                    </div>
+
+                                    {/* Body */}
+                                    <div className="p-5 flex-1 flex flex-col gap-3">
+                                        <div>
+                                            <h3 className="font-admin-serif font-bold text-admin-text text-lg leading-tight">{prog.title}</h3>
+                                            <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">{prog.description}</p>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2">
+                                            {prog.duration && (
+                                                <span className="flex items-center gap-1 text-[11px] text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">
+                                                    <Clock size={11} />{prog.duration}
+                                                </span>
+                                            )}
+                                            {prog.capacity && (
+                                                <span className="flex items-center gap-1 text-[11px] text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">
+                                                    <Users size={11} />{prog.capacity}
+                                                </span>
+                                            )}
+                                            {prog.price && (
+                                                <span className="flex items-center gap-1 text-[11px] text-[#C99B53] bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full font-semibold">
+                                                    <Tag size={11} />{prog.price}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {prog.activities?.length > 0 && (
+                                            <ul className="text-xs text-gray-500 space-y-0.5">
+                                                {prog.activities.slice(0, 3).map((a, i) => (
+                                                    <li key={i} className="flex items-start gap-1.5">
+                                                        <span className="text-[#C99B53] mt-0.5">•</span>{a}
+                                                    </li>
+                                                ))}
+                                                {prog.activities.length > 3 && (
+                                                    <li className="text-gray-400 italic">+{prog.activities.length - 3} aktivitas lainnya</li>
+                                                )}
+                                            </ul>
+                                        )}
+
+                                        {/* Actions */}
+                                        <div className="flex items-center gap-2 pt-2 border-t border-gray-100 mt-auto flex-wrap">
+                                            <button onClick={() => openEdit(prog)}
+                                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-semibold cursor-pointer">
+                                                <Pencil size={12} /> Edit
+                                            </button>
+                                            <button onClick={() => toggleActive(prog)}
+                                                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg transition-colors font-semibold cursor-pointer ${prog.is_active ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'}`}>
+                                                {prog.is_active ? <><EyeOff size={12} /> Nonaktifkan</> : <><Eye size={12} /> Aktifkan</>}
+                                            </button>
+                                            <div className="flex gap-1 ml-auto">
+                                                <button onClick={() => moveOrder(prog, -1)} title="Naik"
+                                                    className="p-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors cursor-pointer">
+                                                    <ChevronUp size={14} />
+                                                </button>
+                                                <button onClick={() => moveOrder(prog, 1)} title="Turun"
+                                                    className="p-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors cursor-pointer">
+                                                    <ChevronDown size={14} />
+                                                </button>
+                                                <button onClick={() => handleDelete(prog.id)} disabled={deletingId === prog.id}
+                                                    className="p-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors disabled:opacity-50 cursor-pointer">
+                                                    {deletingId === prog.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </>
+            )}
+
+            {/* TAB 2: HERO & PAGE CONTENT */}
+            {activeTab === 'content' && (
+                <div className="space-y-8">
+                    {contentLoading ? (
+                        <div className="flex items-center justify-center py-24 text-admin-text/40">
+                            <Loader2 size={28} className="animate-spin mr-2" /> Memuat konten halaman...
+                        </div>
+                    ) : (
+                        <>
+                            {/* 1. HERO BANNER & HEADER */}
+                            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+                                <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-amber-50 text-[#C99B53] flex items-center justify-center font-bold text-sm">
+                                            1
+                                        </div>
+                                        <div>
+                                            <h2 className="text-lg font-admin-serif font-bold text-admin-text">
+                                                Hero Section (Banner Utama)
+                                            </h2>
+                                            <p className="text-xs text-gray-500">
+                                                Background hero image dan teks pembuka yang pertama kali dilihat pengunjung.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Gambar Background Hero */}
+                                <div className="space-y-3">
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700">
+                                        Gambar Latar Hero (Hero Background Image)
+                                    </label>
+                                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                                        <div className="lg:col-span-6 relative rounded-2xl overflow-hidden bg-gray-900 border border-gray-200 aspect-[16/9] shadow-inner group">
+                                            <img
+                                                src={resolveImg(pageContents['programs_banner_image']) || '/images/programs_banner.png'}
+                                                alt="Hero Banner Preview"
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex flex-col justify-end p-5 text-white">
+                                                <span className="text-[10px] font-bold text-[#C99B53] uppercase tracking-wider">
+                                                    {pageContents['programs_hero_badge'] || pageContents['programs_hero_title'] || '— EDU-WISATA SENI BUDAYA —'}
+                                                </span>
+                                                <h3 className="font-serif font-bold text-sm sm:text-base leading-tight mt-1 line-clamp-2">
+                                                    {pageContents['programs_hero_subtitle'] || 'Belajar Budaya Bali Bersama Pelaku Seni Lokal'}
+                                                </h3>
+                                                <p className="text-[11px] text-gray-300 line-clamp-2 mt-1">
+                                                    {pageContents['programs_hero_desc'] || 'Program edu-wisata Sanggar Paiketan Swara menghadirkan pengalaman belajar...'}
+                                                </p>
+                                            </div>
+                                            <span className="absolute top-3 right-3 bg-black/60 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">
+                                                Live Preview Banner
+                                            </span>
+                                        </div>
+
+                                        <div className="lg:col-span-6 space-y-4">
+                                            <div className="p-5 bg-[#FAF6F0] rounded-xl border border-[#C99B53]/20 space-y-3">
+                                                <span className="text-xs font-bold text-admin-primary block">
+                                                    Unggah Background Hero Baru
+                                                </span>
+                                                <label className={`flex flex-col items-center justify-center p-5 border-2 border-dashed border-[#C99B53]/40 hover:border-[#C99B53] rounded-xl cursor-pointer bg-white transition-colors ${uploadingBanner ? 'opacity-50 pointer-events-none' : ''}`}>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        onChange={(e) => handleUploadHeroBanner(e.target.files[0])}
+                                                    />
+                                                    {uploadingBanner ? (
+                                                        <div className="flex items-center gap-2 text-sm text-[#C99B53] font-semibold">
+                                                            <Loader2 size={18} className="animate-spin" /> Mengunggah Banner...
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex flex-col items-center text-center gap-1.5 text-gray-600">
+                                                            <UploadCloud size={24} className="text-[#C99B53]" />
+                                                            <span className="text-xs font-semibold text-admin-primary">Pilih file gambar dari komputer</span>
+                                                            <span className="text-[10px] text-gray-400">JPG, PNG, WebP (Maks. 2MB). Rekomendasi 1920x1080px</span>
+                                                        </div>
+                                                    )}
+                                                </label>
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-semibold text-gray-600">
+                                                    Atau Gunakan Jalur / URL Gambar:
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={pageContents['programs_banner_image'] || ''}
+                                                    onChange={(e) => handleContentChange('programs_banner_image', e.target.value)}
+                                                    placeholder="/images/programs_banner.png atau https://..."
+                                                    className="w-full text-xs p-3 rounded-lg border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:border-admin-secondary transition-colors"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Teks Hero */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-3 border-t border-gray-100">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-bold text-gray-700">
+                                            Label Atas Hero (Eyebrow / Badge)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={pageContents['programs_hero_badge'] ?? pageContents['programs_hero_title'] ?? ''}
+                                            onChange={(e) => handleContentChange('programs_hero_badge', e.target.value)}
+                                            placeholder="— EDU-WISATA SENI BUDAYA —"
+                                            className="w-full text-xs p-3 rounded-lg border border-gray-200 focus:outline-none focus:border-admin-secondary transition-colors"
+                                        />
+                                        <span className="text-[10px] text-gray-400">Tampil di atas judul utama</span>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-bold text-gray-700">
+                                            Judul Utama Hero (Heading H1)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={pageContents['programs_hero_subtitle'] ?? ''}
+                                            onChange={(e) => handleContentChange('programs_hero_subtitle', e.target.value)}
+                                            placeholder="Belajar Budaya Bali Bersama Pelaku Seni Lokal"
+                                            className="w-full text-xs p-3 rounded-lg border border-gray-200 focus:outline-none focus:border-admin-secondary transition-colors font-serif font-bold text-admin-text"
+                                        />
+                                        <span className="text-[10px] text-gray-400">Teks utama yang besar di banner hero</span>
+                                    </div>
+
+                                    <div className="md:col-span-2 space-y-1.5">
+                                        <label className="text-xs font-bold text-gray-700">
+                                            Deskripsi Singkat Hero
+                                        </label>
+                                        <textarea
+                                            rows={3}
+                                            value={pageContents['programs_hero_desc'] ?? ''}
+                                            onChange={(e) => handleContentChange('programs_hero_desc', e.target.value)}
+                                            placeholder="Program edu-wisata Sanggar Paiketan Swara menghadirkan pengalaman belajar gamelan dan tari secara langsung..."
+                                            className="w-full text-xs p-3 rounded-lg border border-gray-200 focus:outline-none focus:border-admin-secondary transition-colors leading-relaxed"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 2. SEKSI PILIHAN PAKET & TARGET PESERTA */}
+                            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+                                <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                            2
+                                        </div>
+                                        <div>
+                                            <h2 className="text-lg font-admin-serif font-bold text-admin-text">
+                                                Teks Bagian Paket & Target Peserta
+                                            </h2>
+                                            <p className="text-xs text-gray-500">
+                                                Label dan judul pengantar untuk daftar paket program dan peserta sasaran.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Pilihan Paket */}
+                                    <div className="p-4 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
+                                        <h3 className="text-xs font-bold uppercase tracking-wider text-admin-primary">
+                                            Seksi Daftar Paket Program
+                                        </h3>
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-medium text-gray-700">Label Atas (Badge)</label>
+                                            <input
+                                                type="text"
+                                                value={pageContents['programs_packages_badge'] ?? ''}
+                                                onChange={(e) => handleContentChange('programs_packages_badge', e.target.value)}
+                                                placeholder="— PILIHAN PAKET —"
+                                                className="w-full text-xs p-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:border-admin-secondary"
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-medium text-gray-700">Judul Seksi</label>
+                                            <input
+                                                type="text"
+                                                value={pageContents['programs_packages_title'] ?? ''}
+                                                onChange={(e) => handleContentChange('programs_packages_title', e.target.value)}
+                                                placeholder="Pilihan Paket Edu-Wisata"
+                                                className="w-full text-xs p-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:border-admin-secondary font-semibold"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Target Peserta */}
+                                    <div className="p-4 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
+                                        <h3 className="text-xs font-bold uppercase tracking-wider text-admin-primary">
+                                            Seksi Target Peserta
+                                        </h3>
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-medium text-gray-700">Label Atas (Badge)</label>
+                                            <input
+                                                type="text"
+                                                value={pageContents['programs_target_badge'] ?? ''}
+                                                onChange={(e) => handleContentChange('programs_target_badge', e.target.value)}
+                                                placeholder="— PESERTA PROGRAM —"
+                                                className="w-full text-xs p-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:border-admin-secondary"
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-medium text-gray-700">Judul Seksi</label>
+                                            <input
+                                                type="text"
+                                                value={pageContents['programs_target_title'] ?? ''}
+                                                onChange={(e) => handleContentChange('programs_target_title', e.target.value)}
+                                                placeholder="Program Ini Cocok Untuk:"
+                                                className="w-full text-xs p-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:border-admin-secondary font-semibold"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 3. SEKSI PROGRAM KHUSUS & KUSTOM */}
+                            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+                                <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-sm">
+                                            3
+                                        </div>
+                                        <div>
+                                            <h2 className="text-lg font-admin-serif font-bold text-admin-text">
+                                                Seksi Program Khusus & Kustom
+                                            </h2>
+                                            <p className="text-xs text-gray-500">
+                                                Teks, foto pendukung, dan tombol untuk penawaran program kustom atau institusi.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                                    <div className="lg:col-span-7 space-y-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-bold text-gray-700">Label Atas (Badge)</label>
+                                                <input
+                                                    type="text"
+                                                    value={pageContents['programs_custom_badge'] ?? ''}
+                                                    onChange={(e) => handleContentChange('programs_custom_badge', e.target.value)}
+                                                    placeholder="— PROGRAM KHUSUS —"
+                                                    className="w-full text-xs p-3 rounded-lg border border-gray-200 focus:outline-none focus:border-admin-secondary"
+                                                />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-bold text-gray-700">Judul Seksi</label>
+                                                <input
+                                                    type="text"
+                                                    value={pageContents['programs_custom_title'] ?? ''}
+                                                    onChange={(e) => handleContentChange('programs_custom_title', e.target.value)}
+                                                    placeholder="Program Khusus & Kustom"
+                                                    className="w-full text-xs p-3 rounded-lg border border-gray-200 focus:outline-none focus:border-admin-secondary font-serif font-bold text-admin-text"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700">Deskripsi Utama</label>
+                                            <textarea
+                                                rows={3}
+                                                value={pageContents['programs_custom_desc'] ?? ''}
+                                                onChange={(e) => handleContentChange('programs_custom_desc', e.target.value)}
+                                                placeholder="Kami dapat membantu menyusun kegiatan khusus yang disesuaikan dengan kebutuhan..."
+                                                className="w-full text-xs p-3 rounded-lg border border-gray-200 focus:outline-none focus:border-admin-secondary leading-relaxed"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700">Catatan / Keterangan Tambahan</label>
+                                            <textarea
+                                                rows={2}
+                                                value={pageContents['programs_custom_note'] ?? ''}
+                                                onChange={(e) => handleContentChange('programs_custom_note', e.target.value)}
+                                                placeholder="Silakan sampaikan jumlah peserta, rentang usia, waktu kunjungan, dan tujuan kegiatan..."
+                                                className="w-full text-xs p-3 rounded-lg border border-gray-200 focus:outline-none focus:border-admin-secondary leading-relaxed"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-gray-700">Teks Tombol Konsultasi</label>
+                                            <input
+                                                type="text"
+                                                value={pageContents['programs_custom_btn_label'] ?? ''}
+                                                onChange={(e) => handleContentChange('programs_custom_btn_label', e.target.value)}
+                                                placeholder="Konsultasikan Program"
+                                                className="w-full text-xs p-3 rounded-lg border border-gray-200 focus:outline-none focus:border-admin-secondary"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Gambar Program Khusus */}
+                                    <div className="lg:col-span-5 space-y-4">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700">
+                                            Gambar Seksi Program Khusus
+                                        </label>
+                                        <div className="relative rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 aspect-[4/3] shadow-sm">
+                                            <img
+                                                src={resolveImg(pageContents['programs_custom_image']) || 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop'}
+                                                alt="Program Khusus Preview"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <label className={`flex items-center justify-center gap-2 p-3 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl cursor-pointer text-xs font-semibold text-admin-primary transition-colors shadow-sm ${uploadingCustomImg ? 'opacity-50 pointer-events-none' : ''}`}>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={(e) => handleUploadCustomImg(e.target.files[0])}
+                                                />
+                                                {uploadingCustomImg ? (
+                                                    <><Loader2 size={14} className="animate-spin text-[#C99B53]" /> Mengunggah Gambar...</>
+                                                ) : (
+                                                    <><ImagePlus size={15} className="text-[#C99B53]" /> Unggah Gambar Baru</>
+                                                )}
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                value={pageContents['programs_custom_image'] || ''}
+                                                onChange={(e) => handleContentChange('programs_custom_image', e.target.value)}
+                                                placeholder="Atau masukkan URL gambar..."
+                                                className="w-full text-xs p-2.5 rounded-lg border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:border-admin-secondary"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Bottom Floating Save Action */}
+                            <div className="flex items-center justify-between p-4 bg-admin-primary text-white rounded-2xl shadow-xl sticky bottom-6 z-30">
+                                <div className="flex items-center gap-2 text-xs text-white/80">
+                                    <Sparkles size={16} className="text-[#C99B53]" />
+                                    <span>Simpan perubahan untuk langsung melihat hasilnya di halaman publik.</span>
+                                </div>
+                                <button
+                                    onClick={handleSaveAllContent}
+                                    disabled={savingContent}
+                                    className="flex items-center gap-2 px-6 py-2.5 bg-[#C99B53] hover:bg-[#B7863F] text-[#261E14] font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-60"
+                                >
+                                    {savingContent ? (
+                                        <><Loader2 size={14} className="animate-spin" /> Menyimpan...</>
+                                    ) : (
+                                        <><Save size={14} /> Simpan Perubahan Halaman</>
+                                    )}
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
 
