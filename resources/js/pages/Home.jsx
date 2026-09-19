@@ -145,11 +145,13 @@ export default function Home({ changePage, content }) {
                             </h2>
                             <div className="h-[2px] w-16 bg-[#C99B53]" />
                             <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans font-medium">
-                                {content('home_about_desc1', 'Di Sanggar Paiketan Swara, pengunjung tidak hanya menyaksikan pertunjukan. Melalui program edu-wisata, peserta dapat mendengarkan cerita budaya, mengenal instrumen gamelan, mempelajari gerakan dasar tari, serta mencoba berkesenian bersama anggota sanggar.')}
+                                {content('home_about_desc1', 'Sanggar ini hadir bukan sekadar sebagai ruang olah bakat dan pelestarian tradisi bagi anak-anak desa, melainkan sebagai wadah pembentukan karakter di era digital.')}
                             </p>
-                            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans font-medium">
-                                {content('home_about_desc2', 'Setiap kegiatan dirancang untuk memberikan pengalaman yang edukatif, partisipatif, dan tetap menghormati nilai budaya Bali.')}
-                            </p>
+                            {content('home_about_desc2', 'Kami berkomitmen menyajikan alternatif kegiatan yang positif, mengalihkan perhatian anak-anak dari ketergantungan game online menuju keindahan gerak, nada, dan karya seni tradisi Bali. Di sini, setiap anak diajak untuk tumbuh berdaya, menjaga akar budaya, dan mengukir prestasi nyata melalui seni.') && (
+                                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans font-medium">
+                                    {content('home_about_desc2', 'Kami berkomitmen menyajikan alternatif kegiatan yang positif, mengalihkan perhatian anak-anak dari ketergantungan game online menuju keindahan gerak, nada, dan karya seni tradisi Bali. Di sini, setiap anak diajak untuk tumbuh berdaya, menjaga akar budaya, dan mengukir prestasi nyata melalui seni.')}
+                                </p>
+                            )}
                         </ScrollReveal>
                         <ScrollReveal className="lg:col-span-6" delay={200} distance="40px">
                             <div className="relative rounded-2xl overflow-hidden shadow-md transform hover:scale-[1.01] transition-transform duration-300">
