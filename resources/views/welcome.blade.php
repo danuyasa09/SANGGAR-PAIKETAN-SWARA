@@ -5,6 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Sanggar Paiketan Swara | Gamelan & Tari Bali</title>
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="/favicon.png">
+        <link rel="shortcut icon" href="/favicon.ico">
+
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

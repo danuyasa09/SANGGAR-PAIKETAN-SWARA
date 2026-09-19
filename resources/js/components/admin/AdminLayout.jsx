@@ -72,9 +72,16 @@ export default function AdminLayout() {
     return (
         <div className="flex min-h-screen bg-admin-bg font-admin-sans">
             <aside className="w-72 bg-admin-primary text-white flex flex-col shadow-2xl z-20">
-                <div className="p-8 border-b border-white/10">
-                    <h2 className="text-2xl font-admin-serif font-bold tracking-tight">Sanggar Admin</h2>
-                    <p className="text-sm text-admin-secondary mt-1 font-medium">Ubud Ethos CMS</p>
+                <div className="p-6 border-b border-white/10 flex items-center gap-3">
+                    <img
+                        src="/images/logo.png"
+                        alt="Logo Sanggar"
+                        className="w-10 h-10 object-contain drop-shadow shrink-0"
+                    />
+                    <div>
+                        <h2 className="text-xl font-admin-serif font-bold tracking-tight leading-none text-white">Sanggar Admin</h2>
+                        <p className="text-xs text-admin-secondary mt-1 font-medium">Ubud Ethos CMS</p>
+                    </div>
                 </div>
                 
                 <nav className="flex-1 space-y-1 p-4 mt-4 overflow-y-auto">

@@ -17,10 +17,12 @@ export default function Footer({ changePage }) {
                             className="flex items-center gap-3 cursor-pointer group"
                             onClick={() => handleFooterClick('home')}
                         >
-                            <div className="w-10 h-10 bg-white rounded-full border border-[#C99B53] flex items-center justify-center shadow-md">
-                                <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#C99B53]" fill="currentColor">
-                                    <path d="M12 2L4.5 9h15zM4 11h16v2H4zm1 4h14l-1.5 5h-11z"/>
-                                </svg>
+                            <div className="w-11 h-11 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105">
+                                <img
+                                    src="/images/logo.png"
+                                    alt="Logo Sanggar Paiketan Swara"
+                                    className="w-11 h-11 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
+                                />
                             </div>
                             <div>
                                 <span className="block font-serif text-lg font-bold tracking-wide text-[#C99B53]">

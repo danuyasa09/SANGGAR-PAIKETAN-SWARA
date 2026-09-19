@@ -54,11 +54,12 @@ export default function Navbar({ currentPage, changePage }) {
                             className="flex items-center gap-2 cursor-pointer group"
                             onClick={() => handleNavClick('home')}
                         >
-                            <div className="relative flex items-center justify-center w-12 h-12 bg-white rounded-full border-2 border-[#C99B53] shadow-md transition-transform duration-300 group-hover:scale-105">
-                                <svg viewBox="0 0 24 24" className="w-8 h-8 text-[#C99B53]" fill="currentColor">
-                                    <path d="M12 2L4.5 9h15zM4 11h16v2H4zm1 4h14l-1.5 5h-11z" />
-                                    <circle cx="12" cy="6" r="1" className="text-[#261E14]" />
-                                </svg>
+                            <div className="relative flex items-center justify-center w-12 h-12 transition-transform duration-300 group-hover:scale-105 shrink-0">
+                                <img
+                                    src="/images/logo.png"
+                                    alt="Logo Sanggar Paiketan Swara"
+                                    className="w-12 h-12 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
+                                />
                             </div>
                             <div>
                                 <span className="block font-serif text-lg md:text-xl font-bold tracking-wide text-[#C99B53] leading-none group-hover:text-white transition-colors duration-200">
@@ -132,10 +133,12 @@ export default function Navbar({ currentPage, changePage }) {
                 {/* Drawer Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-[#C99B53]/20">
                     <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 flex items-center justify-center bg-[#C99B53]/15 rounded-full border border-[#C99B53]/30">
-                            <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#C99B53]" fill="currentColor">
-                                <path d="M12 2L4.5 9h15zM4 11h16v2H4zm1 4h14l-1.5 5h-11z" />
-                            </svg>
+                        <div className="w-9 h-9 flex items-center justify-center shrink-0">
+                            <img
+                                src="/images/logo.png"
+                                alt="Logo Sanggar Paiketan Swara"
+                                className="w-9 h-9 object-contain drop-shadow"
+                            />
                         </div>
                         <div>
                             <p className="text-[#C99B53] font-serif font-bold text-sm leading-none">SANGGAR PAIKETAN</p>

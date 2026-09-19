@@ -25,7 +25,13 @@ export default function Login() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#FAF6F0]">
             <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-96">
-                <h2 className="text-2xl font-bold mb-6 text-center text-[#261E14]">Admin Login</h2>
+                <div className="flex flex-col items-center mb-6">
+                    <div className="w-16 h-16 bg-[#1C150C] rounded-full flex items-center justify-center p-2 mb-3 shadow-md border border-[#C99B53]/40">
+                        <img src="/images/logo.png" alt="Logo Sanggar" className="w-full h-full object-contain" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-[#261E14]">Admin Login</h2>
+                    <p className="text-xs text-gray-500 mt-0.5">Sanggar Paiketan Swara</p>
+                </div>
                 {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                 
                 <label className="block mb-4">
