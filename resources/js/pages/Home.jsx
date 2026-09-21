@@ -1,5 +1,5 @@
 import React from 'react';
-import { Music, Activity, Sparkles, GraduationCap, Check, ChevronRight, User, Home as HomeIcon, Compass, Heart, MapPin, Phone, Users, Clock, ShieldCheck, TreePine, Sparkle } from 'lucide-react';
+import { Music, Activity, Sparkles, GraduationCap, Check, ChevronRight, User, Home as HomeIcon, Compass, Heart, MapPin, Phone, Users, Clock, ShieldCheck, TreePine, Sparkle, Quote } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 
 export default function Home({ changePage, content }) {
@@ -153,13 +153,43 @@ export default function Home({ changePage, content }) {
                                 </p>
                             )}
                         </ScrollReveal>
+
+                        {/* Kolom Kanan: Bingkai Foto Pemilik Sanggar */}
                         <ScrollReveal className="lg:col-span-6" delay={200} distance="40px">
-                            <div className="relative rounded-2xl overflow-hidden shadow-md transform hover:scale-[1.01] transition-transform duration-300">
-                                <img
-                                    src={resolveImage('home_about_image', 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop')}
-                                    alt="Belajar Bersama di Sanggar"
-                                    className="w-full h-auto object-cover aspect-[4/3] rounded-2xl"
-                                />
+                            <div className="relative mx-auto max-w-md lg:max-w-none group">
+                                {/* Decorative Balinese Gold Glow Frame */}
+                                <div className="absolute -inset-3 bg-gradient-to-tr from-[#C99B53]/30 via-[#C99B53]/10 to-[#C99B53]/40 rounded-3xl transform -rotate-1.5 group-hover:rotate-0 transition-transform duration-500 blur-sm" />
+                                
+                                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-2 border-[#C99B53]/50 bg-[#1C150C]">
+                                    <img
+                                        src={resolveImage('home_about_image', '/images/pemilik_sanggar.jpg')}
+                                        alt={content('home_owner_name', 'I Ketut Suweta, S.Sn.')}
+                                        className="w-full h-auto object-cover aspect-[4/3] transform group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1C150C]/90 via-[#1C150C]/20 to-transparent pointer-events-none" />
+                                    
+                                    {/* Top Floating Badge */}
+                                    <div className="absolute top-4 left-4 z-10">
+                                        <div className="inline-flex items-center gap-2 bg-[#1C150C]/85 backdrop-blur-md border border-[#C99B53]/50 px-3 py-1.5 rounded-full shadow-lg">
+                                            <span className="w-2 h-2 rounded-full bg-[#C99B53] animate-pulse" />
+                                            <span className="text-[10px] font-bold tracking-widest text-[#C99B53] uppercase">
+                                                {content('home_owner_badge', 'PENDIRI SANGGAR')}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom Info Card */}
+                                    <div className="absolute bottom-4 left-4 right-4 z-10 text-left">
+                                        <div className="bg-[#1C150C]/90 backdrop-blur-md border border-[#C99B53]/40 rounded-xl p-3 sm:p-4 shadow-xl">
+                                            <p className="text-[#FAF6F0] font-serif font-bold text-base sm:text-lg leading-tight">
+                                                {content('home_owner_name', 'I Ketut Suweta, S.Sn.')}
+                                            </p>
+                                            <p className="text-[#C99B53] text-[11px] sm:text-xs font-medium tracking-wide mt-0.5">
+                                                {content('home_owner_role', 'Pendiri & Pembina Sanggar Paiketan Swara')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </ScrollReveal>
                     </div>
