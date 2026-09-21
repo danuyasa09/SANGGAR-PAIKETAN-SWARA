@@ -101,13 +101,13 @@ export default function AdminReservations() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-admin-primary/10 flex items-center justify-center text-admin-primary">
                         <CalendarDays size={20} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-admin-serif font-bold text-admin-text">Reservasi</h1>
+                        <h1 className="text-xl sm:text-2xl font-admin-serif font-bold text-admin-text">Reservasi</h1>
                         <p className="text-sm text-admin-text/50">Kelola permintaan kunjungan</p>
                     </div>
                 </div>
@@ -189,7 +189,7 @@ export default function AdminReservations() {
 
                             return (
                                 <div key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4 px-6 py-4 items-center">
+                                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4 px-4 sm:px-6 py-4 items-center border-b border-gray-100 lg:border-b-0">
                                         {/* Pemesan */}
                                         <div className="lg:col-span-3">
                                             <p className="font-semibold text-admin-text text-sm">{item.name}</p>

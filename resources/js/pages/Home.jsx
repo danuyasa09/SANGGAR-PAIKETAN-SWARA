@@ -136,7 +136,7 @@ export default function Home({ changePage, content }) {
             <section className="py-20 bg-[#FAF6F0]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                        <ScrollReveal className="lg:col-span-6 space-y-6" distance="40px">
+                        <ScrollReveal className="lg:col-span-7 space-y-6" distance="40px">
                             <span className="text-[10px] font-bold tracking-widest text-[#C99B53] uppercase block">
                                 — PENGALAMAN BUDAYA —
                             </span>
@@ -155,8 +155,8 @@ export default function Home({ changePage, content }) {
                         </ScrollReveal>
 
                         {/* Kolom Kanan: Bingkai Foto Pemilik Sanggar */}
-                        <ScrollReveal className="lg:col-span-6" delay={200} distance="40px">
-                            <div className="relative mx-auto max-w-md lg:max-w-none group">
+                        <ScrollReveal className="lg:col-span-5 flex justify-center items-center" delay={200} distance="40px">
+                            <div className="relative mx-auto max-w-[320px] lg:max-w-[370px] group">
                                 {/* Decorative Balinese Gold Glow Frame */}
                                 <div className="absolute -inset-3 bg-gradient-to-tr from-[#C99B53]/30 via-[#C99B53]/10 to-[#C99B53]/40 rounded-3xl transform -rotate-1.5 group-hover:rotate-0 transition-transform duration-500 blur-sm" />
                                 
@@ -164,7 +164,7 @@ export default function Home({ changePage, content }) {
                                     <img
                                         src={resolveImage('home_about_image', '/images/pemilik_sanggar.jpg')}
                                         alt={content('home_owner_name', 'I Ketut Suweta, S.Sn.')}
-                                        className="w-full h-auto object-cover aspect-[4/3] transform group-hover:scale-105 transition-transform duration-700"
+                                        className="w-full h-full object-cover aspect-[3/4] transform group-hover:scale-105 transition-transform duration-700"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#1C150C]/90 via-[#1C150C]/20 to-transparent pointer-events-none" />
                                     

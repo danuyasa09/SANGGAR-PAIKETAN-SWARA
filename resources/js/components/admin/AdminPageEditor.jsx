@@ -201,11 +201,11 @@ export default function AdminPageEditor() {
 
     return (
         <div className="max-w-4xl">
-            <div className="flex justify-between items-center mb-8 border-b border-admin-primary/10 pb-4">
-                <h1 className="text-2xl sm:text-3xl font-bold font-admin-serif text-admin-primary">{schema.title}</h1>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-8 border-b border-admin-primary/10 pb-4">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold font-admin-serif text-admin-primary">{schema.title}</h1>
             </div>
             
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-admin-primary/10 space-y-8">
+            <div className="bg-white p-4 sm:p-8 rounded-xl shadow-sm border border-admin-primary/10 space-y-8">
                 {schema.fields.map((field) => (
                     <div key={field.key} className="border-b border-admin-primary/5 pb-6 last:border-0 last:pb-0">
                         <label className="block text-sm font-semibold text-admin-text/80 mb-3">{field.label}</label>
@@ -230,18 +230,18 @@ export default function AdminPageEditor() {
                         )}
                         
                         {field.type === 'image' && (
-                            <div className="flex items-center gap-6">
+                            <div className="flex flex-col sm:flex-row items-start gap-4">
                                 {getValue(field.key) && (
-                                    <div className="relative group rounded-lg overflow-hidden border border-admin-primary/10 shadow-sm">
-                                        <img src={getValue(field.key).startsWith('http') || getValue(field.key).startsWith('/') ? getValue(field.key) : `/storage/${getValue(field.key)}`} alt="Preview" className="h-32 w-48 object-cover" />
+                                    <div className="relative group rounded-lg overflow-hidden border border-admin-primary/10 shadow-sm shrink-0">
+                                        <img src={getValue(field.key).startsWith('http') || getValue(field.key).startsWith('/') ? getValue(field.key) : `/storage/${getValue(field.key)}`} alt="Preview" className="h-28 w-full sm:w-44 object-cover" />
                                     </div>
                                 )}
-                                <div className="flex-1">
+                                <div className="flex-1 w-full">
                                     <input 
                                         type="file" 
                                         accept="image/*" 
                                         onChange={e => handleImageUpload(field.key, e.target.files[0], field.type, field.section)} 
-                                        className="text-sm border border-admin-primary/20 p-2.5 rounded-lg w-full bg-admin-bg/30 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-admin-primary/10 file:text-admin-primary hover:file:bg-admin-primary/20" 
+                                        className="text-sm border border-admin-primary/20 p-2.5 rounded-lg w-full bg-admin-bg/30 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-admin-primary/10 file:text-admin-primary hover:file:bg-admin-primary/20" 
                                     />
                                     <p className="mt-2 text-xs text-admin-text/60 italic">
                                         * Maksimal ukuran 2MB. Resolusi ideal: 1920x1080px (Banner) atau 800x800px (Persegi).
