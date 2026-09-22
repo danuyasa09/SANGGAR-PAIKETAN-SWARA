@@ -46,3 +46,33 @@ html {
   background: #B7863F;
 }
 
+/* Google Translate Customization & Clean up */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner-frame,
+iframe.skiptranslate,
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+#google_translate_element,
+.goog-te-gadget {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+font[style] {
+  vertical-align: inherit !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Home, Info, Map, Image, Newspaper, Handshake, Phone, CalendarDays } from 'lucide-react';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar({ currentPage, changePage }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -62,7 +63,10 @@ export default function Navbar({ currentPage, changePage }) {
                                 />
                             </div>
                             <div>
-                                <span className="block font-serif text-lg md:text-xl font-bold tracking-wide text-[#C99B53] leading-none group-hover:text-white transition-colors duration-200">
+                                <span 
+                                    className="block font-serif text-lg md:text-xl font-bold tracking-wide text-[#C99B53] leading-none group-hover:text-white transition-colors duration-200 notranslate"
+                                    translate="no"
+                                >
                                     SANGGAR PAIKETAN SWARA
                                 </span>
                                 <span className="block text-[10px] tracking-[0.2em] font-medium text-gray-300 uppercase leading-none mt-1">
@@ -80,7 +84,7 @@ export default function Navbar({ currentPage, changePage }) {
                                     className={`text-sm tracking-wide font-medium transition-all duration-200 relative py-1 cursor-pointer ${
                                         currentPage === item.id
                                             ? 'text-[#C99B53]'
-                                            : 'text-gray-200 hover:text-[#C99B53]'
+                                             : 'text-gray-200 hover:text-[#C99B53]'
                                     }`}
                                 >
                                     {item.label}
@@ -91,8 +95,9 @@ export default function Navbar({ currentPage, changePage }) {
                             ))}
                         </div>
 
-                        {/* CTA Button (Desktop) */}
-                        <div className="hidden lg:block">
+                        {/* Language Switcher & CTA Button (Desktop) */}
+                        <div className="hidden lg:flex items-center gap-4">
+                            <LanguageSwitcher />
                             <button
                                 onClick={() => handleNavClick('reservation')}
                                 className="px-5 py-2.5 bg-[#C99B53] hover:bg-[#B7863F] text-[#261E14] text-sm font-semibold rounded-md shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
@@ -101,8 +106,9 @@ export default function Navbar({ currentPage, changePage }) {
                             </button>
                         </div>
 
-                        {/* Mobile Hamburger Button */}
-                        <div className="flex lg:hidden">
+                        {/* Mobile Actions: Language Switcher & Hamburger Button */}
+                        <div className="flex items-center gap-2 lg:hidden">
+                            <LanguageSwitcher />
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
                                 aria-label="Toggle menu"
@@ -141,8 +147,8 @@ export default function Navbar({ currentPage, changePage }) {
                             />
                         </div>
                         <div>
-                            <p className="text-[#C99B53] font-serif font-bold text-sm leading-none">SANGGAR PAIKETAN</p>
-                            <p className="text-gray-400 text-[10px] tracking-widest uppercase leading-none mt-1">SWARA</p>
+                            <p className="text-[#C99B53] font-serif font-bold text-sm leading-none notranslate" translate="no">SANGGAR PAIKETAN</p>
+                            <p className="text-gray-400 text-[10px] tracking-widest uppercase leading-none mt-1 notranslate" translate="no">SWARA</p>
                         </div>
                     </div>
                     <button
@@ -181,6 +187,11 @@ export default function Navbar({ currentPage, changePage }) {
 
                 {/* CTA at bottom */}
                 <div className="px-4 py-6 border-t border-[#C99B53]/20 space-y-3">
+                    <div className="flex items-center justify-between px-2 py-1 bg-white/5 rounded-xl border border-white/10">
+                        <span className="text-xs text-gray-300 font-medium">Bahasa / Language</span>
+                        <LanguageSwitcher />
+                    </div>
+
                     <button
                         onClick={() => handleNavClick('reservation')}
                         className="w-full py-3.5 bg-[#C99B53] hover:bg-[#B7863F] active:bg-[#A0722E] text-[#261E14] font-bold text-sm rounded-xl shadow-lg transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
