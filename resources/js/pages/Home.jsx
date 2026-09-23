@@ -310,7 +310,7 @@ export default function Home({ changePage, content }) {
                         <ScrollReveal className="lg:col-span-5" delay={200} distance="30px">
                             <div className="relative rounded-2xl overflow-hidden shadow-md">
                                 <img
-                                    src={resolveImage('home_package_image', 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=800&auto=format&fit=crop')}
+                                    src={resolveImage('home_package_image', '/images/programs_banner.png')}
                                     alt="Paket Edu-Wisata"
                                     className="w-full h-auto object-cover aspect-[4/3] rounded-2xl shadow-sm"
                                 />
