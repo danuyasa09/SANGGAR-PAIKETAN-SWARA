@@ -13,7 +13,7 @@ const PAGE_SCHEMAS = {
             { key: 'home_about_title', label: 'Judul Belajar Bersama', type: 'text', section: 'beranda' },
             { key: 'home_about_desc1', label: 'Paragraf Belajar Bersama 1', type: 'text', section: 'beranda' },
             { key: 'home_about_desc2', label: 'Paragraf Belajar Bersama 2', type: 'text', section: 'beranda' },
-            { key: 'home_about_image', label: 'Gambar Belajar Bersama', type: 'image', section: 'beranda' },
+            { key: 'home_about_image', label: 'Foto Pemilik Sanggar (Section Belajar Bersama)', type: 'image', section: 'beranda' },
             { key: 'home_program_1_img', label: 'Gambar Pengalaman 1 (Belajar Gamelan Bali)', type: 'image', section: 'beranda' },
             { key: 'home_program_2_img', label: 'Gambar Pengalaman 2 (Belajar Tari Bali)', type: 'image', section: 'beranda' },
             { key: 'home_program_3_img', label: 'Gambar Pengalaman 3 (Pertunjukan Seni)', type: 'image', section: 'beranda' },
@@ -75,7 +75,7 @@ const PAGE_SCHEMAS = {
     berita: {
         title: "Kelola Halaman Berita",
         fields: [
-            { key: 'news_banner_image', label: 'Gambar Banner Berita', type: 'image', section: 'berita' },
+            { key: 'news_banner', label: 'Foto Hero / Banner Halaman Berita', type: 'image', section: 'berita' },
             { key: 'news_title', label: 'Judul Halaman Berita', type: 'text', section: 'berita' },
             { key: 'news_subtitle', label: 'Deskripsi Halaman Berita', type: 'text', section: 'berita' }
         ]

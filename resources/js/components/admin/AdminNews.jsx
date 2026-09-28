@@ -5,8 +5,15 @@ import {
     Newspaper, Plus, Pencil, Trash2, RefreshCw, X, Check,
     ImagePlus, Loader2, Eye, EyeOff, AlertCircle, Calendar,
     ChevronDown, ChevronUp, GripVertical, Quote, Heading,
-    AlignLeft, BookOpen, Tag, Clock, User, AtSign
+    AlignLeft, BookOpen, Tag, Clock, User, AtSign, Layout, FileImage
 } from 'lucide-react';
+
+/* ─── News Page Fields (for Tampilan Halaman tab) ─── */
+const NEWS_PAGE_FIELDS = [
+    { key: 'news_banner',   label: 'Foto Hero / Banner Halaman Berita', type: 'image',  section: 'berita', hint: 'Gambar latar belakang pada bagian atas halaman berita. Resolusi ideal: 1920×1080px.' },
+    { key: 'news_title',    label: 'Judul Halaman Berita',              type: 'text',   section: 'berita', hint: 'Judul besar yang tampil di tengah hero (contoh: "Kabar dari Sanggar").' },
+    { key: 'news_subtitle', label: 'Deskripsi / Sub-judul Halaman',     type: 'text',   section: 'berita', hint: 'Teks deskripsi singkat di bawah judul hero.' },
+];
 
 /* ─── Block Types ─────────────────────────────── */
 const BLOCK_TYPES = [
@@ -56,12 +63,25 @@ export default function AdminNews() {
     const [previewCover, setPreviewCover] = useState('');
     const [expandedId, setExpandedId]   = useState(null);
 
+    /* ─── Tab State ──────────────────────────────── */
+    const [activeTab, setActiveTab]     = useState('artikel'); // 'artikel' | 'halaman'
+
+    /* ─── Page Editor State ──────────────────────── */
+    const [pageContents, setPageContents]   = useState([]);
+    const [savingField, setSavingField]     = useState(null);
+    const [pageToast, setPageToast]         = useState(null);
+
     const showToast = (msg, type = 'success') => {
         setToast({ msg, type });
         setTimeout(() => setToast(null), 3000);
     };
 
-    /* ─── Fetch ──────────────────────────────────── */
+    const showPageToast = (msg, type = 'success') => {
+        setPageToast({ msg, type });
+        setTimeout(() => setPageToast(null), 3000);
+    };
+
+    /* ─── Fetch Articles ─────────────────────────── */
     const fetchArticles = useCallback(async () => {
         setLoading(true);
         try {
@@ -74,6 +94,59 @@ export default function AdminNews() {
     }, []);
 
     useEffect(() => { fetchArticles(); }, [fetchArticles]);
+
+    /* ─── Fetch Page Content ─────────────────────── */
+    const fetchPageContent = useCallback(async () => {
+        try {
+            const res = await axios.get('/api/content');
+            setPageContents(res.data);
+        } catch (e) { console.error(e); }
+    }, []);
+
+    useEffect(() => { fetchPageContent(); }, [fetchPageContent]);
+
+    const getPageValue = (key) => {
+        const item = pageContents.find(c => c.key === key);
+        return item ? item.value : '';
+    };
+
+    const handlePageChange = (key, value, type, section) => {
+        const updated = [...pageContents];
+        const idx = updated.findIndex(c => c.key === key);
+        if (idx >= 0) updated[idx].value = value;
+        else updated.push({ key, value, type, section });
+        setPageContents(updated);
+    };
+
+    const handlePageImageUpload = async (key, file, type, section) => {
+        if (!file) return;
+        setSavingField(key);
+        try {
+            const fd = new FormData();
+            fd.append('image', file);
+            if (section) fd.append('section', section);
+            const res = await axios.post('/api/content/upload', fd, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            handlePageChange(key, res.data.path, type, section);
+            await axios.post('/api/content', { contents: [{ key, value: res.data.path }] });
+            showPageToast('Gambar berhasil diupload dan disimpan!');
+        } catch (err) {
+            showPageToast(err.response?.data?.message || 'Gagal upload gambar.', 'error');
+        } finally { setSavingField(null); }
+    };
+
+    const handlePageSaveText = async (field) => {
+        setSavingField(field.key);
+        try {
+            const item = pageContents.find(c => c.key === field.key);
+            if (item) {
+                await axios.post('/api/content', { contents: [item] });
+                showPageToast('Teks berhasil disimpan!');
+            }
+        } catch { showPageToast('Gagal menyimpan teks.', 'error'); }
+        setSavingField(null);
+    };
 
     /* ─── Modal ──────────────────────────────────── */
     const openCreate = () => {
@@ -195,27 +268,56 @@ export default function AdminNews() {
     return (
         <div className="space-y-6">
 
-            {/* Header */}
-            <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-admin-primary/10 flex items-center justify-center text-admin-primary">
-                        <Newspaper size={20} />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-admin-serif font-bold text-admin-text">Manajemen Berita</h1>
-                        <p className="text-sm text-admin-text/50">Kelola artikel dan berita yang tampil di halaman publik</p>
-                    </div>
+            {/* ── Page Header ── */}
+            <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-admin-primary/10 flex items-center justify-center text-admin-primary">
+                    <Newspaper size={20} />
                 </div>
-                <div className="flex gap-2">
-                    <button onClick={fetchArticles} disabled={loading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-admin-text/70 shadow-sm transition-colors">
-                        <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />Refresh
-                    </button>
-                    <button onClick={openCreate}
-                        className="flex items-center gap-2 px-4 py-2 text-sm bg-admin-primary text-white rounded-lg hover:bg-admin-primary/90 shadow-sm font-semibold transition-colors">
-                        <Plus size={16} />Tulis Artikel
-                    </button>
+                <div>
+                    <h1 className="text-2xl font-admin-serif font-bold text-admin-text">Manajemen Berita</h1>
+                    <p className="text-sm text-admin-text/50">Kelola artikel dan tampilan halaman berita publik</p>
                 </div>
+            </div>
+
+            {/* ── Tab Navigation ── */}
+            <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+                <button
+                    onClick={() => setActiveTab('artikel')}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                        activeTab === 'artikel'
+                            ? 'bg-white text-admin-primary shadow-sm'
+                            : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                >
+                    <Newspaper size={15} />
+                    Kelola Artikel
+                </button>
+                <button
+                    onClick={() => setActiveTab('halaman')}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                        activeTab === 'halaman'
+                            ? 'bg-white text-admin-primary shadow-sm'
+                            : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                >
+                    <Layout size={15} />
+                    Tampilan Halaman
+                </button>
+            </div>
+
+            {/* ══════════ TAB: KELOLA ARTIKEL ══════════ */}
+            {activeTab === 'artikel' && (<>
+
+            {/* Toolbar */}
+            <div className="flex justify-end gap-2">
+                <button onClick={fetchArticles} disabled={loading}
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-admin-text/70 shadow-sm transition-colors">
+                    <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />Refresh
+                </button>
+                <button onClick={openCreate}
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-admin-primary text-white rounded-lg hover:bg-admin-primary/90 shadow-sm font-semibold transition-colors">
+                    <Plus size={16} />Tulis Artikel
+                </button>
             </div>
 
             {/* Article List */}
@@ -303,6 +405,80 @@ export default function AdminNews() {
                             )}
                         </div>
                     ))}
+                </div>
+            )}
+
+            </>)}
+
+            {/* ══════════ TAB: TAMPILAN HALAMAN ══════════ */}
+            {activeTab === 'halaman' && (
+                <div className="max-w-3xl space-y-6">
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800 flex items-start gap-2">
+                        <FileImage size={16} className="shrink-0 mt-0.5" />
+                        <span>Perubahan pada <strong>Foto Hero</strong> akan langsung tersimpan setelah upload. Perubahan <strong>Teks</strong> perlu diklik tombol <em>Simpan</em>.</span>
+                    </div>
+
+                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm divide-y divide-gray-100">
+                        {NEWS_PAGE_FIELDS.map((field) => (
+                            <div key={field.key} className="p-6">
+                                <label className="block text-sm font-bold text-admin-text/80 mb-1">{field.label}</label>
+                                {field.hint && <p className="text-xs text-gray-400 mb-4">{field.hint}</p>}
+
+                                {field.type === 'text' && (
+                                    <div className="flex flex-col items-end gap-3">
+                                        <textarea
+                                            rows={2}
+                                            value={getPageValue(field.key)}
+                                            onChange={e => handlePageChange(field.key, e.target.value, field.type, field.section)}
+                                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-admin-primary/50 focus:ring-1 focus:ring-admin-primary/20 transition-colors resize-none"
+                                            placeholder={`Isi ${field.label}...`}
+                                        />
+                                        <button
+                                            onClick={() => handlePageSaveText(field)}
+                                            disabled={savingField === field.key}
+                                            className="flex items-center gap-2 px-5 py-2 bg-admin-secondary hover:bg-[#A37B3D] text-white text-xs font-semibold rounded-lg shadow-sm transition-all disabled:opacity-60"
+                                        >
+                                            {savingField === field.key
+                                                ? <><Loader2 size={12} className="animate-spin" />Menyimpan...</>
+                                                : <><Check size={12} />Simpan Teks</>
+                                            }
+                                        </button>
+                                    </div>
+                                )}
+
+                                {field.type === 'image' && (
+                                    <div className="flex flex-col sm:flex-row items-start gap-4">
+                                        {getPageValue(field.key) && (
+                                            <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-sm shrink-0">
+                                                <img
+                                                    src={(() => { const v = getPageValue(field.key); return (v.startsWith('http') || v.startsWith('/')) ? v : `/storage/${v}`; })()}
+                                                    alt="Preview"
+                                                    className="h-28 w-full sm:w-52 object-cover"
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="flex-1 w-full space-y-2">
+                                            <label className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-admin-primary/50 hover:bg-admin-primary/5 transition-colors text-sm text-gray-500 ${
+                                                savingField === field.key ? 'pointer-events-none opacity-60' : ''
+                                            }`}>
+                                                {savingField === field.key
+                                                    ? <><Loader2 size={14} className="animate-spin" />Mengupload...</>
+                                                    : <><ImagePlus size={14} />Pilih Foto Baru</>
+                                                }
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={e => handlePageImageUpload(field.key, e.target.files[0], field.type, field.section)}
+                                                />
+                                            </label>
+                                            <p className="text-xs text-gray-400 italic">Maks. 2MB. Resolusi ideal: 1920×1080px.</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
 
@@ -515,11 +691,19 @@ export default function AdminNews() {
                 </div>
             )}
 
-            {/* Toast */}
+            {/* Toast — Articles */}
             {toast && (
                 <div className={`fixed bottom-6 right-6 z-[90] flex items-center gap-2.5 px-5 py-3 rounded-xl shadow-xl text-sm font-semibold text-white ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
                     {toast.type === 'error' ? <AlertCircle size={16} /> : <Check size={16} />}
                     {toast.msg}
+                </div>
+            )}
+
+            {/* Toast — Page Editor */}
+            {pageToast && (
+                <div className={`fixed bottom-6 right-6 z-[90] flex items-center gap-2.5 px-5 py-3 rounded-xl shadow-xl text-sm font-semibold text-white ${pageToast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
+                    {pageToast.type === 'error' ? <AlertCircle size={16} /> : <Check size={16} />}
+                    {pageToast.msg}
                 </div>
             )}
         </div>
