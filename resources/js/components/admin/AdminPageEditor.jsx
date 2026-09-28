@@ -7,37 +7,53 @@ const PAGE_SCHEMAS = {
     beranda: {
         title: "Kelola Halaman Beranda",
         fields: [
-            { key: 'home_hero_bg', label: 'Gambar Latar (Hero Background)', type: 'image', section: 'beranda' },
-            { key: 'home_hero_title', label: 'Judul Utama (Hero)', type: 'text', section: 'beranda' },
-            { key: 'home_hero_desc', label: 'Deskripsi Singkat (Hero)', type: 'text', section: 'beranda' },
-            { key: 'home_about_title', label: 'Judul Belajar Bersama', type: 'text', section: 'beranda' },
-            { key: 'home_about_desc1', label: 'Paragraf Belajar Bersama 1', type: 'text', section: 'beranda' },
-            { key: 'home_about_desc2', label: 'Paragraf Belajar Bersama 2', type: 'text', section: 'beranda' },
-            { key: 'home_about_image', label: 'Foto Pemilik Sanggar (Section Belajar Bersama)', type: 'image', section: 'beranda' },
-            { key: 'home_program_1_img', label: 'Gambar Pengalaman 1 (Belajar Gamelan Bali)', type: 'image', section: 'beranda' },
-            { key: 'home_program_2_img', label: 'Gambar Pengalaman 2 (Belajar Tari Bali)', type: 'image', section: 'beranda' },
-            { key: 'home_program_3_img', label: 'Gambar Pengalaman 3 (Pertunjukan Seni)', type: 'image', section: 'beranda' },
-            { key: 'home_program_4_img', label: 'Gambar Pengalaman 4 (Kunjungan Edukasi)', type: 'image', section: 'beranda' },
-            { key: 'home_eduwisata_title', label: 'Judul Paket Edu-Wisata', type: 'text', section: 'beranda' },
-            { key: 'home_eduwisata_desc', label: 'Deskripsi Paket Edu-Wisata', type: 'text', section: 'beranda' },
-            { key: 'home_package_image', label: 'Gambar Paket Edu-Wisata', type: 'image', section: 'beranda' },
-            { key: 'home_why_title', label: 'Judul Mengapa Berkunjung', type: 'text', section: 'beranda' },
-            { key: 'home_about_us_image', label: 'Gambar Tentang Kami (Teaser Beranda)', type: 'image', section: 'beranda' },
-            { key: 'home_about_teaser_p1', label: 'Paragraf Tentang Kami 1 (Alamat Desa Bantas)', type: 'text', section: 'beranda' },
-            { key: 'home_about_teaser_p2', label: 'Paragraf Tentang Kami 2 (Ruang Latihan & Eduwisata)', type: 'text', section: 'beranda' },
-            { key: 'home_about_teaser_p3', label: 'Paragraf Tentang Kami 3 (Gotong Royong & Regenerasi)', type: 'text', section: 'beranda' },
-            { key: 'home_owner_image', label: 'Foto Pemilik / Pendiri Sanggar', type: 'image', section: 'beranda' },
-            { key: 'home_owner_name', label: 'Nama Pemilik / Pendiri Sanggar', type: 'text', section: 'beranda' },
-            { key: 'home_owner_role', label: 'Jabatan / Peran Pemilik', type: 'text', section: 'beranda' },
-            { key: 'home_owner_badge', label: 'Label / Badge Sambutan (cth: SAMBUTAN PENDIRI)', type: 'text', section: 'beranda' },
-            { key: 'home_owner_title', label: 'Judul Sambutan Pemilik', type: 'text', section: 'beranda' },
-            { key: 'home_owner_quote', label: 'Kutipan / Quote Sambutan Pemilik', type: 'text', section: 'beranda' },
-            { key: 'home_owner_desc1', label: 'Paragraf Sambutan Pemilik 1', type: 'text', section: 'beranda' },
-            { key: 'home_owner_desc2', label: 'Paragraf Sambutan Pemilik 2', type: 'text', section: 'beranda' },
-            { key: 'home_cta_bg', label: 'Gambar Latar Ajakan Bawah (CTA Background)', type: 'image', section: 'beranda' },
-            { key: 'cta_bottom_title', label: 'Judul Ajakan Bawah (CTA)', type: 'text', section: 'global' },
-            { key: 'cta_bottom_desc', label: 'Deskripsi Ajakan Bawah (CTA)', type: 'text', section: 'global' }
+            // ── Hero ──────────────────────────────────────────────────────
+            { key: 'home_hero_bg',    label: 'Gambar Latar Hero (Background)',   type: 'image', section: 'beranda' },
+            { key: 'home_hero_title', label: 'Judul Utama Hero',                 type: 'text',  section: 'beranda' },
+            { key: 'home_hero_desc',  label: 'Deskripsi Singkat Hero',           type: 'text',  section: 'beranda' },
+
+            // ── Section: Belajar Bersama (+ Info Pemilik) ─────────────────
+            { key: 'home_about_title',  label: 'Judul Section Belajar Bersama',        type: 'text',  section: 'beranda' },
+            { key: 'home_about_desc1',  label: 'Paragraf Belajar Bersama 1',            type: 'text',  section: 'beranda' },
+            { key: 'home_about_desc2',  label: 'Paragraf Belajar Bersama 2',            type: 'text',  section: 'beranda' },
+            { key: 'home_about_image',  label: 'Foto Pemilik — Section Belajar Bersama', type: 'image', section: 'beranda' },
+            { key: 'home_owner_name',   label: 'Nama Pemilik Sanggar',                  type: 'text',  section: 'beranda' },
+            { key: 'home_owner_role',   label: 'Jabatan / Peran Pemilik',               type: 'text',  section: 'beranda' },
+            { key: 'home_owner_badge',  label: 'Badge pada Foto Pemilik (cth: PENDIRI SANGGAR)', type: 'text', section: 'beranda' },
+
+            // ── Section: Pengalaman / Program ─────────────────────────────
+            { key: 'home_program_1_img', label: 'Foto Pengalaman 1 — Belajar Gamelan Bali',  type: 'image', section: 'beranda' },
+            { key: 'home_program_2_img', label: 'Foto Pengalaman 2 — Belajar Tari Bali',     type: 'image', section: 'beranda' },
+            { key: 'home_program_3_img', label: 'Foto Pengalaman 3 — Pertunjukan Seni',       type: 'image', section: 'beranda' },
+            { key: 'home_program_4_img', label: 'Foto Pengalaman 4 — Kunjungan Edukasi',      type: 'image', section: 'beranda' },
+
+            // ── Section: Paket Edu-Wisata ──────────────────────────────────
+            { key: 'home_eduwisata_title', label: 'Judul Paket Edu-Wisata',        type: 'text',  section: 'beranda' },
+            { key: 'home_eduwisata_desc',  label: 'Deskripsi Paket Edu-Wisata',    type: 'text',  section: 'beranda' },
+            { key: 'home_package_image',   label: 'Foto Paket Edu-Wisata',         type: 'image', section: 'beranda' },
+
+            // ── Section: Mengapa Berkunjung ────────────────────────────────
+            { key: 'home_why_title', label: 'Judul Section Mengapa Berkunjung', type: 'text', section: 'beranda' },
+
+            // ── Section: Teaser Tentang Kami ──────────────────────────────
+            { key: 'home_about_us_image',   label: 'Foto Section Tentang Kami (Teaser)', type: 'image', section: 'beranda' },
+            { key: 'home_about_teaser_p1',  label: 'Tentang Kami — Paragraf 1',          type: 'text',  section: 'beranda' },
+            { key: 'home_about_teaser_p2',  label: 'Tentang Kami — Paragraf 2',          type: 'text',  section: 'beranda' },
+            { key: 'home_about_teaser_p3',  label: 'Tentang Kami — Paragraf 3',          type: 'text',  section: 'beranda' },
+
+            // ── Section: Sambutan Pemilik ──────────────────────────────────
+            { key: 'home_owner_image',  label: 'Foto Pemilik — Section Sambutan',        type: 'image', section: 'beranda' },
+            { key: 'home_owner_title',  label: 'Judul Sambutan Pemilik',                 type: 'text',  section: 'beranda' },
+            { key: 'home_owner_quote',  label: 'Kutipan / Quote Sambutan Pemilik',       type: 'text',  section: 'beranda' },
+            { key: 'home_owner_desc1',  label: 'Paragraf Sambutan Pemilik 1',            type: 'text',  section: 'beranda' },
+            { key: 'home_owner_desc2',  label: 'Paragraf Sambutan Pemilik 2',            type: 'text',  section: 'beranda' },
+
+            // ── Section: CTA Bawah ────────────────────────────────────────
+            { key: 'home_cta_bg',       label: 'Gambar Latar CTA Bawah',      type: 'image', section: 'beranda' },
+            { key: 'cta_bottom_title',  label: 'Judul Ajakan Bawah (CTA)',    type: 'text',  section: 'global' },
+            { key: 'cta_bottom_desc',   label: 'Deskripsi Ajakan Bawah (CTA)', type: 'text', section: 'global' },
         ]
+
     },
     tentangkami: {
         title: "Kelola Halaman Tentang Kami",
@@ -187,10 +203,12 @@ export default function AdminPageEditor() {
         setSavingField(field.key);
         try {
             const item = contents.find(c => c.key === field.key);
-            if (item) {
-                await axios.post('/api/content', { contents: [item] });
-                showToast('Teks berhasil disimpan!');
-            }
+            // Always save — even if item is new (not yet in DB), send key with current value
+            const payload = item
+                ? item
+                : { key: field.key, value: '', type: field.type, section: field.section };
+            await axios.post('/api/content', { contents: [payload] });
+            showToast('Teks berhasil disimpan!');
         } catch (e) {
             showToast('Gagal menyimpan teks.', 'error');
         }
