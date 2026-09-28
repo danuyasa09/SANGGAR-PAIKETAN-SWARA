@@ -35,7 +35,7 @@ class ContentController extends Controller
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
             'section' => 'nullable|string'
         ]);
 

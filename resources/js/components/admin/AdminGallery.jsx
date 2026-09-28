@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from '../../lib/axios';
+import { compressImage, formatFileSize } from '../../lib/mediaCompressor';
 import {
     Image as ImageIcon, Video, Plus, Trash2, RefreshCw,
-    Loader2, AlertCircle, Check, Upload, Link, Tag, Eye
+    Loader2, AlertCircle, Check, Upload, Link, Tag, Eye, Zap
 } from 'lucide-react';
 
 /* ─── Shared categories (must match Gallery.jsx public page) ─── */
@@ -46,6 +47,8 @@ export default function AdminGallery() {
     const [photoTitle, setPhotoTitle]     = useState('');
     const [photoCategory, setPhotoCategory] = useState('general');
     const [uploadingPhoto, setUploadingPhoto] = useState(false);
+    const [compressingPhoto, setCompressingPhoto] = useState(false);
+    const [photoCompressInfo, setPhotoCompressInfo] = useState(null);
     const [photoPreview, setPhotoPreview] = useState('');
 
     /* ─── Add Video State ─── */
@@ -55,6 +58,7 @@ export default function AdminGallery() {
     const [videoViews, setVideoViews]     = useState('');
     const [videoThumb, setVideoThumb]     = useState(null);
     const [videoThumbPreview, setVideoThumbPreview] = useState('');
+    const [compressingVideoThumb, setCompressingVideoThumb] = useState(false);
     const [addingVideo, setAddingVideo]   = useState(false);
 
     /* ─── Active Tab ─── */
@@ -79,6 +83,45 @@ export default function AdminGallery() {
 
     useEffect(() => { fetchItems(); }, [fetchItems]);
 
+    /* ─── Handle File Select with Auto Compression ─── */
+    const handlePhotoSelect = async (file) => {
+        if (!file) return;
+        setCompressingPhoto(true);
+        setPhotoCompressInfo(null);
+        try {
+            const result = await compressImage(file, { maxWidth: 1920, quality: 0.85 });
+            setPhotoFile(result.file);
+            setPhotoPreview(result.previewUrl);
+            setPhotoCompressInfo({
+                original: formatFileSize(result.originalSize),
+                compressed: formatFileSize(result.compressedSize),
+                saved: result.savedPercent
+            });
+        } catch (e) {
+            console.error(e);
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        } finally {
+            setCompressingPhoto(false);
+        }
+    };
+
+    const handleVideoThumbSelect = async (file) => {
+        if (!file) return;
+        setCompressingVideoThumb(true);
+        try {
+            const result = await compressImage(file, { maxWidth: 1280, quality: 0.82 });
+            setVideoThumb(result.file);
+            setVideoThumbPreview(result.previewUrl);
+        } catch (e) {
+            console.error(e);
+            setVideoThumb(file);
+            setVideoThumbPreview(URL.createObjectURL(file));
+        } finally {
+            setCompressingVideoThumb(false);
+        }
+    };
+
     /* ─── Upload Photo ─── */
     const handlePhotoUpload = async (e) => {
         if (e) e.preventDefault();
@@ -94,6 +137,7 @@ export default function AdminGallery() {
             setPhotoFile(null);
             setPhotoTitle('');
             setPhotoPreview('');
+            setPhotoCompressInfo(null);
             showToast('Foto berhasil diupload!');
             fetchItems();
         } catch (err) {
@@ -186,24 +230,42 @@ export default function AdminGallery() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {/* File Picker */}
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-700 flex items-center gap-1"><Upload size={11} />File Foto <span className="text-red-500">*</span></label>
-                                    <label className={`flex flex-col items-center justify-center gap-2 h-32 border-2 border-dashed rounded-xl cursor-pointer transition-colors text-sm text-gray-400 ${photoPreview ? 'border-gray-200 bg-gray-50' : 'border-gray-300 hover:border-admin-primary/50 hover:bg-admin-primary/5'}`}>
-                                        {photoPreview ? (
-                                            <img src={photoPreview} alt="preview" className="h-full w-full object-cover rounded-xl" />
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-xs font-bold text-gray-700 flex items-center gap-1"><Upload size={11} />File Foto <span className="text-red-500">*</span></label>
+                                        <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                            <Zap size={10} />Auto Compress Aktif
+                                        </span>
+                                    </div>
+                                    <label className={`relative flex flex-col items-center justify-center gap-2 h-36 border-2 border-dashed rounded-xl cursor-pointer transition-colors text-sm text-gray-400 overflow-hidden ${photoPreview ? 'border-gray-200 bg-gray-50' : 'border-gray-300 hover:border-admin-primary/50 hover:bg-admin-primary/5'}`}>
+                                        {compressingPhoto ? (
+                                            <div className="flex flex-col items-center gap-2 text-admin-primary">
+                                                <Loader2 size={24} className="animate-spin" />
+                                                <span className="text-xs font-semibold">Mengompresi foto...</span>
+                                            </div>
+                                        ) : photoPreview ? (
+                                            <>
+                                                <img src={photoPreview} alt="preview" className="h-full w-full object-cover rounded-xl" />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium">
+                                                    Ganti Foto
+                                                </div>
+                                            </>
                                         ) : (
                                             <>
                                                 <ImageIcon size={24} className="text-gray-300" />
                                                 <span>Klik untuk pilih foto</span>
-                                                <span className="text-[11px] text-gray-400">JPG, PNG, WEBP · Maks 3MB</span>
+                                                <span className="text-[11px] text-gray-400">Semua resolusi & ukuran foto didukung</span>
                                             </>
                                         )}
                                         <input type="file" accept="image/*" className="hidden" required
-                                            onChange={e => {
-                                                const f = e.target.files[0];
-                                                setPhotoFile(f);
-                                                if (f) setPhotoPreview(URL.createObjectURL(f));
-                                            }} />
+                                            onChange={e => handlePhotoSelect(e.target.files[0])} />
                                     </label>
+
+                                    {photoCompressInfo && (
+                                        <div className="text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-lg flex items-center justify-between">
+                                            <span>Ukuran: <b>{photoCompressInfo.original}</b> &rarr; <b>{photoCompressInfo.compressed}</b></span>
+                                            <span className="font-bold bg-emerald-200/60 px-1.5 py-0.5 rounded text-[10px]">Hemat {photoCompressInfo.saved}%</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Meta */}
@@ -221,7 +283,7 @@ export default function AdminGallery() {
                                             {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                                         </select>
                                     </div>
-                                    <button type="button" onClick={handlePhotoUpload} disabled={uploadingPhoto || !photoFile}
+                                    <button type="button" onClick={handlePhotoUpload} disabled={uploadingPhoto || compressingPhoto || !photoFile}
                                         className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-admin-primary text-white rounded-xl font-bold text-sm hover:bg-admin-primary/90 disabled:opacity-50 transition-colors shadow-sm">
                                         {uploadingPhoto ? <><Loader2 size={14} className="animate-spin" />Mengupload...</> : <><Upload size={14} />Upload Foto</>}
                                     </button>
@@ -248,17 +310,15 @@ export default function AdminGallery() {
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-bold text-gray-700">Thumbnail Kustom (opsional)</label>
                                         <label className={`flex flex-col items-center justify-center gap-1.5 h-24 border-2 border-dashed rounded-xl cursor-pointer transition-colors text-xs text-gray-400 ${videoThumbPreview ? 'border-gray-200 bg-gray-50' : 'border-gray-300 hover:border-admin-primary/50 hover:bg-admin-primary/5'}`}>
-                                            {videoThumbPreview ? (
+                                            {compressingVideoThumb ? (
+                                                <div className="flex items-center gap-1.5 text-admin-primary"><Loader2 size={14} className="animate-spin" /><span>Mengompres...</span></div>
+                                            ) : videoThumbPreview ? (
                                                 <img src={videoThumbPreview} alt="thumb" className="h-full w-full object-cover rounded-xl" />
                                             ) : (
-                                                <><ImageIcon size={18} className="text-gray-300" /><span>Pilih thumbnail</span></>
+                                                <><ImageIcon size={18} className="text-gray-300" /><span>Pilih thumbnail (Auto Compress)</span></>
                                             )}
                                             <input type="file" accept="image/*" className="hidden"
-                                                onChange={e => {
-                                                    const f = e.target.files[0];
-                                                    setVideoThumb(f);
-                                                    if (f) setVideoThumbPreview(URL.createObjectURL(f));
-                                                }} />
+                                                onChange={e => handleVideoThumbSelect(e.target.files[0])} />
                                         </label>
                                     </div>
                                 </div>

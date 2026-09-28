@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import axios from '../../lib/axios';
+import { compressImage, formatFileSize } from '../../lib/mediaCompressor';
 import {
     Map, Plus, Pencil, Trash2, RefreshCw, X, Check,
     GripVertical, ChevronUp, ChevronDown, ImagePlus,
@@ -135,10 +136,11 @@ export default function AdminPrograms() {
     const handleUploadHeroBanner = async (file) => {
         if (!file) return;
         setUploadingBanner(true);
-        const fd = new FormData();
-        fd.append('image', file);
-        fd.append('section', 'program');
         try {
+            const compressed = await compressImage(file, { maxWidth: 1920, quality: 0.85 });
+            const fd = new FormData();
+            fd.append('image', compressed.file);
+            fd.append('section', 'program');
             const res = await axios.post('/api/content/upload', fd, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
@@ -147,7 +149,7 @@ export default function AdminPrograms() {
             await axios.post('/api/content', {
                 contents: [{ key: 'programs_banner_image', value: path }]
             });
-            showToast('Background hero berhasil diperbarui!');
+            showToast(`Background hero berhasil diperbarui! (${formatFileSize(compressed.originalSize)} -> ${formatFileSize(compressed.compressedSize)})`);
         } catch (e) {
             showToast('Gagal mengunggah background hero.', 'error');
         } finally {
@@ -158,10 +160,11 @@ export default function AdminPrograms() {
     const handleUploadCustomImg = async (file) => {
         if (!file) return;
         setUploadingCustomImg(true);
-        const fd = new FormData();
-        fd.append('image', file);
-        fd.append('section', 'program');
         try {
+            const compressed = await compressImage(file, { maxWidth: 1600, quality: 0.85 });
+            const fd = new FormData();
+            fd.append('image', compressed.file);
+            fd.append('section', 'program');
             const res = await axios.post('/api/content/upload', fd, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
@@ -170,7 +173,7 @@ export default function AdminPrograms() {
             await axios.post('/api/content', {
                 contents: [{ key: 'programs_custom_image', value: path }]
             });
-            showToast('Gambar program khusus berhasil diperbarui!');
+            showToast(`Gambar program khusus berhasil diperbarui! (${formatFileSize(compressed.originalSize)} -> ${formatFileSize(compressed.compressedSize)})`);
         } catch (e) {
             showToast('Gagal mengunggah gambar program khusus.', 'error');
         } finally {
@@ -230,13 +233,15 @@ export default function AdminPrograms() {
         if (!file) return;
         setUploading(true);
         try {
+            const compressed = await compressImage(file, { maxWidth: 1200, quality: 0.85 });
             const fd = new FormData();
-            fd.append('image', file);
+            fd.append('image', compressed.file);
             const res = await axios.post('/api/programs/upload-thumbnail', fd, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             setForm(f => ({ ...f, thumbnail_url: res.data.url }));
             setPreviewImg(res.data.url);
+            showToast(`Thumbnail berhasil diunggah! (${formatFileSize(compressed.originalSize)} -> ${formatFileSize(compressed.compressedSize)})`);
         } catch (e) {
             showToast('Gagal upload gambar.', 'error');
         } finally {

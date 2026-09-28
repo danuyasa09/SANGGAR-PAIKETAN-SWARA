@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../lib/axios';
+import { compressImage } from '../../lib/mediaCompressor';
 
 export default function AdminContent() {
     const [contents, setContents] = useState([]);
@@ -22,10 +23,11 @@ export default function AdminContent() {
 
     const handleImageUpload = async (index, file) => {
         if (!file) return;
-        const formData = new FormData();
-        formData.append('image', file);
-
         try {
+            const compressed = await compressImage(file, { maxWidth: 1920, quality: 0.85 });
+            const formData = new FormData();
+            formData.append('image', compressed.file);
+
             const res = await axios.post('/api/content/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });

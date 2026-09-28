@@ -15,6 +15,18 @@ export default function AdminLayout() {
     }
 
     useEffect(() => {
+        // Nonaktifkan translasi di halaman admin
+        try {
+            const hostname = window.location.hostname;
+            const expirePast = '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.cookie = `googtrans${expirePast}`;
+            document.cookie = `googtrans${expirePast} domain=${hostname};`;
+            if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+                document.cookie = `googtrans${expirePast} domain=.${hostname};`;
+            }
+            document.cookie = 'googtrans=/id/id; path=/;';
+        } catch (e) {}
+
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         axios.get('/api/user').catch(() => {
             localStorage.removeItem('admin_token');
@@ -162,7 +174,7 @@ export default function AdminLayout() {
     );
 
     return (
-        <div className="flex min-h-screen bg-admin-bg font-admin-sans">
+        <div className="flex min-h-screen bg-admin-bg font-admin-sans notranslate" translate="no">
 
             {/* ── DESKTOP SIDEBAR (md and up) ── */}
             <aside className="hidden md:flex w-72 bg-admin-primary text-white flex-col shadow-2xl z-20 shrink-0">

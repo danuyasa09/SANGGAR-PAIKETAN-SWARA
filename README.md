@@ -1,108 +1,305 @@
-# Sanggar Paiketan Swara — Frontend Website
+# Sanggar Paiketan Swara — Website Profil & Reservasi
 
-Website profil dan reservasi interaktif untuk **Sanggar Paiketan Swara** (Gamelan & Tari Bali) yang berlokasi di Desa Bantas, Tabanan, Bali. Dibuat menggunakan arsitektur Single Page Application (SPA) modern yang terintegrasi dengan Laravel, React, dan Tailwind CSS v4.
-
----
-
-## 🛠️ Stack Teknologi
-
-- **Backend / Router Wrapper**: Laravel 11/12
-- **Frontend Core**: React 19 (dengan React DOM)
-- **Styling System**: Tailwind CSS v4 (Sistem variabel `@theme` modern)
-- **Asset Bundler / HMR**: Vite 8 (dengan `@vitejs/plugin-react`)
-- **Icon Library**: Lucide React
+Website profil dan reservasi interaktif untuk Sanggar Paiketan Swara (Gamelan & Tari Bali) yang berlokasi di Desa Bantas, Selemadeg Timur, Tabanan, Bali. Dibangun menggunakan arsitektur Single Page Application (SPA) berbasis Laravel 12, React 19, Tailwind CSS v4, dan Vite.
 
 ---
 
-## 📂 Struktur Direktori Frontend
+## Spesifikasi & Kebutuhan Server (Server Requirements)
 
-Berikut adalah pemetaan file utama frontend di dalam direktori `resources/`:
+Sebelum melakukan deployment atau hosting, pastikan server memenuhi spesifikasi berikut:
 
+- **PHP**: Versi >= 8.2 (Direkomendasikan PHP 8.3)
+  - Ekstensi PHP wajib: `BCMath`, `Ctype`, `cURL`, `DOM`, `Fileinfo`, `Filter`, `Hash`, `Mbstring`, `OpenSSL`, `PCRE`, `PDO`, `PDO_MySQL` (atau `PDO_SQLite`), `Session`, `Tokenizer`, `XML`.
+- **Composer**: Versi 2.x
+- **Node.js & NPM**: Node.js >= 18.x / 20.x dan NPM >= 9.x (untuk build asset)
+- **Database**: MySQL 8.0+ / MariaDB 10.4+ / SQLite 3
+- **Web Server**: Nginx atau Apache (dengan modul `mod_rewrite` aktif)
+
+---
+
+## Langkah-Langkah Wajib Sebelum & Saat Hosting (Pre-Hosting Checklist)
+
+Ikuti langkah-langkah berikut secara berurutan saat menyiapkan aplikasi di server hosting atau VPS:
+
+### 1. Unggah / Clone Repositori
+Clone repositori ke server atau unggah berkas proyek ke direktori target (di luar direktori publik web server jika di Shared Hosting):
 ```bash
-resources/
-├── css/
-│   └── app.css                # Konfigurasi variabel tema Tailwind v4 & Scrollbar
-├── js/
-│   ├── app.jsx                # Entry-point bootstrap React
-│   ├── components/            # Komponen bersama (Shared Components)
-│   │   ├── App.jsx            # State Router & penentu transisi halaman
-│   │   ├── Navbar.jsx         # Navigasi responsif (Desktop & Mobile)
-│   │   ├── Footer.jsx         # Footer lengkap dengan link sosial & alamat
-│   │   └── PageWrapper.jsx    # Kontainer efek animasi fade-in-out
-│   └── pages/                 # Halaman utama (Views)
-│       ├── Home.jsx           # Beranda (Hero, Paket, Keunggulan)
-│       ├── About.jsx          # Tentang Kami (Visi, Misi, 5 Nilai Inti)
-│       ├── Programs.jsx       # Program Edu-Wisata (Detail Paket & Target)
-│       ├── News.jsx           # Berita Terkini
-│       ├── Gallery.jsx        # Galeri Kegiatan (Filter Kategori)
-│       ├── Partnership.jsx    # Kemitraan & Sponsorship
-│       ├── Contact.jsx        # Kontak Kami (Formulir Hubungi Kami)
-│       └── Reservation.jsx    # Formulir Reservasi & Detail Booking
-└── views/
-    └── welcome.blade.php      # Blade template utama sebagai mount-point React
+git clone <url-repository> sanggar-paiketan-swara
+cd sanggar-paiketan-swara
 ```
+
+### 2. Instalasi Dependensi Backend (Composer)
+Jalankan instalasi dependensi PHP dengan optimasi produksi (tanpa dependensi dev):
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+### 3. Konfigurasi File Environment (`.env`)
+Salin file `.env.example` menjadi `.env` lalu sesuaikan pengaturannya:
+```bash
+cp .env.example .env
+```
+
+Buka dan sesuaikan variabel kunci pada `.env`:
+```ini
+APP_NAME="Sanggar Paiketan Swara"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://domain-anda.com
+
+# Konfigurasi Database (Sesuaikan dengan kredensial database server)
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database_hosting
+DB_USERNAME=user_database_hosting
+DB_PASSWORD=password_database_hosting
+
+# Session, Cache & Storage
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+FILESYSTEM_DISK=public
+
+# Konfigurasi Pengiriman Email Notifikasi (SMTP)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=email_pengirim@gmail.com
+MAIL_PASSWORD=password_aplikasi_gmail
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=email_pengirim@gmail.com
+MAIL_FROM_NAME="Sanggar Paiketan Swara"
+```
+
+### 4. Generate Application Encryption Key
+Buat kunci enkripsi aplikasi Laravel:
+```bash
+php artisan key:generate --force
+```
+
+### 5. Kompilasi Asset Frontend (Vite)
+Kompilasi asset React dan Tailwind CSS untuk lingkungan produksi:
+```bash
+npm install
+npm run build
+```
+> **Catatan:** Perintah ini menghasilkan direktori bundle produksi di `public/build/`. Jika hosting Anda tidak memiliki akses Node.js di server (Shared Hosting), jalankan `npm run build` di komputer lokal, lalu unggah folder `public/build/` beserta file `public/hot` (jika ada, hapus file `public/hot`).
+
+### 6. Tautkan Storage Simbolik (Storage Link)
+Buat tautan simbolik dari `storage/app/public` ke `public/storage` agar file upload (gambar galeri, artikel, konten) dapat diakses publik:
+```bash
+php artisan storage:link
+```
+
+### 7. Migrasi Database & Seeding Data Awal
+Jalankan migrasi tabel dan masukkan data awal (termasuk akun administrator default):
+```bash
+php artisan migrate --seed --force
+```
+
+### 8. Optimasi Cache Laravel untuk Produksi
+Jalankan perintah optimasi agar performa aplikasi maksimal dan pembacaan konfigurasi instan:
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache
+```
+
+> **Perhatian:** Jika Anda mengubah isi file `.env` di masa mendatang, jalankan kembali `php artisan config:clear` lalu `php artisan config:cache`.
+
+### 9. Pengaturan Hak Akses Direktori (Permissions)
+Pastikan web server memiliki izin tulis (write permission) ke direktori `storage` dan `bootstrap/cache`:
+```bash
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```
+*(Ganti `www-data:www-data` sesuai user web server hosting Anda, misalnya `nginx`, `apache`, atau user cPanel).*
 
 ---
 
-## 🚀 Cara Menjalankan Proyek
+## Konfigurasi Web Server
 
-Buka dua terminal berbeda pada folder root proyek (`sanggar_client`):
+### 1. Pengaturan Document Root (Kritis)
+Pastikan **Document Root** domain / subdomain Anda diarahkan langsung ke subdirektori **`public`**, **BUKAN** ke root folder proyek:
+- **Benar**: `/var/www/sanggar-paiketan-swara/public`
+- **Salah**: `/var/www/sanggar-paiketan-swara`
 
-### Terminal 1: Menjalankan Server Laravel
-Untuk melayani routing backend dan memuat halaman:
+### 2. Contoh Konfigurasi Nginx
+```nginx
+server {
+    listen 80;
+    server_name domain-anda.com www.domain-anda.com;
+    root /var/www/sanggar-paiketan-swara/public;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.php;
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
+
+### 3. Konfigurasi Apache (Shared Hosting / cPanel)
+Jika menggunakan Apache, file `.htaccess` bawaan di dalam folder `public/` sudah mengelola penulisan ulang URL. Pastikan modul `mod_rewrite` aktif.
+
+Jika hosting menggunakan struktur folder cPanel standar:
+1. Letakkan seluruh isi proyek Laravel di direktori luar `public_html` (misal: `/home/username/laravel_app/`).
+2. Pindahkan seluruh isi folder `public/` ke dalam `/home/username/public_html/`.
+3. Sesuaikan path pada file `public_html/index.php`:
+   ```php
+   require __DIR__.'/../laravel_app/vendor/autoload.php';
+   $app = require_once __DIR__.'/../laravel_app/bootstrap/app.php';
+   ```
+
+---
+
+## Panduan Khusus: Persiapan Deployment via File ZIP
+
+Jika mengunggah proyek dalam format `.zip` ke File Manager (cPanel / Shared Hosting), ikuti alur berikut agar aset frontend terbaca dan ukuran berkas efisien:
+
+### 1. Eksekusi di Komputer Lokal (Sebelum di-ZIP)
+Jalankan perintah berikut di komputer lokal:
 ```bash
-php artisan serve
-```
-> Server akan aktif di **http://127.0.0.1:8000**
+# 1. Kompilasi asset React/Tailwind ke folder public/build
+npm run build
 
-### Terminal 2: Menjalankan Vite (Frontend Compiler)
-Untuk kompilasi asset secara *real-time* (Hot Module Replacement):
-```cmd
-npm run dev
+# 2. Siapkan dependensi vendor produksi (opsional jika server tidak ada Composer)
+composer install --no-dev --optimize-autoloader
+
+# 3. HAPUS file 'public/hot' jika ada (Kritis: agar Laravel tidak mencari server Vite lokal)
+rm -f public/hot
 ```
 
-### 🔑 Akses Dasbor Admin
-Setelah server berjalan, Anda dapat mengelola konten website (CMS) dengan mengakses Dasbor Admin:
-- **URL**: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
+### 2. Folder yang WAJIB Disertakan & Dikecualikan dalam File ZIP
+- **WAJIB Disertakan**:
+  - `public/build/` (berisi manifest dan file JS/CSS hasil compile).
+  - `vendor/` (jika hosting tidak memiliki akses SSH / Composer).
+  - `app/`, `bootstrap/`, `config/`, `database/`, `resources/`, `routes/`, `storage/`, `artisan`, `.env.example`.
+- **JANGAN Disertakan (Kecualikan dari ZIP)**:
+  - `node_modules/` (ukurannya sangat besar dan tidak dibutuhkan lagi di server karena sudah di-build).
+  - `.git/` (tidak dibutuhkan di server hosting).
+  - `storage/logs/*.log` (file log lama).
+
+### 3. Setelah File ZIP Diekstrak di Server
+1. Buat file `.env` di server sesuai database hosting Anda (`APP_DEBUG=false`, `APP_ENV=production`).
+2. Pastikan file `public/build/manifest.json` ada.
+3. Jalankan `php artisan storage:link` (jika tidak ada akses terminal SSH, buat route sementara di `routes/web.php` untuk memanggil `Artisan::call('storage:link')` dan `Artisan::call('migrate --seed --force')`).
+
+---
+
+## Konfigurasi Fitur Notifikasi Email (SMTP)
+
+Website ini dilengkapi sistem notifikasi email otomatis berbasis template responsif untuk modul Reservasi:
+- **Email Masuk (`ReservationReceived`)**: Dikirim otomatis ke pengunjung saat pertama kali mengirim formulir reservasi online.
+- **Email Konfirmasi (`ReservationConfirmed`)**: Dikirim otomatis saat admin menyetujui reservasi di Admin Panel.
+- **Email Penolakan (`ReservationRejected`)**: Dikirim otomatis saat admin menolak reservasi.
+
+Karena berkas `.env` **TIDAK** disertakan ke Git (`.gitignore`), Anda wajib mengisi konfigurasi SMTP pada `.env` di server hosting Anda:
+
+### Opsi A: Menggunakan Gmail SMTP (Gratis & Mudah)
+1. Aktifkan **2-Step Verification** pada akun Google Anda.
+2. Buka menu **Security > 2-Step Verification > App Passwords** (Sandi Aplikasi).
+3. Buat password aplikasi baru (misal dengan nama `Web Sanggar`) dan salin 16 karakter password yang diberikan.
+4. Masukkan ke file `.env` server:
+```ini
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=alamatemailanda@gmail.com
+MAIL_PASSWORD=enambelaskarakterpasswordapp
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=alamatemailanda@gmail.com
+MAIL_FROM_NAME="Sanggar Paiketan Swara"
+```
+
+### Opsi B: Menggunakan Webmail / cPanel Hosting SMTP
+Gunakan akun email domain kustom dari cPanel hosting Anda (misal `kontak@domain-sanggar.com`):
+```ini
+MAIL_MAILER=smtp
+MAIL_HOST=mail.domain-anda.com
+MAIL_PORT=465
+MAIL_USERNAME=kontak@domain-anda.com
+MAIL_PASSWORD=password_email_cpanel
+MAIL_ENCRYPTION=ssl
+MAIL_FROM_ADDRESS=kontak@domain-anda.com
+MAIL_FROM_NAME="Sanggar Paiketan Swara"
+```
+
+### Opsi C: Mode Pengujian Lokal / Tanpa Pengiriman Asli (Log)
+Jika di lingkungan lokal dan tidak ingin mengirim email asli:
+```ini
+MAIL_MAILER=log
+```
+*(Seluruh isi email akan dicatat di dalam berkas `storage/logs/laravel.log`).*
+
+> **Tips:** Setelah mengubah konfigurasi email di file `.env`, jalankan selalu `php artisan config:clear` dan `php artisan config:cache`.
+
+---
+
+## Kredensial Administrator Default
+
+Setelah proses database seeding selesai dijalankan (`php artisan db:seed`), akun admin default adalah:
+
+- **URL Login Admin**: `https://domain-anda.com/admin`
 - **Email**: `admin@sanggar.com`
 - **Password**: `password`
 
+> **PENTING**: Segera ubah password dan email administrator setelah pertama kali berhasil login di lingkungan produksi.
+
 ---
-## Migrate dulu biar ada database 
-``` bash
-php artisan migrate
+
+## Ringkasan Perintah Cepat Deployment (Cheatsheet)
+
+```bash
+# 1. Update kode & dependensi
+git pull origin main
+composer install --no-dev --optimize-autoloader
+npm install && npm run build
+
+# 2. Update database & storage
+php artisan migrate --force
+php artisan storage:link
+
+# 3. Refresh cache produksi
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache
 ```
-## 🎭 Animasi Transisi Halaman (Fade-In-Out)
-
-Website ini menggunakan sistem routing berbasis state di dalam `App.jsx` dan dibalut oleh `PageWrapper.jsx` untuk menciptakan perpindahan halaman yang profesional:
-1. Ketika link navigasi diklik, halaman aktif akan memicu state `visible = false` yang secara perlahan menurunkan opasitas kontainer menjadi `opacity-0` dan mengecilkan skala kontainer (`duration-300`).
-2. Setelah 300ms (animasi keluar selesai), state halaman diperbarui ke halaman baru, scrollbar diatur ulang ke atas instan (`window.scrollTo(0,0)`), dan state diubah kembali menjadi `visible = true`.
-3. Halaman baru memudar masuk secara elegan (`opacity-100`) ke posisi semula.
 
 ---
 
-## 🎨 Palet Warna & Font (Tailwind v4)
+## Pengembangan Lokal (Local Development)
 
-Variabel tema didefinisikan secara modern di dalam `resources/css/app.css` menggunakan sintaks `@theme`:
-- **Background Utama (Warm Cream)**: `--color-brand-bg: #FAF6F0`
-- **Teks / Earth Dark**: `--color-brand-dark: #261E14`
-- **Gold Accent (Bali Gold)**: `--color-brand-gold: #C99B53`
-- **Gold Hover**: `--color-brand-gold-hover: #B7863F`
-- **Dark Forest Green**: `--color-brand-forest: #1A2F1C`
-- **Brand Red**: `--color-brand-red: #8B261E`
+Untuk menjalankan proyek di lingkungan pengembangan lokal:
 
-### Font:
-- **Heading**: `Playfair Display` (Serif premium untuk aksen tradisional Bali)
-- **Body / Teks**: `Instrument Sans` (Sans-serif bersih untuk keterbacaan tinggi)
-
----
-
-## 💡 Tips Pengaturan Editor (Menghilangkan Garis Merah di app.css)
-
-Jika file `app.css` menampilkan tanda error merah di editor Anda, hal ini dikarenakan editor belum mengenali struktur `@theme` atau `@import "tailwindcss"` bawaan Tailwind CSS v4.
-
-**Cara memperbaikinya di VS Code:**
-1. Buka **Settings** (`Ctrl + ,`).
-2. Cari `css.validate`.
-3. Hapus centang pada **Css › Validate** (ubah ke `false`).
-4. Pasang ekstensi resmi **Tailwind CSS IntelliSense** di VS Code.
+1. Salin `.env`: `cp .env.example .env`
+2. Pasang dependensi: `composer install` dan `npm install`
+3. Generate key: `php artisan key:generate`
+4. Buat database & migrasi: `php artisan migrate --seed`
+5. Tautkan storage: `php artisan storage:link`
+6. Jalankan server Laravel: `php artisan serve`
+7. Jalankan compiler Vite: `npm run dev`
+8. Akses website di `http://127.0.0.1:8000`

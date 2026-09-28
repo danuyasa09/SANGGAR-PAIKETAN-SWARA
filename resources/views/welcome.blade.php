@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="id">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +13,25 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+        <!-- Inisialisasi Prefensi Bahasa Default (ID) -->
+        <script>
+            try {
+                const userLang = localStorage.getItem('user_language');
+                if (!userLang || userLang === 'id') {
+                    localStorage.setItem('user_language', 'id');
+                    // Bersihkan cookie googtrans agar tidak auto translate ke Inggris
+                    const hostname = window.location.hostname;
+                    const expirePast = '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    document.cookie = `googtrans${expirePast}`;
+                    document.cookie = `googtrans${expirePast} domain=${hostname};`;
+                    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+                        document.cookie = `googtrans${expirePast} domain=.${hostname};`;
+                    }
+                    document.cookie = 'googtrans=/id/id; path=/;';
+                }
+            } catch (e) {}
+        </script>
 
         <!-- React DOM Protection for Google Translate -->
         <script>
@@ -47,6 +66,9 @@
         <!-- Google Translate Script Loader -->
         <script type="text/javascript">
             function googleTranslateElementInit() {
+                if (window.location.pathname.startsWith('/admin')) {
+                    return; // Jangan aktifkan translator di halaman admin
+                }
                 new google.translate.TranslateElement({
                     pageLanguage: 'id',
                     includedLanguages: 'id,en',

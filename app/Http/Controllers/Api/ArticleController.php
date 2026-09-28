@@ -113,7 +113,7 @@ class ArticleController extends Controller
     public function uploadCover(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
         ]);
 
         $path = $request->file('image')->store('articles', 'public');

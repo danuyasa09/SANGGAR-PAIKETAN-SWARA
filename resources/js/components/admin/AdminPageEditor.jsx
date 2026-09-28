@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from '../../lib/axios';
+import { compressImage, formatFileSize } from '../../lib/mediaCompressor';
 
 const PAGE_SCHEMAS = {
     beranda: {
@@ -157,11 +158,12 @@ export default function AdminPageEditor() {
 
     const handleImageUpload = async (key, file, type, section) => {
         if (!file) return;
-        const formData = new FormData();
-        formData.append('image', file);
-        if (section) formData.append('section', section);
-
         try {
+            const compressed = await compressImage(file, { maxWidth: 1920, quality: 0.85 });
+            const formData = new FormData();
+            formData.append('image', compressed.file);
+            if (section) formData.append('section', section);
+
             const res = await axios.post('/api/content/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
@@ -174,7 +176,7 @@ export default function AdminPageEditor() {
                 contents: [{ key, value: res.data.path }] 
             });
 
-            showToast('Gambar berhasil diupload dan disimpan!');
+            showToast(`Gambar berhasil diupload! (${formatFileSize(compressed.originalSize)} -> ${formatFileSize(compressed.compressedSize)})`);
         } catch (err) {
             const errorMsg = err.response?.data?.message || 'Gagal upload gambar konten.';
             showToast(errorMsg, 'error');

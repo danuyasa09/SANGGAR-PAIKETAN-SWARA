@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from '../../lib/axios';
+import { compressImage, formatFileSize } from '../../lib/mediaCompressor';
 import {
     Newspaper, Plus, Pencil, Trash2, RefreshCw, X, Check,
     ImagePlus, Loader2, Eye, EyeOff, AlertCircle, Calendar,
@@ -124,18 +125,21 @@ export default function AdminNews() {
         return { ...f, content: blocks };
     });
 
-    /* ─── Cover Upload ───────────────────────────── */
+    /* ─── Cover Upload with Auto Compression ─────── */
     const handleCoverUpload = async (file) => {
         if (!file) return;
         setUploading(true);
         try {
+            // Kompres gambar otomatis sebelum upload
+            const compressed = await compressImage(file, { maxWidth: 1600, quality: 0.85 });
             const fd = new FormData();
-            fd.append('image', file);
+            fd.append('image', compressed.file);
             const res = await axios.post('/api/articles/upload-cover', fd, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             setForm(f => ({ ...f, cover_url: res.data.url }));
             setPreviewCover(res.data.url);
+            showToast(`Foto cover berhasil diunggah! (${formatFileSize(compressed.originalSize)} -> ${formatFileSize(compressed.compressedSize)})`);
         } catch { showToast('Gagal upload gambar cover.', 'error'); }
         finally { setUploading(false); }
     };

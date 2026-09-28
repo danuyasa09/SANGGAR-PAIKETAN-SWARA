@@ -2,30 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { Globe } from 'lucide-react';
 
 export const getSavedLanguage = () => {
-    // 1. Cek cookie googtrans
+    // 1. Jadikan localStorage sebagai prioritas utama
+    const saved = localStorage.getItem('user_language');
+    if (saved === 'en') return 'en';
+    if (saved === 'id') return 'id';
+
+    // 2. Default pengguna baru SELALU 'id'
+    // Bersihkan cookie googtrans liar yang mungkin tertinggal dari sesi lain di localhost/domain
     const match = document.cookie.match(/(^|;\s*)googtrans=([^;]+)/);
     if (match) {
         const val = decodeURIComponent(match[2]);
-        if (val.endsWith('/en')) return 'en';
-        if (val.endsWith('/id')) return 'id';
+        if (val.includes('/en')) {
+            clearGoogTransCookie();
+        }
     }
-    // 2. Cek localStorage
-    const saved = localStorage.getItem('user_language');
-    if (saved === 'en' || saved === 'id') return saved;
 
+    localStorage.setItem('user_language', 'id');
     return 'id';
 };
 
-export const switchLanguage = (targetLang) => {
+const clearGoogTransCookie = () => {
     const hostname = window.location.hostname;
     const expirePast = '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    
-    // Hapus cookie lama
     document.cookie = `googtrans${expirePast}`;
     document.cookie = `googtrans${expirePast} domain=${hostname};`;
     if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
         document.cookie = `googtrans${expirePast} domain=.${hostname};`;
     }
+};
+
+export const switchLanguage = (targetLang) => {
+    const hostname = window.location.hostname;
+    clearGoogTransCookie();
 
     if (targetLang === 'id') {
         localStorage.setItem('user_language', 'id');
