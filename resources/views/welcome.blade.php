@@ -14,19 +14,26 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
 
-        <!-- Inisialisasi Prefensi Bahasa Default (ID) -->
+        <!-- Inisialisasi Prefensi Bahasa (ID / EN) -->
         <script>
             try {
-                const userLang = localStorage.getItem('user_language');
-                if (!userLang || userLang === 'id') {
-                    localStorage.setItem('user_language', 'id');
-                    // Bersihkan cookie googtrans agar tidak auto translate ke Inggris
-                    const hostname = window.location.hostname;
-                    const expirePast = '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    document.cookie = `googtrans${expirePast}`;
-                    document.cookie = `googtrans${expirePast} domain=${hostname};`;
+                const userLang = localStorage.getItem('user_language') || 'id';
+                const hostname = window.location.hostname;
+                const expirePast = '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+                if (userLang === 'en') {
+                    // Pastikan cookie translate ke EN terpasang sebelum script translate berjalan
+                    document.cookie = 'googtrans=/id/en; path=/;';
                     if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
-                        document.cookie = `googtrans${expirePast} domain=.${hostname};`;
+                        document.cookie = 'googtrans=/id/en; domain=.' + hostname + '; path=/;';
+                    }
+                } else {
+                    localStorage.setItem('user_language', 'id');
+                    // Bersihkan cookie translate agar murni Bahasa Indonesia
+                    document.cookie = 'googtrans' + expirePast;
+                    document.cookie = 'googtrans' + expirePast + ' domain=' + hostname + ';';
+                    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+                        document.cookie = 'googtrans' + expirePast + ' domain=.' + hostname + ';';
                     }
                     document.cookie = 'googtrans=/id/id; path=/;';
                 }

@@ -5,7 +5,7 @@ import {
     Newspaper, Plus, Pencil, Trash2, RefreshCw, X, Check,
     ImagePlus, Loader2, Eye, EyeOff, AlertCircle, Calendar,
     ChevronDown, ChevronUp, GripVertical, Quote, Heading,
-    AlignLeft, BookOpen, Tag, Clock, User, AtSign, Layout, FileImage
+    AlignLeft, BookOpen, Tag, Clock, User, AtSign, Layout, FileImage, Zap
 } from 'lucide-react';
 
 /* ─── News Page Fields (for Tampilan Halaman tab) ─── */
@@ -122,15 +122,17 @@ export default function AdminNews() {
         if (!file) return;
         setSavingField(key);
         try {
+            // Kompres foto hero/banner otomatis sebelum upload
+            const compressed = await compressImage(file, { maxWidth: 1920, quality: 0.85 });
             const fd = new FormData();
-            fd.append('image', file);
+            fd.append('image', compressed.file);
             if (section) fd.append('section', section);
             const res = await axios.post('/api/content/upload', fd, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             handlePageChange(key, res.data.path, type, section);
             await axios.post('/api/content', { contents: [{ key, value: res.data.path }] });
-            showPageToast('Gambar berhasil diupload dan disimpan!');
+            showPageToast(`Foto hero berhasil diunggah! (${formatFileSize(compressed.originalSize)} -> ${formatFileSize(compressed.compressedSize)})`);
         } catch (err) {
             showPageToast(err.response?.data?.message || 'Gagal upload gambar.', 'error');
         } finally { setSavingField(null); }
@@ -458,11 +460,17 @@ export default function AdminNews() {
                                             </div>
                                         )}
                                         <div className="flex-1 w-full space-y-2">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className="text-[11px] text-gray-500 font-medium">Unggah Gambar Latar</span>
+                                                <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                                    <Zap size={10} />Auto Compress Aktif
+                                                </span>
+                                            </div>
                                             <label className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-admin-primary/50 hover:bg-admin-primary/5 transition-colors text-sm text-gray-500 ${
                                                 savingField === field.key ? 'pointer-events-none opacity-60' : ''
                                             }`}>
                                                 {savingField === field.key
-                                                    ? <><Loader2 size={14} className="animate-spin" />Mengupload...</>
+                                                    ? <><Loader2 size={14} className="animate-spin" />Mengompres & Mengupload...</>
                                                     : <><ImagePlus size={14} />Pilih Foto Baru</>
                                                 }
                                                 <input
@@ -472,7 +480,7 @@ export default function AdminNews() {
                                                     onChange={e => handlePageImageUpload(field.key, e.target.files[0], field.type, field.section)}
                                                 />
                                             </label>
-                                            <p className="text-xs text-gray-400 italic">Maks. 2MB. Resolusi ideal: 1920×1080px.</p>
+                                            <p className="text-xs text-gray-400 italic">Semua ukuran & resolusi foto didukung (otomatis dikompresi ke WebP/JPEG teroptimasi).</p>
                                         </div>
                                     </div>
                                 )}

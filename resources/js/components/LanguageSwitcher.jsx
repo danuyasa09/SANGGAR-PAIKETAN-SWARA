@@ -72,17 +72,28 @@ export default function LanguageSwitcher({ className = '' }) {
     const [currentLang, setCurrentLang] = useState('id');
 
     useEffect(() => {
-        setCurrentLang(getSavedLanguage());
+        const saved = getSavedLanguage();
+        setCurrentLang(saved);
 
-        const interval = setInterval(() => {
-            const detected = getSavedLanguage();
-            if (detected !== currentLang) {
-                setCurrentLang(detected);
-            }
-        }, 1000);
+        // Jika bahasa yang tersimpan adalah 'en', pastikan widget Google Translate memproses translasi
+        if (saved === 'en') {
+            let count = 0;
+            const timer = setInterval(() => {
+                count++;
+                const combo = document.querySelector('.goog-te-combo');
+                if (combo) {
+                    if (combo.value !== 'en') {
+                        combo.value = 'en';
+                        combo.dispatchEvent(new Event('change'));
+                    }
+                    clearInterval(timer);
+                }
+                if (count > 30) clearInterval(timer);
+            }, 200);
 
-        return () => clearInterval(interval);
-    }, [currentLang]);
+            return () => clearInterval(timer);
+        }
+    }, []);
 
     const handleSelect = (lang) => {
         if (lang === currentLang) return;
