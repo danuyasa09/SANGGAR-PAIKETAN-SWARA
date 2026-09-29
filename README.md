@@ -79,12 +79,18 @@ php artisan key:generate --force
 ```
 
 ### 5. Kompilasi Asset Frontend (Vite)
-Kompilasi asset React dan Tailwind CSS untuk lingkungan produksi:
-```bash
-npm install
-npm run build
-```
-> **Catatan:** Perintah ini menghasilkan direktori bundle produksi di `public/build/`. Jika hosting Anda tidak memiliki akses Node.js di server (Shared Hosting), jalankan `npm run build` di komputer lokal, lalu unggah folder `public/build/` beserta file `public/hot` (jika ada, hapus file `public/hot`).
+Asset React dan Tailwind CSS wajib dikompilasi ke format produksi statis (`public/build/`):
+
+> **PENTING**: **JANGAN** menjalankan `npm run dev` di server hosting. `npm run dev` hanya untuk pengembangan lokal. Jika dijalankan di hosting atau jika file `public/hot` tertinggal, website akan menampilkan halaman putih (*blank page*).
+
+- **Jika server hosting memiliki akses Node.js & Terminal SSH:**
+  ```bash
+  npm install
+  npm run build
+  rm -f public/hot
+  ```
+- **Jika Shared Hosting / cPanel (tanpa Node.js):**
+  Jalankan `npm run build` dan `rm -f public/hot` di komputer lokal Anda, lalu pastikan folder `public/build/` ikut terunggah ke hosting (di dalam `public_html/build/`). Server hosting **tidak membutuhkan Node.js**.
 
 ### 6. Tautkan Storage Simbolik (Storage Link)
 Buat tautan simbolik dari `storage/app/public` ke `public/storage` agar file upload (gambar galeri, artikel, konten) dapat diakses publik:
@@ -166,7 +172,7 @@ Jika menggunakan Apache, file `.htaccess` bawaan di dalam folder `public/` sudah
 
 Jika hosting menggunakan struktur folder cPanel standar:
 1. Letakkan seluruh isi proyek Laravel di direktori luar `public_html` (misal: `/home/username/laravel_app/`).
-2. Pindahkan seluruh isi folder `public/` ke dalam `/home/username/public_html/`.
+2. Pindahkan seluruh isi folder `public/` (termasuk folder `build/`) ke dalam `/home/username/public_html/`.
 3. Sesuaikan path pada file `public_html/index.php`:
    ```php
    require __DIR__.'/../laravel_app/vendor/autoload.php';
@@ -175,37 +181,50 @@ Jika hosting menggunakan struktur folder cPanel standar:
 
 ---
 
-## Panduan Khusus: Persiapan Deployment via File ZIP
+## Panduan Khusus: Persiapan & Deployment via File ZIP (Plug & Play)
 
-Jika mengunggah proyek dalam format `.zip` ke File Manager (cPanel / Shared Hosting), ikuti alur berikut agar aset frontend terbaca dan ukuran berkas efisien:
+Gunakan panduan ini jika Anda membagikan proyek dalam bentuk berkas `.zip` untuk di-upload langsung ke hosting/cPanel tanpa memerlukan Node.js di server:
 
-### 1. Eksekusi di Komputer Lokal (Sebelum di-ZIP)
-Jalankan perintah berikut di komputer lokal:
-```bash
-# 1. Kompilasi asset React/Tailwind ke folder public/build
-npm run build
+### A. Langkah di Komputer Lokal (Sebelum Membuat ZIP)
+1. Matikan server dev lokal jika masih menyala (`Ctrl + C`).
+2. Jalankan kompilasi frontend:
+   ```bash
+   npm run build
+   ```
+3. Pastikan file `public/hot` terhapus:
+   ```bash
+   rm -f public/hot
+   ```
+4. Siapkan dependensi Composer jika server hosting tidak ada terminal Composer:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   ```
+5. Kompres seluruh proyek menjadi `.zip` dengan ketentuan:
+   - **WAJIB Masuk**: `public/build/` (beserta `manifest.json`), `app/`, `bootstrap/`, `config/`, `database/`, `public/`, `resources/`, `routes/`, `storage/`, `vendor/`, `artisan`, `.env.example`.
+   - **JANGAN Masukkan**: `node_modules/` (sangat berat & tidak diperlukan di server), `public/hot`, `.git/`.
 
-# 2. Siapkan dependensi vendor produksi (opsional jika server tidak ada Composer)
-composer install --no-dev --optimize-autoloader
-
-# 3. HAPUS file 'public/hot' jika ada (Kritis: agar Laravel tidak mencari server Vite lokal)
-rm -f public/hot
-```
-
-### 2. Folder yang WAJIB Disertakan & Dikecualikan dalam File ZIP
-- **WAJIB Disertakan**:
-  - `public/build/` (berisi manifest dan file JS/CSS hasil compile).
-  - `vendor/` (jika hosting tidak memiliki akses SSH / Composer).
-  - `app/`, `bootstrap/`, `config/`, `database/`, `resources/`, `routes/`, `storage/`, `artisan`, `.env.example`.
-- **JANGAN Disertakan (Kecualikan dari ZIP)**:
-  - `node_modules/` (ukurannya sangat besar dan tidak dibutuhkan lagi di server karena sudah di-build).
-  - `.git/` (tidak dibutuhkan di server hosting).
-  - `storage/logs/*.log` (file log lama).
-
-### 3. Setelah File ZIP Diekstrak di Server
-1. Buat file `.env` di server sesuai database hosting Anda (`APP_DEBUG=false`, `APP_ENV=production`).
-2. Pastikan file `public/build/manifest.json` ada.
-3. Jalankan `php artisan storage:link` (jika tidak ada akses terminal SSH, buat route sementara di `routes/web.php` untuk memanggil `Artisan::call('storage:link')` dan `Artisan::call('migrate --seed --force')`).
+### B. Langkah di Server Hosting (Setelah Ekstrak ZIP)
+Di server hosting, Anda **TIDAK PERLU** menjalankan `npm install` atau `npm run dev`:
+1. Ekstrak file `.zip` ke File Manager hosting.
+2. Salin `.env.example` menjadi `.env`, lalu atur koneksi database dan domain:
+   ```ini
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://domain-anda.com
+   ```
+3. Generate application key (jika belum):
+   ```bash
+   php artisan key:generate --force
+   ```
+4. Jalankan migrasi dan seeding database:
+   ```bash
+   php artisan migrate --seed --force
+   ```
+5. Buat tautan storage agar gambar tampil:
+   ```bash
+   php artisan storage:link
+   ```
+6. Website sudah siap dan langsung tampil normal.
 
 ---
 
