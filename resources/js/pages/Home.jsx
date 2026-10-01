@@ -17,24 +17,28 @@ export default function Home({ changePage, content }) {
             icon: <Music className="w-6 h-6 text-[#C99B53]" />,
             title: "Belajar Gamelan Bali",
             desc: "Kenali berbagai instrumen gamelan, cara memainkannya, serta peran setiap instrumen dalam menciptakan sebuah komposisi yang harmonis.",
+            defaultImg: 'https://images.unsplash.com/photo-1620801582341-237ab047de0f?q=80&w=600&auto=format&fit=crop',
             img: resolveImage('home_program_1_img', 'https://images.unsplash.com/photo-1620801582341-237ab047de0f?q=80&w=600&auto=format&fit=crop')
         },
         {
             icon: <Activity className="w-6 h-6 text-[#C99B53]" />,
             title: "Belajar Tari Bali",
             desc: "Pelajari gerakan dasar, ekspresi, postur, dan makna yang terdapat dalam seni tari Bali melalui pendampingan anggota sanggar.",
+            defaultImg: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=600&auto=format&fit=crop',
             img: resolveImage('home_program_2_img', 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=600&auto=format&fit=crop')
         },
         {
             icon: <Sparkles className="w-6 h-6 text-[#C99B53]" />,
             title: "Pertunjukan Seni",
             desc: "Nikmati pertunjukan gamelan dan tari yang dibawakan oleh para seniman Sanggar Paiketan Swara.",
+            defaultImg: 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=600&auto=format&fit=crop',
             img: resolveImage('home_program_3_img', 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=600&auto=format&fit=crop')
         },
         {
             icon: <GraduationCap className="w-6 h-6 text-[#C99B53]" />,
             title: "Kunjungan Edukasi",
             desc: "Program khusus untuk sekolah, perguruan tinggi, komunitas, keluarga, dan kelompok wisata yang ingin mempelajari budaya Bali secara lebih dekat.",
+            defaultImg: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=600&auto=format&fit=crop',
             img: resolveImage('home_program_4_img', 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=600&auto=format&fit=crop')
         }
     ];
@@ -222,6 +226,11 @@ export default function Home({ changePage, content }) {
                                         <img
                                             src={item.img}
                                             alt={item.title}
+                                            onError={(e) => {
+                                                if (item.defaultImg && e.currentTarget.src !== item.defaultImg) {
+                                                    e.currentTarget.src = item.defaultImg;
+                                                }
+                                            }}
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
