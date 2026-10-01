@@ -85,15 +85,15 @@ export default function Home({ changePage, content }) {
 
     return (
         <div className="bg-[#FAF6F0] font-sans">
-            
+
             {/* HERO SECTION */}
             <section className="relative min-h-screen flex items-center justify-start pt-24 pb-28 md:pb-36 lg:pb-44 overflow-hidden">
-                <div 
+                <div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url('${resolveImage('home_hero_bg', '/images/image.png')}')` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1C150C]/90 via-[#261E14]/75 to-[#261E14]/30" />
- 
+
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left mt-8 space-y-6">
                     <span className="text-xs font-bold tracking-widest text-[#C99B53] uppercase block">
                         — SANGGAR PAIKETAN SWARA —
@@ -121,9 +121,9 @@ export default function Home({ changePage, content }) {
 
                 {/* SVG Curve Divider */}
                 <div className="absolute -bottom-[2px] left-0 w-full overflow-hidden leading-[0] z-20 pointer-events-none">
-                    <svg 
-                        viewBox="0 0 1200 120" 
-                        preserveAspectRatio="none" 
+                    <svg
+                        viewBox="0 0 1200 120"
+                        preserveAspectRatio="none"
                         className="relative block w-full h-[35px] md:h-[50px] text-[#FAF6F0] translate-y-px"
                         fill="currentColor"
                     >
@@ -159,7 +159,7 @@ export default function Home({ changePage, content }) {
                             <div className="relative mx-auto max-w-[320px] lg:max-w-[370px] group">
                                 {/* Decorative Balinese Gold Glow Frame */}
                                 <div className="absolute -inset-3 bg-gradient-to-tr from-[#C99B53]/30 via-[#C99B53]/10 to-[#C99B53]/40 rounded-3xl transform -rotate-1.5 group-hover:rotate-0 transition-transform duration-500 blur-sm" />
-                                
+
                                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border-2 border-[#C99B53]/50 bg-[#1C150C]">
                                     <img
                                         src={resolveImage('home_about_image', '/images/pemilik_sanggar.jpg')}
@@ -167,7 +167,7 @@ export default function Home({ changePage, content }) {
                                         className="w-full h-full object-cover aspect-[3/4] transform group-hover:scale-105 transition-transform duration-700"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#1C150C]/90 via-[#1C150C]/20 to-transparent pointer-events-none" />
-                                    
+
                                     {/* Top Floating Badge */}
                                     <div className="absolute top-4 left-4 z-10">
                                         <div className="inline-flex items-center gap-2 bg-[#1C150C]/85 backdrop-blur-md border border-[#C99B53]/50 px-3 py-1.5 rounded-full shadow-lg">
@@ -219,14 +219,14 @@ export default function Home({ changePage, content }) {
                                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col group text-left w-full relative">
                                     {/* Photo Header */}
                                     <div className="relative h-44 overflow-hidden">
-                                        <img 
-                                            src={item.img} 
-                                            alt={item.title} 
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                        <img
+                                            src={item.img}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
                                     </div>
-                                    
+
                                     {/* Floating Pin Badge */}
                                     <div className="absolute right-4 top-38 w-10 h-10 rounded-full bg-white border border-[#C99B53]/25 shadow-sm flex items-center justify-center text-[#C99B53] z-10">
                                         {item.icon}
@@ -267,7 +267,7 @@ export default function Home({ changePage, content }) {
                                 <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans font-medium">
                                     {content('home_eduwisata_desc', 'Program edu-wisata Sanggar Paiketan Swara dirancang untuk kelompok berjumlah 10–30 peserta dengan durasi sekitar 60–90 menit. Program dapat disesuaikan dengan usia, jumlah peserta, waktu kunjungan, dan tujuan pembelajaran.')}
                                 </p>
-                                
+
                                 <div className="flex flex-wrap items-center gap-4 pt-1">
                                     <div className="flex items-center gap-2 text-xs font-bold text-[#261E14] bg-white px-3.5 py-2 rounded-lg border border-gray-200">
                                         <Users size={14} className="text-[#C99B53]" />
@@ -334,10 +334,10 @@ export default function Home({ changePage, content }) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {whyPoints.map((feat, idx) => (
-                            <ScrollReveal 
-                                key={idx} 
+                            <ScrollReveal
+                                key={idx}
                                 delay={idx * 80}
-                                distance="30px" 
+                                distance="30px"
                                 className="flex"
                             >
                                 <div className="bg-[#FAF6F0]/40 rounded-2xl p-6 border border-gray-100/80 hover:shadow-md transition-all duration-200 flex flex-col space-y-4 w-full">
@@ -383,7 +383,7 @@ export default function Home({ changePage, content }) {
                                 </h2>
                             </div>
                             <div className="h-[2px] w-16 bg-[#C99B53]" />
-                            
+
                             <div className="space-y-4 text-xs sm:text-sm text-gray-600 leading-relaxed font-sans font-medium">
                                 <p>
                                     {content('home_about_teaser_p1', 'Sanggar Paiketan Swara merupakan kelompok seni yang berlokasi di Banjar Dinas Bantas Tengah Kaja, Desa Bantas, Kecamatan Selemadeg Timur, Kabupaten Tabanan, Bali.')}
@@ -410,12 +410,12 @@ export default function Home({ changePage, content }) {
 
             {/* SECTION: BOTTOM CTA BANNER */}
             <section className="relative py-28 overflow-hidden">
-                <div 
+                <div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url('${resolveImage('home_cta_bg', 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=1600&auto=format&fit=crop')}')` }}
                 />
                 <div className="absolute inset-0 bg-black/75" />
-                
+
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left space-y-6">
                     <h2 className="text-3xl sm:text-5xl font-serif text-[#FAF6F0] font-bold leading-tight" dangerouslySetInnerHTML={{ __html: content('cta_bottom_title', 'Mari <span class="font-serif italic font-normal text-[#C99B53]">Mengenal Budaya Bali</span> Lebih Dekat') }} />
                     <p className="text-sm sm:text-base text-gray-300 max-w-2xl leading-relaxed font-sans">
