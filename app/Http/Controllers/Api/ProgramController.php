@@ -114,7 +114,7 @@ class ProgramController extends Controller
     public function uploadThumbnail(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:51200',
         ]);
 
         $path = $request->file('image')->store('programs', 'public');

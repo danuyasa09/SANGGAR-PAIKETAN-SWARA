@@ -24,7 +24,7 @@ class GalleryController extends Controller
                 'category'  => 'nullable|string|max:100',
                 'video_url' => 'required|string',
                 'views'     => 'nullable|string|max:50',
-                'image'     => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
+                'image'     => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:51200',
             ]);
 
             // Thumbnail is optional for video
@@ -43,7 +43,7 @@ class GalleryController extends Controller
             ]);
         } else {
             $request->validate([
-                'image'    => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:10240',
+                'image'    => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:51200',
                 'title'    => 'nullable|string|max:255',
                 'category' => 'nullable|string|max:100',
             ]);

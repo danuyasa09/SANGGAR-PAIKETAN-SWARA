@@ -122,12 +122,12 @@ export const compressImage = async (file, options = {}) => {
                         const baseName = file.name.replace(/\.[^/.]+$/, '');
                         const newFileName = `${baseName}.${extension}`;
 
-                        // Jika hasil kompresi malah lebih besar dari file asli, pertahankan file asli
+                        // Jika hasil kompresi malah lebih besar dari file asli HANYA jika file asli memang sudah sangat kecil (< 1MB)
                         let finalBlob = blob;
                         let finalName = newFileName;
                         let finalType = targetMime;
 
-                        if (blob.size >= file.size && file.size > 0) {
+                        if (blob.size >= file.size && file.size < 1024 * 1024 && file.size > 0) {
                             finalBlob = file;
                             finalName = file.name;
                             finalType = file.type;
