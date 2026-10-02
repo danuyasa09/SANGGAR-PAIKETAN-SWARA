@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Users, Info, Send, Lock, Phone, Mail, User, MessageSquare, Check, Clock, Tag, Loader2, AlertCircle, MapPin, Globe, HelpCircle } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 import axios from '../lib/axios';
@@ -7,6 +7,8 @@ export default function Reservation({ content }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [submitted, setSubmitted] = useState(false);
+    const [packages, setPackages] = useState([]);
+    const [loadingPackages, setLoadingPackages] = useState(true);
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -16,10 +18,40 @@ export default function Reservation({ content }) {
         visitTime: 'Pagi (09.00 - 11.00 WITA)',
         participants: '',
         ageGroup: 'Campuran / Umum',
-        packageType: 'Paket 1: Pengalaman Gamelan Bali',
+        packageType: '',
         language: 'Bahasa Indonesia',
         notes: ''
     });
+
+    // Fetch paket dari API agar sinkron dengan data admin
+    useEffect(() => {
+        axios.get('/api/programs')
+            .then(res => {
+                const activePackages = res.data.map((prog, idx) => ({
+                    value: `${prog.code || `Paket ${idx + 1}`}: ${prog.title}`,
+                    label: `${prog.code || `Paket ${idx + 1}`}: ${prog.title}`,
+                }));
+                // Tambahkan selalu opsi Program Khusus/Kustom di akhir
+                activePackages.push({ value: 'Program Khusus / Kustom', label: 'Program Khusus / Kustom' });
+                setPackages(activePackages);
+                // Set default ke paket pertama
+                if (activePackages.length > 0) {
+                    setFormData(prev => ({ ...prev, packageType: activePackages[0].value }));
+                }
+            })
+            .catch(() => {
+                // Fallback ke paket hardcoded jika API gagal
+                const fallback = [
+                    { value: 'Paket 1: Pengalaman Gamelan Bali', label: 'Paket 1: Pengalaman Gamelan Bali' },
+                    { value: 'Paket 2: Pengalaman Tari Bali', label: 'Paket 2: Pengalaman Tari Bali' },
+                    { value: 'Paket 3: Gamelan dan Tari Bali', label: 'Paket 3: Gamelan dan Tari Bali' },
+                    { value: 'Program Khusus / Kustom', label: 'Program Khusus / Kustom' },
+                ];
+                setPackages(fallback);
+                setFormData(prev => ({ ...prev, packageType: fallback[0].value }));
+            })
+            .finally(() => setLoadingPackages(false));
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -122,7 +154,7 @@ export default function Reservation({ content }) {
                                                 name: '', phone: '', email: '', origin: '',
                                                 visitDate: '', visitTime: 'Pagi (09.00 - 11.00 WITA)',
                                                 participants: '', ageGroup: 'Campuran / Umum',
-                                                packageType: 'Paket 1: Pengalaman Gamelan Bali',
+                                                packageType: packages.length > 0 ? packages[0].value : '',
                                                 language: 'Bahasa Indonesia', notes: ''
                                             });
                                         }}
@@ -290,23 +322,29 @@ export default function Reservation({ content }) {
                                             </select>
                                         </div>
 
-                                        {/* Paket yang Dipilih */}
+                                        {/* Paket yang Dipilih — diambil dinamis dari API */}
                                         <div className="space-y-1.5">
                                             <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
                                                 <Tag size={13} className="text-[#C99B53]" />
                                                 Paket yang Dipilih <span className="text-red-500">*</span>
                                             </label>
-                                            <select
-                                                name="packageType"
-                                                value={formData.packageType}
-                                                onChange={handleInputChange}
-                                                className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
-                                            >
-                                                <option value="Paket 1: Pengalaman Gamelan Bali">Paket 1: Pengalaman Gamelan Bali</option>
-                                                <option value="Paket 2: Pengalaman Tari Bali">Paket 2: Pengalaman Tari Bali</option>
-                                                <option value="Paket 3: Gamelan dan Tari Bali">Paket 3: Gamelan dan Tari Bali</option>
-                                                <option value="Program Khusus / Kustom">Program Khusus / Kustom</option>
-                                            </select>
+                                            {loadingPackages ? (
+                                                <div className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl flex items-center gap-2 text-xs text-gray-400">
+                                                    <Loader2 size={13} className="animate-spin" />
+                                                    Memuat pilihan paket...
+                                                </div>
+                                            ) : (
+                                                <select
+                                                    name="packageType"
+                                                    value={formData.packageType}
+                                                    onChange={handleInputChange}
+                                                    className="w-full px-4 py-2.5 bg-[#FAF6F0]/40 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 outline-none focus:border-[#C99B53] focus:bg-white transition-all"
+                                                >
+                                                    {packages.map(pkg => (
+                                                        <option key={pkg.value} value={pkg.value}>{pkg.label}</option>
+                                                    ))}
+                                                </select>
+                                            )}
                                         </div>
 
                                         {/* Pilihan Bahasa Pendampingan */}

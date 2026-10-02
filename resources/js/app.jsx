@@ -19,6 +19,7 @@ if (root) {
         <React.StrictMode>
             <BrowserRouter>
                 <Routes>
+                    {/* Admin routes */}
                     <Route path="/admin/login" element={<Login />} />
                     <Route path="/admin" element={<AdminLayout />}>
                         <Route index element={<Navigate to="/admin/page/beranda" replace />} />
@@ -30,7 +31,19 @@ if (root) {
                         <Route path="programs" element={<AdminPrograms />} />
                         <Route path="news" element={<AdminNews />} />
                     </Route>
-                    <Route path="/*" element={<App />} />
+
+                    {/* Public routes — semua ditangani oleh App.jsx yang mengelola state navigasi */}
+                    <Route path="/"          element={<App />} />
+                    <Route path="/tentang"   element={<App />} />
+                    <Route path="/program"   element={<App />} />
+                    <Route path="/berita"    element={<App />} />
+                    <Route path="/berita/:id" element={<App />} />
+                    <Route path="/galeri"    element={<App />} />
+                    <Route path="/kemitraan" element={<App />} />
+                    <Route path="/kontak"    element={<App />} />
+                    <Route path="/reservasi" element={<App />} />
+                    {/* Fallback: redirect path tidak dikenal ke home */}
+                    <Route path="/*"         element={<App />} />
                 </Routes>
             </BrowserRouter>
         </React.StrictMode>

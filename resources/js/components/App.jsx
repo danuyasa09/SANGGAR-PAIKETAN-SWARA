@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from '../lib/axios';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -13,50 +14,109 @@ import Partnership from '../pages/Partnership';
 import Contact from '../pages/Contact';
 import Reservation from '../pages/Reservation';
 
+// Peta URL path ke nama halaman internal
+const PATH_TO_PAGE = {
+    '/':            'home',
+    '/tentang':     'about',
+    '/program':     'programs',
+    '/berita':      'news',
+    '/galeri':      'gallery',
+    '/kemitraan':   'partnership',
+    '/kontak':      'contact',
+    '/reservasi':   'reservation',
+};
+
+// Peta nama halaman ke URL path
+const PAGE_TO_PATH = {
+    home:        '/',
+    about:       '/tentang',
+    programs:    '/program',
+    news:        '/berita',
+    gallery:     '/galeri',
+    partnership: '/kemitraan',
+    contact:     '/kontak',
+    reservation: '/reservasi',
+};
+
+// Ekstrak page + articleId dari lokasi URL saat ini
+const resolvePageFromLocation = (location) => {
+    const path = location.pathname;
+    // Cek apakah path adalah artikel berita: /berita/:id
+    const newsDetailMatch = path.match(/^\/berita\/(\d+)$/);
+    if (newsDetailMatch) {
+        return { page: 'news-detail', articleId: parseInt(newsDetailMatch[1]) };
+    }
+    const page = PATH_TO_PAGE[path] || 'home';
+    return { page, articleId: null };
+};
+
 export default function App() {
-    const [page, setPage] = useState('home');
-    const [articleId, setArticleId] = useState(null);
-    const [renderedPage, setRenderedPage] = useState('home');
-    const [visible, setVisible] = useState(true);
-    const [progress, setProgress] = useState(0);
+    const navigate   = useNavigate();
+    const location   = useLocation();
+
+    const initial    = resolvePageFromLocation(location);
+    const [page, setPage]               = useState(initial.page);
+    const [articleId, setArticleId]     = useState(initial.articleId);
+    const [renderedPage, setRenderedPage] = useState(initial.page);
+    const [visible, setVisible]         = useState(true);
+    const [progress, setProgress]       = useState(0);
     const [progressVisible, setProgressVisible] = useState(false);
     const [siteContent, setSiteContent] = useState([]);
 
-    const changePage = (newPage, id = null) => {
+    // Navigasi antar halaman: update URL sekaligus
+    const changePage = useCallback((newPage, id = null) => {
         if (newPage === page && id === articleId) return;
 
-        // Start gold loading bar
+        // Tentukan URL baru
+        let newPath;
+        if (newPage === 'news-detail' && id) {
+            newPath = `/berita/${id}`;
+        } else {
+            newPath = PAGE_TO_PATH[newPage] || '/';
+        }
+        navigate(newPath);
+
         setProgressVisible(true);
         setProgress(30);
-
         setVisible(false);
         setPage(newPage);
         setArticleId(id);
-    };
+    }, [page, articleId, navigate]);
 
+    // Tangani tombol back/forward browser
     useEffect(() => {
-        // Fetch dynamic content
+        const resolved = resolvePageFromLocation(location);
+        if (resolved.page !== page || resolved.articleId !== articleId) {
+            setProgressVisible(true);
+            setProgress(30);
+            setVisible(false);
+            setPage(resolved.page);
+            setArticleId(resolved.articleId);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname]);
+
+    // Fetch konten dinamis
+    useEffect(() => {
         axios.get('/api/content').then(res => {
             setSiteContent(res.data);
         }).catch(err => console.error(err));
     }, []);
 
+    // Animasi transisi halaman
     useEffect(() => {
         if (!visible) {
             const timer = setTimeout(() => {
                 setRenderedPage(page);
                 setVisible(true);
                 window.scrollTo({ top: 0, behavior: 'instant' });
-                
-                // Complete loading progress bar
+
                 setProgress(100);
-                
                 const hideTimer = setTimeout(() => {
                     setProgressVisible(false);
                     setProgress(0);
                 }, 300);
 
-                // Force recalculation for IntersectionObservers
                 const reflowTimer = setTimeout(() => {
                     window.dispatchEvent(new Event('scroll'));
                     window.scrollBy(0, 1);
@@ -67,7 +127,7 @@ export default function App() {
                     clearTimeout(hideTimer);
                     clearTimeout(reflowTimer);
                 };
-            }, 150); // fast 150ms fade-out transition
+            }, 150);
             return () => clearTimeout(timer);
         }
     }, [page, visible]);
@@ -105,21 +165,21 @@ export default function App() {
     return (
         <div className="flex flex-col min-h-screen bg-[#FAF6F0] text-[#261E14] font-sans selection:bg-[#C99B53] selection:text-white overflow-x-hidden">
             {/* Top Gold Loading Bar */}
-            <div 
+            <div
                 className="fixed top-0 left-0 h-[3px] bg-[#C99B53] z-[9999] transition-all duration-300 ease-out shadow-[0_0_8px_#C99B53] pointer-events-none"
-                style={{ 
-                    width: `${progress}%`, 
-                    opacity: progressVisible ? 1 : 0 
+                style={{
+                    width: `${progress}%`,
+                    opacity: progressVisible ? 1 : 0
                 }}
             />
-            
+
             <Navbar currentPage={page} changePage={changePage} />
             <main className="flex-grow min-h-[75vh] overflow-x-hidden">
                 <PageWrapper visible={visible}>
                     {renderCurrentPage()}
                 </PageWrapper>
             </main>
-            <Footer changePage={changePage} />
+            <Footer changePage={changePage} content={getContent} />
         </div>
     );
 }

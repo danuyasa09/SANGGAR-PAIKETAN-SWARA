@@ -32,7 +32,10 @@ class ReservationController extends Controller
         $reservation = Reservation::create($validated);
 
         try {
-            Mail::to($reservation->email)->send(new ReservationReceived($reservation));
+            // Kirim ke pemesan + CC ke email admin sanggar
+            Mail::to($reservation->email)
+                ->cc(config('mail.from.address'))
+                ->send(new ReservationReceived($reservation));
         } catch (\Exception $e) {
             \Log::error('Gagal mengirim email reservasi: ' . $e->getMessage());
         }

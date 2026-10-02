@@ -46,7 +46,9 @@ export default function NewsDetail({ changePage, articleId }) {
     }, [articleId]);
 
     const handleCopyLink = () => {
-        navigator.clipboard.writeText(window.location.href).catch(() => {});
+        // Bangun URL artikel yang benar berdasarkan ID
+        const articleUrl = `${window.location.origin}/berita/${articleId}`;
+        navigator.clipboard.writeText(articleUrl).catch(() => {});
         setLinkCopied(true);
         setTimeout(() => setLinkCopied(false), 2000);
     };
@@ -184,17 +186,17 @@ export default function NewsDetail({ changePage, articleId }) {
                                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-1 flex items-center gap-1.5">
                                         <Share2 size={11} />Bagikan:
                                     </span>
-                                    <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                                    <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${window.location.origin}/berita/${articleId}`)}`}
                                         target="_blank" rel="noopener noreferrer"
                                         className="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:opacity-80 transition-opacity shadow-sm">
                                         <IconFacebook />
                                     </a>
-                                    <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(window.location.href)}`}
+                                    <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(`${window.location.origin}/berita/${articleId}`)}`}
                                         target="_blank" rel="noopener noreferrer"
                                         className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white hover:opacity-80 transition-opacity shadow-sm">
                                         <IconTwitterX />
                                     </a>
-                                    <a href={`https://wa.me/?text=${encodeURIComponent(article.title + ' ' + window.location.href)}`}
+                                    <a href={`https://wa.me/?text=${encodeURIComponent(article.title + ' ' + `${window.location.origin}/berita/${articleId}`)}`}
                                         target="_blank" rel="noopener noreferrer"
                                         className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center text-white hover:opacity-80 transition-opacity shadow-sm">
                                         <MessageCircle size={14} />
