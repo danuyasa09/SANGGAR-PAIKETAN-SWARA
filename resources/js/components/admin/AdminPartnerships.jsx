@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import axios from '../../lib/axios';
 import { Handshake, Check, X, Trash2, RefreshCw, ChevronDown, Search, Building2, Phone, Mail, Calendar, MessageSquare, Filter } from 'lucide-react';
 
@@ -106,14 +107,19 @@ export default function AdminPartnerships() {
                         <p className="text-sm text-admin-text/50">Kelola pengajuan kerja sama</p>
                     </div>
                 </div>
-                <button
-                    onClick={fetchData}
-                    disabled={loading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-admin-text/70 shadow-sm"
-                >
-                    <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-                    Refresh
-                </button>
+                <div className="flex items-center gap-2">
+                    <RouterLink to="/admin/page/kemitraan" className="flex items-center gap-2 px-4 py-2 text-sm bg-admin-secondary text-white rounded-lg hover:bg-[#A37B3D] shadow-sm transition-colors font-semibold">
+                        Edit Info & Banner Halaman
+                    </RouterLink>
+                    <button
+                        onClick={fetchData}
+                        disabled={loading}
+                        className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-admin-text/70 shadow-sm"
+                    >
+                        <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+                        Refresh
+                    </button>
+                </div>
             </div>
 
             {/* Stats Cards */}

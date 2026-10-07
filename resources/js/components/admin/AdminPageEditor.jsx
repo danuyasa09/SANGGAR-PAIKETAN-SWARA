@@ -107,7 +107,7 @@ const PAGE_SCHEMAS = {
     kemitraan: {
         title: "Kelola Halaman Kemitraan",
         fields: [
-            { key: 'partnership_banner_image', label: 'Gambar Banner Kemitraan', type: 'image', section: 'kemitraan' },
+            { key: 'partnership_banner', label: 'Gambar Banner Kemitraan', type: 'image', section: 'kemitraan' },
             { key: 'partnership_title', label: 'Judul Halaman', type: 'text', section: 'kemitraan' },
             { key: 'partnership_desc', label: 'Deskripsi Halaman', type: 'text', section: 'kemitraan' }
         ]

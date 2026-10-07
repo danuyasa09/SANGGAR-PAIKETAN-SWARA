@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import axios from '../../lib/axios';
 import { compressImage, formatFileSize } from '../../lib/mediaCompressor';
 import {
@@ -203,10 +204,15 @@ export default function AdminGallery() {
                         </p>
                     </div>
                 </div>
-                <button onClick={fetchItems} disabled={loading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-admin-text/70 shadow-sm transition-colors">
-                    <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />Refresh
-                </button>
+                <div className="flex items-center gap-2">
+                    <RouterLink to="/admin/page/galeri" className="flex items-center gap-2 px-4 py-2 text-sm bg-admin-secondary text-white rounded-lg hover:bg-[#A37B3D] shadow-sm transition-colors font-semibold">
+                        Edit Info & Banner Halaman
+                    </RouterLink>
+                    <button onClick={fetchItems} disabled={loading}
+                        className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-admin-text/70 shadow-sm transition-colors">
+                        <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />Refresh
+                    </button>
+                </div>
             </div>
 
             {/* ── UPLOAD FORM PANEL ── */}
