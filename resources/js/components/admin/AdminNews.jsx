@@ -5,7 +5,7 @@ import {
     Newspaper, Plus, Pencil, Trash2, RefreshCw, X, Check,
     ImagePlus, Loader2, Eye, EyeOff, AlertCircle, Calendar,
     ChevronDown, ChevronUp, GripVertical, Quote, Heading,
-    AlignLeft, BookOpen, Tag, Clock, User, AtSign, Layout, FileImage, Zap
+    AlignLeft, BookOpen, Tag, Clock, User, AtSign, Layout, FileImage, Zap, Search
 } from 'lucide-react';
 
 /* ─── News Page Fields (for Tampilan Halaman tab) ─── */
@@ -62,6 +62,8 @@ export default function AdminNews() {
     const [toast, setToast]             = useState(null);
     const [previewCover, setPreviewCover] = useState('');
     const [expandedId, setExpandedId]   = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'published' | 'draft'
 
     /* ─── Tab State ──────────────────────────────── */
     const [activeTab, setActiveTab]     = useState('artikel'); // 'artikel' | 'halaman'
@@ -264,6 +266,23 @@ export default function AdminNews() {
         } catch { showToast('Gagal mengubah status.', 'error'); }
     };
 
+    /* ─── Filtered Articles & Counts ─────────────── */
+    const publishedCount = articles.filter(a => a.is_published).length;
+    const draftCount = articles.filter(a => !a.is_published).length;
+
+    const filteredArticles = articles.filter(art => {
+        const q = searchQuery.toLowerCase().trim();
+        const matchesSearch = !q ||
+            (art.title?.toLowerCase().includes(q)) ||
+            (art.author_name?.toLowerCase().includes(q)) ||
+            (art.tag?.toLowerCase().includes(q));
+        const matchesStatus =
+            filterStatus === 'all' ? true :
+            filterStatus === 'published' ? art.is_published :
+            !art.is_published;
+        return matchesSearch && matchesStatus;
+    });
+
     /* ════════════════════════════════════════════════
        RENDER
        ════════════════════════════════════════════════ */
@@ -272,20 +291,20 @@ export default function AdminNews() {
 
             {/* ── Page Header ── */}
             <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-admin-primary/10 flex items-center justify-center text-admin-primary">
+                <div className="w-10 h-10 rounded-xl bg-admin-primary/10 flex items-center justify-center text-admin-primary shrink-0">
                     <Newspaper size={20} />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-admin-serif font-bold text-admin-text">Manajemen Berita</h1>
-                    <p className="text-sm text-admin-text/50">Kelola artikel dan tampilan halaman berita publik</p>
+                    <h1 className="text-xl sm:text-2xl font-admin-serif font-bold text-admin-text">Manajemen Berita</h1>
+                    <p className="text-xs sm:text-sm text-admin-text/50">Kelola artikel dan tampilan halaman berita publik</p>
                 </div>
             </div>
 
             {/* ── Tab Navigation ── */}
-            <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+            <div className="flex w-full sm:w-fit bg-gray-100 p-1 rounded-xl">
                 <button
                     onClick={() => setActiveTab('artikel')}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                    className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 ${
                         activeTab === 'artikel'
                             ? 'bg-white text-admin-primary shadow-sm'
                             : 'text-gray-500 hover:text-gray-700'
@@ -296,7 +315,7 @@ export default function AdminNews() {
                 </button>
                 <button
                     onClick={() => setActiveTab('halaman')}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                    className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 ${
                         activeTab === 'halaman'
                             ? 'bg-white text-admin-primary shadow-sm'
                             : 'text-gray-500 hover:text-gray-700'
@@ -310,15 +329,74 @@ export default function AdminNews() {
             {/* ══════════ TAB: KELOLA ARTIKEL ══════════ */}
             {activeTab === 'artikel' && (<>
 
-            {/* Toolbar */}
-            <div className="flex justify-end gap-2">
-                <button onClick={fetchArticles} disabled={loading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-admin-text/70 shadow-sm transition-colors">
-                    <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />Refresh
+            {/* Toolbar & Search */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                {/* Search Bar */}
+                <div className="relative flex-1 max-w-md">
+                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        placeholder="Cari judul, tag, atau penulis..."
+                        className="w-full pl-9 pr-8 py-2 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm outline-none focus:border-admin-primary/50 focus:ring-1 focus:ring-admin-primary/20 shadow-2xs transition-colors"
+                    />
+                    {searchQuery && (
+                        <button
+                            onClick={() => setSearchQuery('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
+                        >
+                            <X size={14} />
+                        </button>
+                    )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2 shrink-0">
+                    <button onClick={fetchArticles} disabled={loading}
+                        className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-admin-text/70 shadow-2xs transition-colors">
+                        <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+                        <span>Refresh</span>
+                    </button>
+                    <button onClick={openCreate}
+                        className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 text-xs sm:text-sm bg-admin-primary text-white rounded-xl hover:bg-admin-primary/90 shadow-sm font-semibold transition-colors">
+                        <Plus size={16} />
+                        <span>Tulis Artikel</span>
+                    </button>
+                </div>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mt-1 scrollbar-none">
+                <button
+                    onClick={() => setFilterStatus('all')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+                        filterStatus === 'all'
+                            ? 'bg-admin-primary text-white shadow-2xs'
+                            : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }`}
+                >
+                    Semua ({articles.length})
                 </button>
-                <button onClick={openCreate}
-                    className="flex items-center gap-2 px-4 py-2 text-sm bg-admin-primary text-white rounded-lg hover:bg-admin-primary/90 shadow-sm font-semibold transition-colors">
-                    <Plus size={16} />Tulis Artikel
+                <button
+                    onClick={() => setFilterStatus('published')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+                        filterStatus === 'published'
+                            ? 'bg-emerald-600 text-white shadow-2xs'
+                            : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }`}
+                >
+                    Published ({publishedCount})
+                </button>
+                <button
+                    onClick={() => setFilterStatus('draft')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+                        filterStatus === 'draft'
+                            ? 'bg-gray-800 text-white shadow-2xs'
+                            : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }`}
+                >
+                    Draft ({draftCount})
                 </button>
             </div>
 
@@ -328,76 +406,181 @@ export default function AdminNews() {
                     <Loader2 size={28} className="animate-spin mr-2" />Memuat artikel...
                 </div>
             ) : articles.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-24 gap-4 border-2 border-dashed border-gray-200 rounded-2xl text-admin-text/40">
+                <div className="flex flex-col items-center justify-center py-20 gap-4 border-2 border-dashed border-gray-200 rounded-2xl text-admin-text/40 bg-white">
                     <Newspaper size={48} strokeWidth={1} />
                     <p className="text-sm">Belum ada artikel. Klik "Tulis Artikel" untuk memulai.</p>
                 </div>
+            ) : filteredArticles.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3 border border-gray-200 rounded-2xl text-admin-text/50 bg-white">
+                    <Search size={36} strokeWidth={1.5} className="text-gray-300" />
+                    <p className="text-sm font-medium">Tidak ada artikel yang cocok dengan filter.</p>
+                    {(searchQuery || filterStatus !== 'all') && (
+                        <button
+                            onClick={() => { setSearchQuery(''); setFilterStatus('all'); }}
+                            className="text-xs text-admin-primary font-semibold hover:underline"
+                        >
+                            Reset filter pencarian
+                        </button>
+                    )}
+                </div>
             ) : (
                 <div className="space-y-3">
-                    {articles.map(art => (
-                        <div key={art.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                            <div className="flex items-start gap-4 p-5">
-                                {/* Thumbnail */}
-                                <div className="w-24 h-16 rounded-xl overflow-hidden shrink-0 bg-gray-100 border border-gray-200">
-                                    {art.cover_url ? (
-                                        <img src={resolveUrl(art.cover_url)} alt={art.title} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-300"><ImagePlus size={22} strokeWidth={1} /></div>
-                                    )}
-                                </div>
+                    {filteredArticles.map(art => (
+                        <div key={art.id} className="bg-white rounded-2xl border border-gray-200 shadow-2xs hover:shadow-sm transition-all duration-200 overflow-hidden">
+                            <div className="p-4 sm:p-5">
+                                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                                    
+                                    {/* Left: Thumbnail & Info */}
+                                    <div className="flex items-start gap-3.5 sm:gap-4 flex-1 min-w-0">
+                                        {/* Thumbnail */}
+                                        <div className="w-20 h-20 sm:w-28 sm:h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100 border border-gray-200 relative group">
+                                            {art.cover_url ? (
+                                                <img 
+                                                    src={resolveUrl(art.cover_url)} 
+                                                    alt={art.title} 
+                                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 gap-1 bg-gray-50">
+                                                    <ImagePlus size={22} strokeWidth={1.5} />
+                                                    <span className="text-[9px] text-gray-400 font-medium hidden sm:inline">No cover</span>
+                                                </div>
+                                            )}
+                                        </div>
 
-                                {/* Info */}
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                                        <span className="text-[9px] font-bold bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded uppercase tracking-widest">{art.tag}</span>
-                                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${art.is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
-                                            {art.is_published ? '● Published' : '○ Draft'}
-                                        </span>
-                                    </div>
-                                    <h3 className="font-admin-serif font-bold text-admin-text text-base leading-snug line-clamp-1">{art.title}</h3>
-                                    <div className="flex flex-wrap items-center gap-3 mt-1 text-[11px] text-gray-400">
-                                        <span className="flex items-center gap-1"><User size={10} />{art.author_name}</span>
-                                        <span className="flex items-center gap-1"><Calendar size={10} />{formatDate(art.published_at)}</span>
-                                        <span className="flex items-center gap-1"><Eye size={10} />{art.views?.toLocaleString() ?? 0} views</span>
-                                        <span className="flex items-center gap-1"><Clock size={10} />{art.read_time}</span>
-                                        <span className="flex items-center gap-1"><BookOpen size={10} />{art.content?.length ?? 0} blok konten</span>
-                                    </div>
-                                </div>
+                                        {/* Content Details */}
+                                        <div className="flex-1 min-w-0 space-y-1 sm:space-y-1.5">
+                                            {/* Badges */}
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <span className="text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200/80 px-2 py-0.5 rounded uppercase tracking-wider">
+                                                    {art.tag || 'BERITA'}
+                                                </span>
+                                                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider inline-flex items-center gap-1 ${
+                                                    art.is_published 
+                                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                                                        : 'bg-gray-100 text-gray-500 border border-gray-200'
+                                                }`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${art.is_published ? 'bg-emerald-500' : 'bg-gray-400'}`}></span>
+                                                    {art.is_published ? 'Published' : 'Draft'}
+                                                </span>
+                                            </div>
 
-                                {/* Actions */}
-                                <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
-                                    <button onClick={() => openEdit(art)}
-                                        className="flex items-center gap-1 px-3 py-1.5 text-xs bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 font-semibold transition-colors">
-                                        <Pencil size={12} />Edit
-                                    </button>
-                                    <button onClick={() => togglePublish(art)}
-                                        className={`flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg font-semibold transition-colors ${art.is_published ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'}`}>
-                                        {art.is_published ? <><EyeOff size={12} />Jadikan Draft</> : <><Eye size={12} />Publish</>}
-                                    </button>
-                                    <button onClick={() => setExpandedId(expandedId === art.id ? null : art.id)}
-                                        className="p-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors">
-                                        {expandedId === art.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                                    </button>
-                                    <button onClick={() => handleDelete(art.id)} disabled={deletingId === art.id}
-                                        className="p-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors disabled:opacity-50">
-                                        {deletingId === art.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                                    </button>
+                                            {/* Title */}
+                                            <h3 className="font-admin-serif font-bold text-admin-text text-sm sm:text-base leading-snug line-clamp-2">
+                                                {art.title}
+                                            </h3>
+
+                                            {/* Metadata row */}
+                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-400 pt-0.5">
+                                                {art.author_name && (
+                                                    <span className="inline-flex items-center gap-1 shrink-0">
+                                                        <User size={11} className="text-gray-400" />
+                                                        <span className="truncate max-w-[120px] sm:max-w-none">{art.author_name}</span>
+                                                    </span>
+                                                )}
+                                                <span className="inline-flex items-center gap-1 shrink-0">
+                                                    <Calendar size={11} className="text-gray-400" />
+                                                    {formatDate(art.published_at || art.created_at)}
+                                                </span>
+                                                <span className="inline-flex items-center gap-1 shrink-0">
+                                                    <Eye size={11} className="text-gray-400" />
+                                                    {(art.views ?? 0).toLocaleString()} views
+                                                </span>
+                                                {art.read_time && (
+                                                    <span className="inline-flex items-center gap-1 shrink-0">
+                                                        <Clock size={11} className="text-gray-400" />
+                                                        {art.read_time}
+                                                    </span>
+                                                )}
+                                                <span className="inline-flex items-center gap-1 shrink-0">
+                                                    <BookOpen size={11} className="text-gray-400" />
+                                                    {art.content?.length ?? 0} blok
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Right: Actions */}
+                                    <div className="flex items-center justify-between lg:justify-end gap-1.5 pt-3 lg:pt-0 border-t lg:border-t-0 border-gray-100 shrink-0 w-full lg:w-auto">
+                                        <div className="flex items-center gap-1.5 flex-1 lg:flex-initial">
+                                            <button 
+                                                onClick={() => openEdit(art)}
+                                                className="flex-1 lg:flex-initial flex items-center justify-center gap-1 px-3 py-2 lg:py-1.5 text-xs bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 font-semibold transition-colors active:scale-95 border border-blue-100"
+                                            >
+                                                <Pencil size={13} />
+                                                <span>Edit</span>
+                                            </button>
+                                            <button 
+                                                onClick={() => togglePublish(art)}
+                                                className={`flex-1 lg:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 lg:py-1.5 text-xs rounded-lg font-semibold transition-colors active:scale-95 whitespace-nowrap border ${
+                                                    art.is_published 
+                                                        ? 'bg-amber-50/70 text-amber-700 hover:bg-amber-100 border-amber-200/70' 
+                                                        : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-emerald-200/70'
+                                                }`}
+                                            >
+                                                {art.is_published ? (
+                                                    <>
+                                                        <EyeOff size={13} />
+                                                        <span>Jadikan Draft</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Eye size={13} />
+                                                        <span>Publish</span>
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+
+                                        <div className="flex items-center gap-1.5 shrink-0">
+                                            <button 
+                                                onClick={() => setExpandedId(expandedId === art.id ? null : art.id)}
+                                                title={expandedId === art.id ? "Tutup Preview" : "Lihat Preview"}
+                                                className={`p-2 lg:p-1.5 rounded-lg border transition-colors flex items-center justify-center ${
+                                                    expandedId === art.id 
+                                                        ? 'bg-admin-primary/10 text-admin-primary border-admin-primary/30' 
+                                                        : 'bg-gray-50 text-gray-500 hover:bg-gray-100 border-gray-200'
+                                                }`}
+                                            >
+                                                {expandedId === art.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                                            </button>
+                                            <button 
+                                                onClick={() => handleDelete(art.id)} 
+                                                disabled={deletingId === art.id}
+                                                title="Hapus Artikel"
+                                                className="p-2 lg:p-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 border border-red-200/60 transition-colors disabled:opacity-50 flex items-center justify-center"
+                                            >
+                                                {deletingId === art.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                            </button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
                             {/* Expanded: content preview */}
                             {expandedId === art.id && art.content?.length > 0 && (
-                                <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-2">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Preview Konten ({art.content.length} blok)</p>
+                                <div className="border-t border-gray-100 px-4 sm:px-5 pb-4 sm:pb-5 pt-3.5 space-y-2 bg-gray-50/40">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                            Preview Konten ({art.content.length} blok)
+                                        </p>
+                                        <span className="text-[10px] text-gray-400 italic hidden sm:inline">Menampilkan maksimal 4 blok pertama</span>
+                                    </div>
                                     {art.content.slice(0, 4).map((block, i) => (
-                                        <div key={i} className="flex items-start gap-2.5 p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+                                        <div key={i} className="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-gray-100 shadow-2xs">
                                             <span className={`shrink-0 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
                                                 block.type === 'lead' ? 'bg-amber-100 text-amber-700' :
                                                 block.type === 'heading' ? 'bg-purple-100 text-purple-700' :
                                                 block.type === 'quote' ? 'bg-blue-100 text-blue-700' :
                                                 'bg-gray-200 text-gray-600'
                                             }`}>{block.type}</span>
-                                            <p className="text-xs text-gray-600 line-clamp-1 flex-1">{block.text}</p>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs text-gray-600 line-clamp-2 break-words leading-relaxed">{block.text}</p>
+                                                {block.type === 'quote' && block.author && (
+                                                    <p className="text-[10px] text-gray-400 italic mt-0.5">— {block.author}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     ))}
                                     {art.content.length > 4 && (
@@ -422,7 +605,7 @@ export default function AdminNews() {
 
                     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm divide-y divide-gray-100">
                         {NEWS_PAGE_FIELDS.map((field) => (
-                            <div key={field.key} className="p-6">
+                            <div key={field.key} className="p-4 sm:p-6">
                                 <label className="block text-sm font-bold text-admin-text/80 mb-1">{field.label}</label>
                                 {field.hint && <p className="text-xs text-gray-400 mb-4">{field.hint}</p>}
 
@@ -438,7 +621,7 @@ export default function AdminNews() {
                                         <button
                                             onClick={() => handlePageSaveText(field)}
                                             disabled={savingField === field.key}
-                                            className="flex items-center gap-2 px-5 py-2 bg-admin-secondary hover:bg-[#A37B3D] text-white text-xs font-semibold rounded-lg shadow-sm transition-all disabled:opacity-60"
+                                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 bg-admin-secondary hover:bg-[#A37B3D] text-white text-xs font-semibold rounded-lg shadow-sm transition-all disabled:opacity-60"
                                         >
                                             {savingField === field.key
                                                 ? <><Loader2 size={12} className="animate-spin" />Menyimpan...</>
@@ -451,11 +634,11 @@ export default function AdminNews() {
                                 {field.type === 'image' && (
                                     <div className="flex flex-col sm:flex-row items-start gap-4">
                                         {getPageValue(field.key) && (
-                                            <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-sm shrink-0">
+                                            <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-sm shrink-0 w-full sm:w-auto">
                                                 <img
                                                     src={(() => { const v = getPageValue(field.key); return (v.startsWith('http') || v.startsWith('/')) ? v : `/storage/${v}`; })()}
                                                     alt="Preview"
-                                                    className="h-28 w-full sm:w-52 object-cover"
+                                                    className="h-36 sm:h-28 w-full sm:w-52 object-cover"
                                                 />
                                             </div>
                                         )}
@@ -492,20 +675,20 @@ export default function AdminNews() {
 
             {/* ════════ MODAL FORM ════════ */}
             {modalOpen && (
-                <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-4">
                     <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeModal} />
                     <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] sm:max-h-[92vh] flex flex-col z-10">
 
                         {/* Modal Header */}
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 shrink-0">
-                            <h2 className="text-lg font-admin-serif font-bold text-admin-text">
+                        <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 shrink-0">
+                            <h2 className="text-base sm:text-lg font-admin-serif font-bold text-admin-text">
                                 {editingId ? 'Edit Artikel' : 'Tulis Artikel Baru'}
                             </h2>
                             <button onClick={closeModal} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors"><X size={20} /></button>
                         </div>
 
                         {/* Modal Body */}
-                        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+                        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-6">
                             {error && (
                                 <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs">
                                     <AlertCircle size={14} className="shrink-0 mt-0.5" /><span>{error}</span>
@@ -545,15 +728,15 @@ export default function AdminNews() {
                             {/* ── Section: Cover ── */}
                             <section className="space-y-3">
                                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Foto Cover</h3>
-                                <div className="flex items-start gap-4">
-                                    <div className="w-32 h-20 rounded-xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center shrink-0">
+                                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                                    <div className="w-full sm:w-36 h-36 sm:h-24 rounded-xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center shrink-0">
                                         {previewCover || form.cover_url ? (
                                             <img src={resolveUrl(previewCover || form.cover_url)} alt="preview" className="w-full h-full object-cover" />
                                         ) : (
                                             <ImagePlus size={22} className="text-gray-300" />
                                         )}
                                     </div>
-                                    <div className="flex-1 space-y-2">
+                                    <div className="flex-1 w-full space-y-2">
                                         <label className={`flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-admin-primary/50 hover:bg-admin-primary/5 transition-colors text-sm text-gray-500 ${uploading ? 'pointer-events-none opacity-60' : ''}`}>
                                             {uploading ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} />}
                                             {uploading ? 'Mengupload...' : 'Pilih Foto Cover'}
@@ -685,14 +868,14 @@ export default function AdminNews() {
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="flex items-center justify-end gap-3 px-4 sm:px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl shrink-0">
+                        <div className="flex items-center justify-end gap-2 sm:gap-3 px-4 sm:px-6 py-3.5 sm:py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl shrink-0">
                             <button type="button" onClick={closeModal}
-                                className="px-5 py-2.5 text-sm text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 font-medium transition-colors">
+                                className="flex-1 sm:flex-initial px-4 sm:px-5 py-2.5 text-xs sm:text-sm text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 font-medium transition-colors text-center">
                                 Batal
                             </button>
                             <button onClick={handleSave} disabled={saving}
-                                className="flex items-center gap-2 px-6 py-2.5 text-sm bg-admin-primary text-white rounded-xl hover:bg-admin-primary/90 font-semibold disabled:opacity-60 transition-colors">
-                                {saving ? <><Loader2 size={14} className="animate-spin" />Menyimpan...</> : <><Check size={14} />{editingId ? 'Simpan Perubahan' : 'Buat Artikel'}</>}
+                                className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 text-xs sm:text-sm bg-admin-primary text-white rounded-xl hover:bg-admin-primary/90 font-semibold disabled:opacity-60 transition-colors">
+                                {saving ? <><Loader2 size={14} className="animate-spin" />Menyimpan...</> : <><Check size={14} />{editingId ? 'Simpan' : 'Buat Artikel'}</>}
                             </button>
                         </div>
                     </div>
@@ -701,17 +884,17 @@ export default function AdminNews() {
 
             {/* Toast — Articles */}
             {toast && (
-                <div className={`fixed bottom-6 right-6 z-[90] flex items-center gap-2.5 px-5 py-3 rounded-xl shadow-xl text-sm font-semibold text-white ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
-                    {toast.type === 'error' ? <AlertCircle size={16} /> : <Check size={16} />}
-                    {toast.msg}
+                <div className={`fixed bottom-4 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-auto max-w-sm z-[90] flex items-center gap-2.5 px-4 sm:px-5 py-3 rounded-xl shadow-xl text-xs sm:text-sm font-semibold text-white ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
+                    {toast.type === 'error' ? <AlertCircle size={16} className="shrink-0" /> : <Check size={16} className="shrink-0" />}
+                    <span>{toast.msg}</span>
                 </div>
             )}
 
             {/* Toast — Page Editor */}
             {pageToast && (
-                <div className={`fixed bottom-6 right-6 z-[90] flex items-center gap-2.5 px-5 py-3 rounded-xl shadow-xl text-sm font-semibold text-white ${pageToast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
-                    {pageToast.type === 'error' ? <AlertCircle size={16} /> : <Check size={16} />}
-                    {pageToast.msg}
+                <div className={`fixed bottom-4 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-auto max-w-sm z-[90] flex items-center gap-2.5 px-4 sm:px-5 py-3 rounded-xl shadow-xl text-xs sm:text-sm font-semibold text-white ${pageToast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
+                    {pageToast.type === 'error' ? <AlertCircle size={16} className="shrink-0" /> : <Check size={16} className="shrink-0" />}
+                    <span>{pageToast.msg}</span>
                 </div>
             )}
         </div>
